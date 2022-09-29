@@ -1,0 +1,18 @@
+{
+  "name": "reactils",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {},
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "nx": "14.8.1",
+    "@nrwl/cli": "14.8.1",
+    "@nrwl/workspace": "14.8.1",
+    "typescript": "~4.8.2",
+    "prettier": "^2.6.2"
+  },
+  "workspaces": [
+    "packages/**"
+  ]
+}
