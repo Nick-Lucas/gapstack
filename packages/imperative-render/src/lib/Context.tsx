@@ -14,8 +14,14 @@ export type ImperativeRenderElementsContextType = Record<string, ReactNode>
 
 export function createContexts() {
   const Render = createContext<ImperativeRenderContextType>({
-    render: () => () => {
-      console.error('ImperativeRenderContext not initialised')
+    render: () => {
+      console.error(
+        'ImperativeRender Context not initialised. Is the Provider at the top of your app?'
+      )
+
+      return () => {
+        //
+      }
     },
   })
 

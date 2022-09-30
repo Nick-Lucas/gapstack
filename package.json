@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "test": "jest",
     "start:imperative-render": "nx run serve imperative-render-example",
     "build": "nx run-many --target=build --production",
     "publish:imperative-render": "npm publish --access=public"
@@ -24,7 +25,8 @@
     "@nrwl/react": "^14.8.1",
     "@nrwl/web": "14.8.1",
     "@nrwl/workspace": "14.8.1",
-    "@testing-library/react": "13.4.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^14.4.3",
     "@types/jest": "28.1.1",
     "@types/node": "16.11.7",
     "@types/react": "18.0.20",
