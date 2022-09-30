@@ -32,7 +32,7 @@ export function App() {
             setTimeout(destroySuccess, 500)
           }}
         >
-          Create element for promise
+          Create alert for promise
         </button>
 
         {/* Render something which can destroy itself */}
@@ -47,7 +47,7 @@ export function App() {
             ))
           }}
         >
-          Create closeable element
+          Create closeable alert
         </button>
 
         <button
@@ -63,7 +63,7 @@ export function App() {
             })
           }}
         >
-          Create a modal element with separate behaviour
+          Create a modal element with its own parent layout
         </button>
       </span>
     </div>

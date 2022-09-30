@@ -13,6 +13,10 @@ export function createRoot(contexts: Contexts) {
   }: ImperativeRenderRootProps) {
     const elements = useContext(contexts.Elements)
 
+    if (Object.keys(elements).length === 0) {
+      return null
+    }
+
     return React.cloneElement(container, {
       children: Object.keys(elements).map((key) => (
         <React.Fragment key={key}>{elements[key]}</React.Fragment>

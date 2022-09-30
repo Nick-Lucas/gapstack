@@ -15,8 +15,8 @@ root.render(
     <ImperativeRenderProvider>
       <App />
 
-      <AlertsRenderer.Root />
-      <ModalRenderer.Root />
+      <AlertsRenderer.Root container={<div className="alert-container" />} />
+      <ModalRenderer.Root container={<div className="modal-container" />} />
     </ImperativeRenderProvider>
   </StrictMode>
 )
