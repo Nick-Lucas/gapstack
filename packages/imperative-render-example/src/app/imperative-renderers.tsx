@@ -1,7 +1,7 @@
 import {
   createInstance,
   createMergedProvider,
-} from '@reactils/imperative-render'
+} from '@gapstack/react-imperative-render'
 
 export const AlertsRenderer = createInstance()
 export const ModalRenderer = createInstance()

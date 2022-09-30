@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@reactils/imperative-render": ["packages/imperative-render/src/index.ts"]
+      "@gapstack/react-imperative-render": ["packages/imperative-render/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

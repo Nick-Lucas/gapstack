@@ -1,9 +1,10 @@
 {
-  "name": "reactils",
+  "name": "gapstack",
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "start:imperative-render": "nx run serve imperative-render-example"
+    "start:imperative-render": "nx run serve imperative-render-example",
+    "build": "nx run-many --target=build --production"
   },
   "private": true,
   "dependencies": {
