@@ -4,7 +4,8 @@
   "license": "MIT",
   "scripts": {
     "start:imperative-render": "nx run serve imperative-render-example",
-    "build": "nx run-many --target=build --production"
+    "build": "nx run-many --target=build --production",
+    "publish:imperative-render": "npm publish --access=public"
   },
   "private": true,
   "dependencies": {

@@ -1,8 +1,9 @@
+import { ReactNode } from 'react'
+
 import { createContexts } from './Context'
 import { createProvider, ProvideMultiple } from './Providers'
 import { createHooks } from './hooks'
 import { createRoot } from './Root'
-import { ReactNode } from 'react'
 
 export function createInstance() {
   const contexts = createContexts()

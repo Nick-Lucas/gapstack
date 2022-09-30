@@ -13,7 +13,6 @@
         "tsConfig": "packages/imperative-render/tsconfig.lib.json",
         "project": "packages/imperative-render/package.json",
         "entryFile": "packages/imperative-render/src/index.ts",
-        "external": ["react/jsx-runtime"],
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "compiler": "babel",
         "assets": [
