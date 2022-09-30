@@ -1,6 +1,6 @@
 {
   "name": "@gapstack/react-imperative-render",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": false,
   "peerDependencies": {
     "react": ">=17"
