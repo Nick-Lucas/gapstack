@@ -1,4 +1,18 @@
 .modal {
+  background-color: #99ffc7;
+  border-radius: 5px;
+  padding: 1rem;
+
+  margin-top: 0.5rem;
+
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  left: 5px;
+  bottom: 5px;
+}
+
+.alert {
   background-color: #99f0ff;
   border-radius: 5px;
   padding: 1rem;

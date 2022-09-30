@@ -12,11 +12,19 @@ export type ImperativeRenderContextType = {
 }
 export type ImperativeRenderElementsContextType = Record<string, ReactNode>
 
-export const ImperativeRenderContext =
-  createContext<ImperativeRenderContextType>({
+export function createContexts() {
+  const Render = createContext<ImperativeRenderContextType>({
     render: () => () => {
       console.error('ImperativeRenderContext not initialised')
     },
   })
-export const ImperativeRenderElementsContext =
-  createContext<ImperativeRenderElementsContextType>({})
+
+  const Elements = createContext<ImperativeRenderElementsContextType>({})
+
+  return {
+    Render,
+    Elements,
+  }
+}
+
+export type Contexts = ReturnType<typeof createContexts>

@@ -1,9 +1,10 @@
 import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import {
+  AlertsRenderer,
+  ModalRenderer,
   ImperativeRenderProvider,
-  ImperativeRenderRoot,
-} from '@reactils/imperative-render'
+} from './app/imperative-renderers'
 
 import { App } from './app/app'
 
@@ -14,7 +15,8 @@ root.render(
     <ImperativeRenderProvider>
       <App />
 
-      <ImperativeRenderRoot />
+      <AlertsRenderer.Root />
+      <ModalRenderer.Root />
     </ImperativeRenderProvider>
   </StrictMode>
 )

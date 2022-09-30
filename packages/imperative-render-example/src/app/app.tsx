@@ -1,8 +1,9 @@
 import './app.css'
-import { useImperativeRender } from '@reactils/imperative-render'
+import { AlertsRenderer, ModalRenderer } from './imperative-renderers'
 
 export function App() {
-  const render = useImperativeRender()
+  const render = AlertsRenderer.useImperativeRender()
+  const renderModal = ModalRenderer.useImperativeRender()
 
   return (
     <div>
@@ -18,7 +19,7 @@ export function App() {
         <button
           onClick={async () => {
             const destroy = render(
-              <div className="modal">
+              <div className="alert">
                 Created by click. Will disapear when a promise resolves
               </div>
             )
@@ -27,7 +28,7 @@ export function App() {
 
             destroy()
 
-            const destroySuccess = render(<div className="modal">Success!</div>)
+            const destroySuccess = render(<div className="alert">Success!</div>)
             setTimeout(destroySuccess, 500)
           }}
         >
@@ -36,17 +37,33 @@ export function App() {
 
         {/* Render something which can destroy itself */}
         <button
-          onClick={() => [
+          onClick={() => {
             render((params) => (
-              <div className="modal space">
+              <div className="alert space">
                 <span>Created by click. Will disapear when dismissed</span>
 
                 <button onClick={params.destroy}>Dismiss</button>
               </div>
-            )),
-          ]}
+            ))
+          }}
         >
           Create closeable element
+        </button>
+
+        <button
+          onClick={() => {
+            renderModal((params) => {
+              return (
+                <div className="modal space">
+                  <span>Content!</span>
+
+                  <button onClick={params.destroy}>Close Modal</button>
+                </div>
+              )
+            })
+          }}
+        >
+          Create a modal element with separate behaviour
         </button>
       </span>
     </div>
