@@ -8,15 +8,11 @@ type Model = {
 const ImperativeRenderer = createInstance<Model>({
   container: <ul />,
   renderElement: (model, params) => {
-    return (
-      <li>
-        Element {model.count} <button onClick={params.destroy}>Dismiss</button>
-      </li>
-    )
+    return <li>Element {model.count}</li>
   },
 })
 
-export default function CloseSelfExample() {
+export default function TimedExample() {
   return (
     <ImperativeRenderer.Provider>
       <Component />
@@ -29,7 +25,9 @@ export default function CloseSelfExample() {
 export function Component() {
   const counter = useRef(0)
 
-  const render = ImperativeRenderer.useRender()
+  const render = ImperativeRenderer.useTimed({
+    timeout: 1000,
+  })
 
   return (
     <button
@@ -41,7 +39,7 @@ export function Component() {
         })
       }}
     >
-      Add Element until dismissed
+      Add Element for 1000ms
     </button>
   )
 }

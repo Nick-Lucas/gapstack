@@ -1,22 +1,30 @@
 import { ReactNode, useCallback, useMemo, useRef, useState, FC } from 'react'
 import {
   Contexts,
-  ImperativeRenderContextType,
-  ImperativeRenderElementsContextType,
+  RenderContextType,
+  ElementsContextType,
+  RenderCallback,
 } from './Context'
+import { RendererModel } from './types'
+
+export type ProviderOptions<Model extends RendererModel> = {
+  renderElement: RenderCallback<Model>
+}
 
 export type ImperativeRenderProviderProps = {
   children: ReactNode
 }
 
-export function createProvider(contexts: Contexts) {
+export function createProvider<Model extends RendererModel>(
+  contexts: Contexts<Model>,
+  options: ProviderOptions<Model>
+) {
   return function Provider({ children }: ImperativeRenderProviderProps) {
     const counter = useRef(0)
-    const [elements, setElements] =
-      useState<ImperativeRenderElementsContextType>({})
+    const [elements, setElements] = useState<ElementsContextType>({})
 
-    const render = useCallback<ImperativeRenderContextType['render']>(
-      (element) => {
+    const render = useCallback<RenderContextType<Model>['render']>(
+      (request) => {
         const key = 'EL_' + counter.current++
         const destroy = () => {
           setElements((els) => {
@@ -26,12 +34,13 @@ export function createProvider(contexts: Contexts) {
           })
         }
 
-        const el =
-          typeof element === 'function' ? element({ destroy }) : element
+        const model =
+          typeof request === 'function' ? request({ destroy }) : request
 
         setElements((els) => ({
           ...els,
-          [key]: el,
+          // TODO: maybe move this down-stream to only store the model data in state instead of the ReactNodes
+          [key]: options.renderElement(model, { destroy }),
         }))
 
         return destroy
@@ -39,7 +48,7 @@ export function createProvider(contexts: Contexts) {
       []
     )
 
-    const renderContextValue = useMemo<ImperativeRenderContextType>(() => {
+    const renderContextValue = useMemo<RenderContextType<Model>>(() => {
       return {
         render,
       }
@@ -61,15 +70,17 @@ export type ProvideMultipleProps = {
 }
 
 export function ProvideMultiple({ Providers, children }: ProvideMultipleProps) {
-  const [Component, ...Rest] = Providers
+  const [Provider, ...RemainingProviders] = Providers
 
-  if (Rest.length === 0) {
-    return <Component>{children}</Component>
+  if (RemainingProviders.length === 0) {
+    return <Provider>{children}</Provider>
   } else {
     return (
-      <Component>
-        <ProvideMultiple Providers={Rest}>{children}</ProvideMultiple>
-      </Component>
+      <Provider>
+        <ProvideMultiple Providers={RemainingProviders}>
+          {children}
+        </ProvideMultiple>
+      </Provider>
     )
   }
 }

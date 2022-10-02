@@ -1,5 +1,6 @@
 import { ReactNode } from 'react'
 import { Story } from '@storybook/react'
+import { Source } from '@storybook/addon-docs'
 
 type MakeOpts = {
   title: string
@@ -17,6 +18,10 @@ export function make(
         <p style={{ marginTop: 0 }}>{opts.description}</p>
 
         <Component />
+
+        <div style={{ overflow: 'auto', maxHeight: '60vh', marginTop: '1rem' }}>
+          <Source dark code={code as string} language="tsx" />
+        </div>
       </div>
     )
   }
@@ -27,7 +32,7 @@ export function make(
     docs: {
       title: opts.title,
       source: {
-        code: code,
+        code: null,
         language: 'tsx',
         type: 'auto',
       },

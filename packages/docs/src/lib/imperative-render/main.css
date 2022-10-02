@@ -12,6 +12,7 @@
   background-color: #99ffc7;
   border-radius: 5px;
   padding: 1rem;
+  z-index: 1000;
 
   margin-top: 0.5rem;
 
@@ -20,6 +21,10 @@
   right: 5rem;
   left: 5rem;
   bottom: 1rem;
+}
+
+.modal > h4 {
+  margin-top: 0;
 }
 
 .alert-container {
@@ -50,4 +55,13 @@
 
 .space > * {
   margin-right: 0.5rem;
+}
+
+.positive {
+  background-color: green;
+  color: whitesmoke;
+}
+.negative {
+  background-color: orangered;
+  color: whitesmoke;
 }

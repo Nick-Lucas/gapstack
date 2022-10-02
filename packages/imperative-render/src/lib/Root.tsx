@@ -2,16 +2,23 @@
 
 import React, { useContext } from 'react'
 import { Contexts } from './Context'
+import { RendererModel } from './types'
 
-export type ImperativeRenderRootProps = {
+export type RootOptions = {
   container?: JSX.Element
 }
 
-export function createRoot(contexts: Contexts) {
-  return function ImperativeRenderRoot({
-    container = <React.Fragment />,
-  }: ImperativeRenderRootProps) {
+export type ImperativeRenderRootProps = {
+  //
+}
+
+export function createRoot<Model extends RendererModel>(
+  contexts: Contexts<Model>,
+  options: RootOptions
+) {
+  return function ImperativeRenderRoot(props: ImperativeRenderRootProps) {
     const elements = useContext(contexts.Elements)
+    const container = options.container ?? <React.Fragment />
 
     if (Object.keys(elements).length === 0) {
       return null

@@ -1,19 +1,29 @@
-import { createContext, ReactNode } from 'react'
+import React, { createContext, ReactNode } from 'react'
 
-export type RenderFunctionValueParams = {
+import { RendererModel } from './types'
+
+export type RenderContextType<Model extends RendererModel> = {
+  render: (
+    renderer: Model | ((params: RenderCallbackParams) => Model)
+  ) => () => void
+}
+
+export type ElementsContextType = Record<string, ReactNode>
+
+export type RenderCallbackParams = {
   destroy: () => void
 }
-export type RenderValue =
-  | ReactNode
-  | ((params: RenderFunctionValueParams) => ReactNode)
+export type RenderCallback<Model extends RendererModel> = (
+  model: Model,
+  params: RenderCallbackParams
+) => ReactNode
 
-export type ImperativeRenderContextType = {
-  render: (renderer: RenderValue) => () => void
+export type Contexts<Model extends RendererModel> = {
+  Render: React.Context<RenderContextType<Model>>
+  Elements: React.Context<ElementsContextType>
 }
-export type ImperativeRenderElementsContextType = Record<string, ReactNode>
-
-export function createContexts() {
-  const Render = createContext<ImperativeRenderContextType>({
+export function createContexts<Model extends RendererModel>(): Contexts<Model> {
+  const Render = createContext<RenderContextType<Model>>({
     render: () => {
       console.error(
         'ImperativeRender Context not initialised. Is the Provider at the top of your app?'
@@ -25,12 +35,10 @@ export function createContexts() {
     },
   })
 
-  const Elements = createContext<ImperativeRenderElementsContextType>({})
+  const Elements = createContext<ElementsContextType>({})
 
   return {
     Render,
     Elements,
   }
 }
-
-export type Contexts = ReturnType<typeof createContexts>

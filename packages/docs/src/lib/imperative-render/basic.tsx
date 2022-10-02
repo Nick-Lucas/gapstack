@@ -1,14 +1,23 @@
 import { createInstance } from '@gapstack/react-imperative-render'
 import { useRef } from 'react'
 
-const ImperativeRenderer = createInstance()
+type Model = {
+  count: number
+}
+
+const ImperativeRenderer = createInstance<Model>({
+  container: <ul />,
+  renderElement: (model, params) => {
+    return <li>Element {model.count}</li>
+  },
+})
 
 export default function BasicExample() {
   return (
     <ImperativeRenderer.Provider>
       <Component />
 
-      <ImperativeRenderer.Root container={<ul />} />
+      <ImperativeRenderer.Root />
     </ImperativeRenderer.Provider>
   )
 }
@@ -16,14 +25,16 @@ export default function BasicExample() {
 export function Component() {
   const counter = useRef(0)
 
-  const render = ImperativeRenderer.useImperativeRender()
+  const render = ImperativeRenderer.useRender()
 
   return (
     <button
       onClick={() => {
         const count = counter.current++
 
-        const destroy = render(<li>Element {count}</li>)
+        const destroy = render({
+          count,
+        })
 
         setTimeout(destroy, 1000)
       }}
