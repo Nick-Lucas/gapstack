@@ -6,7 +6,11 @@
     "test": "jest",
     "start:imperative-render": "nx run serve imperative-render-example",
     "build": "nx run-many --target=build --production",
-    "publish:imperative-render": "npm publish --access=public"
+    "publish:imperative-render": "npm publish --access=public",
+    "docs:base:build": "nx build-storybook docs",
+    "docs:base:publish": "gh-pages -d dist/storybook/docs",
+    "docs:deploy": "yarn run docs:base:build && yarn run docs:base:publish",
+    "docs": "nx storybook docs"
   },
   "private": true,
   "dependencies": {
@@ -53,6 +57,7 @@
     "eslint-plugin-jsx-a11y": "6.6.1",
     "eslint-plugin-react": "7.31.8",
     "eslint-plugin-react-hooks": "4.6.0",
+    "gh-pages": "^4.0.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
     "nx": "14.8.1",
