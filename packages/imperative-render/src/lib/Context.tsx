@@ -3,7 +3,9 @@ import React, { createContext, ReactNode } from 'react'
 import { RendererModel } from './types'
 
 export type RenderContextType<Model extends RendererModel> = {
-  render: (renderer: Model) => () => void
+  render: (
+    renderer: Model | ((params: RenderCallbackParams) => Model)
+  ) => () => void
 }
 
 export type ElementsContextType = Record<string, ReactNode>

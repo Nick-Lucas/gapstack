@@ -18,12 +18,12 @@ export function createHooks<Model extends RendererModel>(
     return context.render
   }
 
-  function useAlert(staticOptions: Partial<AlertOptions>) {
+  function useTimed(staticOptions: Partial<AlertOptions> | undefined = {}) {
     const render = useRender()
     const [cachedStaticOptions] = useState(staticOptions)
 
     return useCallback(
-      (model: Model, renderOptions: Partial<AlertOptions>) => {
+      (model: Model, renderOptions: Partial<AlertOptions> | undefined = {}) => {
         const opts: AlertOptions = {
           ...defaultAlertOptions,
           ...cachedStaticOptions,
@@ -39,6 +39,6 @@ export function createHooks<Model extends RendererModel>(
 
   return {
     useRender,
-    useAlert,
+    useTimed,
   }
 }

@@ -55,3 +55,10 @@
 .space > * {
   margin-right: 0.5rem;
 }
+
+.positive {
+  background-color: green;
+}
+.negative {
+  background-color: orangered;
+}

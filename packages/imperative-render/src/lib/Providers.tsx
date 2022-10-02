@@ -23,24 +23,30 @@ export function createProvider<Model extends RendererModel>(
     const counter = useRef(0)
     const [elements, setElements] = useState<ElementsContextType>({})
 
-    const render = useCallback<RenderContextType<Model>['render']>((model) => {
-      const key = 'EL_' + counter.current++
-      const destroy = () => {
-        setElements((els) => {
-          const nextEls = { ...els }
-          delete nextEls[key]
-          return nextEls
-        })
-      }
+    const render = useCallback<RenderContextType<Model>['render']>(
+      (request) => {
+        const key = 'EL_' + counter.current++
+        const destroy = () => {
+          setElements((els) => {
+            const nextEls = { ...els }
+            delete nextEls[key]
+            return nextEls
+          })
+        }
 
-      setElements((els) => ({
-        ...els,
-        // TODO: maybe move this down-stream to only store the model data in state instead of the ReactNodes
-        [key]: options.renderElement(model, { destroy }),
-      }))
+        const model =
+          typeof request === 'function' ? request({ destroy }) : request
 
-      return destroy
-    }, [])
+        setElements((els) => ({
+          ...els,
+          // TODO: maybe move this down-stream to only store the model data in state instead of the ReactNodes
+          [key]: options.renderElement(model, { destroy }),
+        }))
+
+        return destroy
+      },
+      []
+    )
 
     const renderContextValue = useMemo<RenderContextType<Model>>(() => {
       return {

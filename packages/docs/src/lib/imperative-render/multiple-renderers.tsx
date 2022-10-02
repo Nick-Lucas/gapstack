@@ -3,7 +3,7 @@ import {
   createMergedProvider,
 } from '@gapstack/react-imperative-render'
 
-import './multiple-renderers.css'
+import './main.css'
 
 //
 // Create multiple instances and then merge the Providers together
