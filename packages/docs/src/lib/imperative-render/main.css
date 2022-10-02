@@ -12,6 +12,7 @@
   background-color: #99ffc7;
   border-radius: 5px;
   padding: 1rem;
+  z-index: 1000;
 
   margin-top: 0.5rem;
 
