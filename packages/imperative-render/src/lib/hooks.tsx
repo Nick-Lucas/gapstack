@@ -55,8 +55,18 @@ export function createHooks<Model extends RendererModel>(
   }
 
   return {
+    /**
+     * The simplest hook. Returns a function which will render a given model and let you destroy it
+     */
     useRender,
+    /**
+     * Used to create a short-lived element which will be automatically destroyed in the future
+     */
     useTimed,
+    /**
+     * Used to create an element for the duration of a Promise.
+     * For instance some visual feedback like a notification, or a loading spinner.
+     */
     usePromise,
   }
 }

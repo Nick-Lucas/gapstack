@@ -16,6 +16,11 @@ export type Instance<Model extends RendererModel> = ReturnType<
   Root: ReturnType<typeof createRoot<Model>>
 }
 
+/**
+ * Creates an Imperative Renderer instance along with your chosen markup.
+ *
+ * You need at least one of these in your applications
+ */
 export function createInstance<Model extends RendererModel = RendererModel>(
   options: InstanceOptions<Model>
 ): Instance<Model> {
@@ -31,6 +36,14 @@ export function createInstance<Model extends RendererModel = RendererModel>(
   }
 }
 
+/**
+ * If you have many instances for different needs, the Provider stack might get quite unwieldy in your editor.
+ *
+ * This lets you create a single Provider that rolls up multiple instances
+ *
+ * @param instances An array of Imperative Renderer Instances
+ * @returns
+ */
 export function createMergedProvider(
   instances: { Provider: React.FC<{ children: ReactNode }> }[]
 ) {
