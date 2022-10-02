@@ -8,8 +8,38 @@ import './multiple-renderers.css'
 //
 // Create multiple instances and then merge the Providers together
 
-export const AlertsRenderer = createInstance()
-export const ModalRenderer = createInstance()
+type AlertModel = {
+  message: string
+}
+type ModalModel = {
+  title: string
+  text: string
+}
+
+export const AlertsRenderer = createInstance<AlertModel>({
+  renderElement: (model, params) => {
+    return (
+      <div className="alert space">
+        <span>{model.message}</span>
+
+        <button onClick={params.destroy}>Dismiss</button>
+      </div>
+    )
+  },
+})
+
+export const ModalRenderer = createInstance<ModalModel>({
+  renderElement: (model, params) => {
+    return (
+      <div className="modal space">
+        <h4>{model.title}</h4>
+        <span>{model.text}</span>
+
+        <button onClick={params.destroy}>Close Modal</button>
+      </div>
+    )
+  },
+})
 
 export const MergedRendererProvider = createMergedProvider([
   AlertsRenderer,
@@ -31,21 +61,15 @@ export default function MultiplerRenderersExample() {
 }
 
 export function Component() {
-  const renderAlert = AlertsRenderer.useImperativeRender()
-  const renderModal = ModalRenderer.useImperativeRender()
+  const renderAlert = AlertsRenderer.useRender()
+  const renderModal = ModalRenderer.useRender()
 
   return (
     <span className="space">
       <button
         onClick={() => {
-          renderAlert((params) => {
-            return (
-              <div className="alert space">
-                <span>Created by click. Will disapear when dismissed</span>
-
-                <button onClick={params.destroy}>Dismiss</button>
-              </div>
-            )
+          renderAlert({
+            message: 'Created by click. Will disapear when dismissed',
           })
         }}
       >
@@ -54,14 +78,9 @@ export function Component() {
 
       <button
         onClick={() => {
-          renderModal((params) => {
-            return (
-              <div className="modal space">
-                <span>Content!</span>
-
-                <button onClick={params.destroy}>Close Modal</button>
-              </div>
-            )
+          renderModal({
+            title: 'My Modal',
+            text: 'Modal with content',
           })
         }}
       >

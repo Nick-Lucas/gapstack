@@ -1,13 +1,26 @@
-import { ReactNode } from 'react'
+import React, { ReactNode } from 'react'
 
+import { RendererModel } from './types'
 import { createContexts } from './Context'
-import { createProvider, ProvideMultiple } from './Providers'
+import { createProvider, ProvideMultiple, ProviderOptions } from './Providers'
 import { createHooks } from './hooks'
 import { createRoot } from './Root'
 
-export function createInstance() {
-  const contexts = createContexts()
-  const Provider = createProvider(contexts)
+export type InstanceOptions<Model extends RendererModel> =
+  ProviderOptions<Model>
+
+export type Instance<Model extends RendererModel> = ReturnType<
+  typeof createHooks<Model>
+> & {
+  Provider: ReturnType<typeof createProvider<Model>>
+  Root: ReturnType<typeof createRoot<Model>>
+}
+
+export function createInstance<Model extends RendererModel = RendererModel>(
+  options: InstanceOptions<Model>
+): Instance<Model> {
+  const contexts = createContexts<Model>()
+  const Provider = createProvider(contexts, options)
   const hooks = createHooks(contexts)
   const Root = createRoot(contexts)
 
@@ -18,9 +31,9 @@ export function createInstance() {
   }
 }
 
-export type Instance = ReturnType<typeof createInstance>
-
-export function createMergedProvider(instances: Instance[]) {
+export function createMergedProvider(
+  instances: { Provider: React.FC<{ children: ReactNode }> }[]
+) {
   const Providers = instances.map((i) => i.Provider)
 
   return function Provider(props: { children: ReactNode }) {

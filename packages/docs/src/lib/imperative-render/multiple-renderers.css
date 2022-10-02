@@ -22,6 +22,10 @@
   bottom: 1rem;
 }
 
+.modal > h4 {
+  margin-top: 0;
+}
+
 .alert-container {
   position: absolute;
   top: 5px;

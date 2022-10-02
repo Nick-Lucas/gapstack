@@ -1,7 +1,19 @@
 import { createInstance } from '@gapstack/react-imperative-render'
 import { useRef } from 'react'
 
-const ImperativeRenderer = createInstance()
+type Model = {
+  count: number
+}
+
+const ImperativeRenderer = createInstance<Model>({
+  renderElement: (model, params) => {
+    return (
+      <li>
+        Element {model.count} <button onClick={params.destroy}>Dismiss</button>
+      </li>
+    )
+  },
+})
 
 export default function CloseSelfExample() {
   return (
@@ -16,18 +28,16 @@ export default function CloseSelfExample() {
 export function Component() {
   const counter = useRef(0)
 
-  const render = ImperativeRenderer.useImperativeRender()
+  const render = ImperativeRenderer.useRender()
 
   return (
     <button
       onClick={() => {
         const count = counter.current++
 
-        render((params) => (
-          <li>
-            Element {count} <button onClick={params.destroy}>Dismiss</button>
-          </li>
-        ))
+        render({
+          count,
+        })
       }}
     >
       Add Element until dismissed
