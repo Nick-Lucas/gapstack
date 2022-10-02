@@ -13,6 +13,8 @@ import TimedExample from './imperative-render/timed'
 import TimedExampleRaw from '!!raw-loader!./imperative-render/timed'
 import ConfirmationExample from './imperative-render/confirmation-dialogue'
 import ConfirmationExampleRaw from '!!raw-loader!./imperative-render/confirmation-dialogue'
+import PromiseProgressExample from './imperative-render/promise-progress'
+import PromiseProgressExampleRaw from '!!raw-loader!./imperative-render/promise-progress'
 
 const meta: Meta = {
   title: 'React Imperative Render',
@@ -37,7 +39,9 @@ export const Basic = make(BasicExample, BasicExampleRaw, {
       <p>
         Here we add an item to a list from a button click, and later destroy it
         automatically. You can imagine this being useful for creating your own
-        Toast notifications or UI feedback while awaiting a Promise.
+        Toast notifications, UI feedback while awaiting a Promise, or a
+        short-lived modal to fetch some user input during a long-running
+        function call
       </p>
     </>
   ),
@@ -62,6 +66,20 @@ export const Confirmation = make(ConfirmationExample, ConfirmationExampleRaw, {
     </>
   ),
 })
+
+export const Promises = make(
+  PromiseProgressExample,
+  PromiseProgressExampleRaw,
+  {
+    title: 'Promise Progress',
+    description: (
+      <>
+        It's often useful to give feedback around an async process. There is a
+        dedicated hook for this
+      </>
+    ),
+  }
+)
 
 export const CloseSelf = make(CloseSelfExample, CloseSelfExampleRaw, {
   title: 'Closeable Elements',

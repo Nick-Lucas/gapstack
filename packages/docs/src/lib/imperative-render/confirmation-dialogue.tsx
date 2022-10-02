@@ -12,16 +12,16 @@ export const Renderer = createInstance<ConfirmationModel>({
   renderElement: (model, params) => {
     return (
       <div className="alert space">
-        <span>{model.message}</span>
+        <div>{model.message}</div>
 
-        <span>
+        <div className="space">
           <button onClick={model.onConfirm} className="positive">
             Continue
           </button>
           <button onClick={model.onCancel} className="negative">
             Cancel
           </button>
-        </span>
+        </div>
       </div>
     )
   },
@@ -78,8 +78,8 @@ async function prepareDangerousChange() {
   //
 }
 async function applyDangerousChange() {
-  //
+  alert('Process completed!')
 }
 async function abandonDangerousChange() {
-  //
+  alert('Process cancelled!')
 }

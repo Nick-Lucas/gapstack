@@ -37,8 +37,26 @@ export function createHooks<Model extends RendererModel>(
     )
   }
 
+  function usePromise() {
+    const render = useRender()
+
+    return useCallback(
+      async function <T>(model: Model, promise: Promise<T>): Promise<T> {
+        const destroy = render(model)
+
+        try {
+          return await promise
+        } finally {
+          destroy()
+        }
+      },
+      [render]
+    )
+  }
+
   return {
     useRender,
     useTimed,
+    usePromise,
   }
 }

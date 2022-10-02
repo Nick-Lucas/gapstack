@@ -58,7 +58,9 @@
 
 .positive {
   background-color: green;
+  color: whitesmoke;
 }
 .negative {
   background-color: orangered;
+  color: whitesmoke;
 }
