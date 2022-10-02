@@ -9,6 +9,7 @@ type ConfirmationModel = {
 }
 
 export const Renderer = createInstance<ConfirmationModel>({
+  container: <div className="alert-container" />,
   renderElement: (model, params) => {
     return (
       <div className="alert space">
@@ -32,7 +33,7 @@ export default function ConfirmationExample() {
     <Renderer.Provider>
       <Component />
 
-      <Renderer.Root container={<div className="alert-container" />} />
+      <Renderer.Root />
     </Renderer.Provider>
   )
 }

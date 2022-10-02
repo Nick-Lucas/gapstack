@@ -28,6 +28,7 @@ describe('imperative-render', () => {
 
     it('renders "Jim" in a span', async () => {
       const instance = createInstance<NameModel>({
+        container: <div data-testid="root-container" />,
         renderElement: (model, params) => {
           return <span>{model.name}</span>
         },
@@ -50,9 +51,7 @@ describe('imperative-render', () => {
               </button>
             </div>
 
-            <instance.Root
-              container={<div data-testid="root-container"></div>}
-            />
+            <instance.Root />
           </>
         )
       }
@@ -68,6 +67,7 @@ describe('imperative-render', () => {
 
     it('renders no container element when no render requests have occured', async () => {
       const instance = createInstance({
+        container: <div data-testid="root-container" />,
         renderElement: () => {
           throw new Error('NOT_IMPLEMENTED')
         },
@@ -76,9 +76,7 @@ describe('imperative-render', () => {
       function App() {
         return (
           <>
-            <instance.Root
-              container={<div data-testid="root-container"></div>}
-            />
+            <instance.Root />
           </>
         )
       }
@@ -89,6 +87,7 @@ describe('imperative-render', () => {
 
     it('is stable when no Root element has been rendered', async () => {
       const instance = createInstance<NameModel>({
+        container: <div data-testid="root-container" />,
         renderElement: (model, params) => {
           return <span>{model.name}</span>
         },

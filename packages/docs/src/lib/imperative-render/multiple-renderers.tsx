@@ -17,6 +17,7 @@ type ModalModel = {
 }
 
 export const AlertsRenderer = createInstance<AlertModel>({
+  container: <div className="alert-container" />,
   renderElement: (model, params) => {
     return (
       <div className="alert space">
@@ -29,6 +30,7 @@ export const AlertsRenderer = createInstance<AlertModel>({
 })
 
 export const ModalRenderer = createInstance<ModalModel>({
+  container: <div className="modal-container" />,
   renderElement: (model, params) => {
     return (
       <div className="modal space">
@@ -54,8 +56,8 @@ export default function MultiplerRenderersExample() {
     <MergedRendererProvider>
       <Component />
 
-      <AlertsRenderer.Root container={<div className="alert-container" />} />
-      <ModalRenderer.Root container={<div className="modal-container" />} />
+      <AlertsRenderer.Root />
+      <ModalRenderer.Root />
     </MergedRendererProvider>
   )
 }

@@ -8,6 +8,7 @@ type AlertModel = {
 }
 
 const AlertsRenderer = createInstance<AlertModel>({
+  container: <div className="alert-container" />,
   renderElement: (model, params) => {
     let icon = '⏰'
     let bg = '#9999ff'
@@ -37,7 +38,7 @@ export default function PromiseProgressExample() {
     <AlertsRenderer.Provider>
       <Component />
 
-      <AlertsRenderer.Root container={<div className="alert-container" />} />
+      <AlertsRenderer.Root />
     </AlertsRenderer.Provider>
   )
 }

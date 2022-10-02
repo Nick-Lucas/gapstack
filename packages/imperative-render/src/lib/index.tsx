@@ -4,10 +4,10 @@ import { RendererModel } from './types'
 import { createContexts } from './Context'
 import { createProvider, ProvideMultiple, ProviderOptions } from './Providers'
 import { createHooks } from './hooks'
-import { createRoot } from './Root'
+import { createRoot, RootOptions } from './Root'
 
 export type InstanceOptions<Model extends RendererModel> =
-  ProviderOptions<Model>
+  ProviderOptions<Model> & RootOptions
 
 export type Instance<Model extends RendererModel> = ReturnType<
   typeof createHooks<Model>
@@ -22,7 +22,7 @@ export function createInstance<Model extends RendererModel = RendererModel>(
   const contexts = createContexts<Model>()
   const Provider = createProvider(contexts, options)
   const hooks = createHooks(contexts)
-  const Root = createRoot(contexts)
+  const Root = createRoot(contexts, options)
 
   return {
     ...hooks,

@@ -6,6 +6,7 @@ type Model = {
 }
 
 const ImperativeRenderer = createInstance<Model>({
+  container: <ul />,
   renderElement: (model, params) => {
     return <li>Element {model.count}</li>
   },
@@ -16,7 +17,7 @@ export default function BasicExample() {
     <ImperativeRenderer.Provider>
       <Component />
 
-      <ImperativeRenderer.Root container={<ul />} />
+      <ImperativeRenderer.Root />
     </ImperativeRenderer.Provider>
   )
 }
