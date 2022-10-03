@@ -8,7 +8,7 @@ Rendering elements imperatively _can be an anti-pattern_. There are good reasons
 
 This said, doing things declaratively can also be considered an anti-pattern at times, for instance when building modals the need to manage aspects like an `isOpen` state to move a user through a flow can add a lot of complexity and indirection, where it might be cleanest to handle this within the callback which triggers it.
 
-As a rule of thumb, if you want to serve ethemeral information or UI in response to a user interaction, or do more after some period of time or future interaction, imperative-render might be a clean solution.
+As a rule of thumb, if you want to serve ephemeral information or UI in response to a user interaction, or do more after some period of time or future interaction, imperative-render might be a clean solution.
 
 ### Installation
 
