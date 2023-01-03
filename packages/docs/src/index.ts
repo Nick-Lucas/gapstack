@@ -1,1 +1,1 @@
-export * from './lib/docs'
+export * from './lib/imperative-render.stories'

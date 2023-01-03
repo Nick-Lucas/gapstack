@@ -1,5 +1,5 @@
 import { useCallback, useContext, useState } from 'react'
-import { Contexts } from './Context'
+import { useInternalRenderSubscription } from './Context'
 import { RendererModel } from './types'
 
 export type AlertOptions = {
@@ -9,13 +9,11 @@ const defaultAlertOptions: AlertOptions = {
   timeout: 1500,
 }
 
-export function createHooks<Model extends RendererModel>(
-  contexts: Contexts<Model>
-) {
+export function createHooks<Model extends RendererModel>(rootKey: symbol) {
   function useRender() {
-    const context = useContext(contexts.Render)
+    const { render } = useInternalRenderSubscription(rootKey)
 
-    return context.render
+    return render
   }
 
   function useTimed(staticOptions: Partial<AlertOptions> | undefined = {}) {
@@ -30,7 +28,7 @@ export function createHooks<Model extends RendererModel>(
           ...renderOptions,
         }
 
-        const destroy = render(model)
+        const { destroy } = render(model)
         setTimeout(destroy, opts.timeout)
       },
       [cachedStaticOptions, render]
@@ -42,7 +40,7 @@ export function createHooks<Model extends RendererModel>(
 
     return useCallback(
       async function <T>(model: Model, promise: Promise<T>): Promise<T> {
-        const destroy = render(model)
+        const { destroy } = render(model)
 
         try {
           return await promise

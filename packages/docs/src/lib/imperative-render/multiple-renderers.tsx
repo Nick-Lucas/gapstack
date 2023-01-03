@@ -1,12 +1,12 @@
 import {
   createInstance,
-  createMergedProvider,
+  ImperativeRenderProvider,
 } from '@gapstack/react-imperative-render'
 
 import './main.css'
 
 //
-// Create multiple instances and then merge the Providers together
+// Create multiple instances with their own styles
 
 type AlertModel = {
   message: string
@@ -43,22 +43,17 @@ export const ModalRenderer = createInstance<ModalModel>({
   },
 })
 
-export const MergedRendererProvider = createMergedProvider([
-  AlertsRenderer,
-  ModalRenderer,
-])
-
 //
 // Render the Provider and Roots
 
 export default function MultiplerRenderersExample() {
   return (
-    <MergedRendererProvider>
+    <ImperativeRenderProvider>
       <Component />
 
       <AlertsRenderer.Root />
       <ModalRenderer.Root />
-    </MergedRendererProvider>
+    </ImperativeRenderProvider>
   )
 }
 

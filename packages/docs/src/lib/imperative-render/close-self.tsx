@@ -1,4 +1,7 @@
-import { createInstance } from '@gapstack/react-imperative-render'
+import {
+  createInstance,
+  ImperativeRenderProvider,
+} from '@gapstack/react-imperative-render'
 import { useRef } from 'react'
 
 type Model = {
@@ -18,11 +21,11 @@ const ImperativeRenderer = createInstance<Model>({
 
 export default function CloseSelfExample() {
   return (
-    <ImperativeRenderer.Provider>
+    <ImperativeRenderProvider>
       <Component />
 
       <ImperativeRenderer.Root />
-    </ImperativeRenderer.Provider>
+    </ImperativeRenderProvider>
   )
 }
 

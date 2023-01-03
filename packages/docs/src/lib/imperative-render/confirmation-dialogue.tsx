@@ -1,4 +1,7 @@
-import { createInstance } from '@gapstack/react-imperative-render'
+import {
+  createInstance,
+  ImperativeRenderProvider,
+} from '@gapstack/react-imperative-render'
 
 import './main.css'
 
@@ -30,11 +33,11 @@ export const Renderer = createInstance<ConfirmationModel>({
 
 export default function ConfirmationExample() {
   return (
-    <Renderer.Provider>
+    <ImperativeRenderProvider>
       <Component />
 
       <Renderer.Root />
-    </Renderer.Provider>
+    </ImperativeRenderProvider>
   )
 }
 

@@ -1,11 +1,12 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 
-import React, { useContext } from 'react'
-import { Contexts } from './Context'
+import React, { ReactNode } from 'react'
+import { useInternalRootSubscription, RenderUtils } from './Context'
 import { RendererModel } from './types'
 
-export type RootOptions = {
+export type RootOptions<Model extends RendererModel> = {
   container?: JSX.Element
+  renderElement: (model: Model, utils: RenderUtils) => ReactNode
 }
 
 export type ImperativeRenderRootProps = {
@@ -13,20 +14,21 @@ export type ImperativeRenderRootProps = {
 }
 
 export function createRoot<Model extends RendererModel>(
-  contexts: Contexts<Model>,
-  options: RootOptions
+  rootKey: symbol,
+  options: RootOptions<Model>
 ) {
   return function ImperativeRenderRoot(props: ImperativeRenderRootProps) {
-    const elements = useContext(contexts.Elements)
-    const container = options.container ?? <React.Fragment />
+    const items = useInternalRootSubscription<Model>(rootKey)
 
-    if (Object.keys(elements).length === 0) {
+    if (items.length === 0) {
       return null
     }
 
-    return React.cloneElement(container, {
-      children: Object.keys(elements).map((key) => (
-        <React.Fragment key={key}>{elements[key]}</React.Fragment>
+    return React.cloneElement(options.container ?? <React.Fragment />, {
+      children: items.map((item, index) => (
+        <React.Fragment key={index}>
+          {options.renderElement(item.model, item.utils)}
+        </React.Fragment>
       )),
     })
   }
