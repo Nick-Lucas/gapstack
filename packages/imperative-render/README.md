@@ -23,7 +23,7 @@ yarn add @gapstack/react-imperative-render
 ### Basic Usage
 
 ```tsx
-import { createInstance } from '@gapstack/react-imperative-render'
+import { createInstance, ImperativeRendererProvider } from '@gapstack/react-imperative-render'
 import { useRef } from 'react'
 
 // A Renderer requires an model used to render elements
@@ -42,11 +42,11 @@ const ImperativeRenderer = createInstance<Model>({
 // Render the Provider and the Root element
 export default function BasicExample() {
   return (
-    <ImperativeRenderer.Provider>
+    <ImperativeRendererProvider>
       <Component />
 
       <ImperativeRenderer.Root />
-    </ImperativeRenderer.Provider>
+    </ImperativeRendererProvider>
   )
 }
 
@@ -76,27 +76,20 @@ export function Component() {
 ### Multiple Renderers
 
 ```jsx
-import { createInstance, createMergedProvider } from '@gapstack/react-imperative-render'
+import { createInstance, ImperativeRendererProvider } from '@gapstack/react-imperative-render'
 
 // By creating multiple renderers you can have different behaviours and styles for different use cases
 const AlertsRenderer = createInstance(/**/)
 const ModalRenderer = createInstance(/**/)
 
-// imperative-render provides a tiny utility to roll up multiple instances into one Provider component.
-// You can use it to avoid mad Context Provider stacks!
-const MergedProvider = createMergedProvider([
-  AlertsRenderer,
-  ModalRenderer
-])
-
 function Main() {
   return (
-    <MergedProvider>
+    <ImperativeRendererProvider>
       <MyComponent />
 
       <AlertsRenderer.Root />
       <ModalRenderer.Root />
-    </MergedProvider>
+    </ImperativeRendererProvider>
   )
 }
 ```
