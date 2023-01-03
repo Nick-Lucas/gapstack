@@ -4,7 +4,6 @@
   "license": "MIT",
   "scripts": {
     "test": "jest",
-    "start:imperative-render": "nx run serve imperative-render-example",
     "build": "nx run-many --target=build --production",
     "publish:imperative-render": "cd dist/packages/imperative-render && npm publish --access=public",
     "docs:base:build": "nx build-storybook docs",
