@@ -1,4 +1,7 @@
-import { createInstance } from '@gapstack/react-imperative-render'
+import {
+  createInstance,
+  ImperativeRenderProvider,
+} from '@gapstack/react-imperative-render'
 
 import './main.css'
 
@@ -35,11 +38,11 @@ const AlertsRenderer = createInstance<AlertModel>({
 
 export default function PromiseProgressExample() {
   return (
-    <AlertsRenderer.Provider>
+    <ImperativeRenderProvider>
       <Component />
 
       <AlertsRenderer.Root />
-    </AlertsRenderer.Provider>
+    </ImperativeRenderProvider>
   )
 }
 

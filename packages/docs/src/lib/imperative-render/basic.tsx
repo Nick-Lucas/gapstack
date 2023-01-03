@@ -1,4 +1,7 @@
-import { createInstance } from '@gapstack/react-imperative-render'
+import {
+  createInstance,
+  ImperativeRenderProvider,
+} from '@gapstack/react-imperative-render'
 import { useRef } from 'react'
 
 type Model = {
@@ -14,11 +17,11 @@ const ImperativeRenderer = createInstance<Model>({
 
 export default function BasicExample() {
   return (
-    <ImperativeRenderer.Provider>
+    <ImperativeRenderProvider>
       <Component />
 
       <ImperativeRenderer.Root />
-    </ImperativeRenderer.Provider>
+    </ImperativeRenderProvider>
   )
 }
 
@@ -32,7 +35,7 @@ export function Component() {
       onClick={() => {
         const count = counter.current++
 
-        const destroy = render({
+        const { destroy } = render({
           count,
         })
 

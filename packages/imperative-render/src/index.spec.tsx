@@ -1,4 +1,4 @@
-import { createInstance, Instance } from '.'
+import { createInstance, Instance, ImperativeRenderProvider } from '.'
 
 import { render, screen, act } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -20,9 +20,9 @@ describe('imperative-render', () => {
       Component: React.FC
     ) {
       return render(
-        <instance.Provider>
+        <ImperativeRenderProvider>
           <Component />
-        </instance.Provider>
+        </ImperativeRenderProvider>
       )
     }
 
