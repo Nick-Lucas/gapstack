@@ -93,3 +93,9 @@ function Main() {
   )
 }
 ```
+
+# Developing
+
+To run the docs for development: `yarn docs`
+
+To deploy: `yarn build && cd dist/packages/imperative-render && npm publish --access=public`
