@@ -11,7 +11,7 @@ const defaultAlertOptions: AlertOptions = {
 
 export function createHooks<Model extends RendererModel>(rootKey: symbol) {
   function useRender() {
-    const { render } = useInternalRenderSubscription(rootKey)
+    const { render } = useInternalRenderSubscription<Model>(rootKey)
 
     return render
   }
