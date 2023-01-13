@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "lint": "nx run-many --target=lint",
     "test": "jest",
     "build": "nx run-many --target=build --production",
     "publish:imperative-render": "cd dist/packages/imperative-render && npm publish --access=public",
