@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useInternalRenderSubscription } from './Context'
 import { RendererModel } from './types'
 
