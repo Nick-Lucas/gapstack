@@ -68,6 +68,9 @@ type LightObjectInput<TDef extends LightObject> = {
     : never
 }
 
+// TODO: add .implements method to enforce recreation of deep TS type
+
+// TODO: extend all types with validations
 export const lt = {
   object<TDef extends LightObject>(def: TDef) {
     const keys = Object.keys(def) as (keyof TDef)[]
@@ -75,6 +78,7 @@ export const lt = {
     type TOutput = Simplify<LightObjectOutput<TDef>>
     type TInput = Simplify<LightObjectInput<TDef>>
 
+    // TODO: extend Modifiable with extra methods (extend, omit, pick, etc)
     return new Modifiable<TOutput, TInput>({
       parse(input) {
         return keys.reduce((aggr, key) => {
@@ -90,6 +94,7 @@ export const lt = {
     })
   },
   array<TOutput, TInput>(valueType: LightType<TOutput, TInput>) {
+    // TODO: extend Modifiable with extra methods
     return new Modifiable<TOutput[], TInput[]>({
       parse(input) {
         return input.map((element) => valueType.parse(element))
