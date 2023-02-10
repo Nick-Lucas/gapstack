@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/ban-types
-type NoOp = {}
+export type NoOp = {}
 
 export type Primitive = string | number | boolean
 
