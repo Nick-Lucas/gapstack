@@ -22,7 +22,7 @@ export const lt = {
     return new ChainableType<TInput[], TOutput[]>({
       parse(input) {
         if (Array.isArray(input)) {
-          return input.map((element) => valueType.parse(element))
+          return [...input].map((element) => valueType.parse(element))
         }
 
         throw new Error(`Not an Array, received "${input}"`)

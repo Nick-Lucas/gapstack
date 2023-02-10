@@ -35,7 +35,7 @@ export const complexZodRouter = router({
     .input(z.object({ count: z.number().default(100) }))
     .output(z.array(CarDto))
     .query((opts) => {
-      return new Array(opts.input.count).map<DbCar>((_, idx) => {
+      return new Array(opts.input.count).fill(null).map<DbCar>((_, idx) => {
         return {
           id: idx,
           name: 'Foobarmo',

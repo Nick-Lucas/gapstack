@@ -2,7 +2,7 @@ import { trpc } from '../trpc'
 
 export function SimpleZod() {
   const item = trpc.simpleZod.get.useQuery({ id: 1 })
-  const items = trpc.simpleZod.list.useQuery({ count: 100 })
+  const items = trpc.simpleZod.list.useQuery({ count: 3 })
   const updateMutation = trpc.simpleZod.update.useMutation()
 
   if (updateMutation.isLoading) {

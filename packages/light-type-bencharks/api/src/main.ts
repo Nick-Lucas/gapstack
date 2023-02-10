@@ -8,26 +8,25 @@ const handler = createHTTPHandler({
   batching: {
     enabled: false,
   },
+  onError: (err) => {
+    console.error(
+      'ERRORSTART:',
+      err.path,
+      JSON.stringify(err.error.cause, null, 2)
+    )
+  },
 })
-
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': '*',
-  'Access-Control-Expose-Headers': '*',
-}
 
 const server = createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Request-Method', '*')
   res.setHeader('Access-Control-Allow-Methods', '*')
-  res.setHeader('Access-Control-Expose-Headers', '*')
-
+  res.setHeader('Access-Control-Allow-Headers', '*')
   if (req.method === 'OPTIONS') {
     res.writeHead(200)
-    res.end()
-    return
+    return res.end()
   }
-
-  return handler(req, res)
+  handler(req, res)
 })
 
 server.listen(3333)

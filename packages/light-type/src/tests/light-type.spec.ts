@@ -104,6 +104,23 @@ describe('lightType', () => {
 
       expect(() => simpleArray.parse([...input] as any)).toThrowError(Error)
     })
+
+    it.each([null, undefined])(
+      'should throw invalid for array of %p',
+      (input) => {
+        const simpleArray = lt.array(simpleObject).seal()
+
+        expect(() =>
+          simpleArray.parse([input, input, input] as any)
+        ).toThrowError(Error)
+      }
+    )
+
+    it('should throw invalid for array of emptys', () => {
+      const simpleArray = lt.array(simpleObject).seal()
+
+      expect(() => simpleArray.parse(new Array(3) as any)).toThrowError(Error)
+    })
   })
 
   describe('complex case', () => {

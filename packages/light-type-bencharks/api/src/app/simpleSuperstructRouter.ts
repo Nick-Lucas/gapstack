@@ -32,7 +32,7 @@ export const simpleSuperstructRouter = router({
     .input(s.object({ count: s.defaulted(s.number(), 100) }))
     .output(s.array(CarDto))
     .query((opts) => {
-      return new Array(opts.input.count).map<DbCar>((_, idx) => {
+      return new Array(opts.input.count).fill(null).map<DbCar>((_, idx) => {
         return {
           id: idx,
           name: 'Foobarmo',

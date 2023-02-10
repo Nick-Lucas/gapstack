@@ -53,7 +53,7 @@ export const complexTypeboxRouter = router({
     .input(Compile(t.Object({ count: t.Number({ default: 100 }) })))
     .output(Compile(t.Array(CarDto)))
     .query((opts) => {
-      return new Array(opts.input.count).map<DbCar>((_, idx) => {
+      return new Array(opts.input.count).fill(null).map<DbCar>((_, idx) => {
         return {
           id: idx,
           name: 'Foobarmo',

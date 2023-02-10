@@ -26,7 +26,7 @@ export const simpleLightTypeRouter = router({
     .input(lt.object({ count: lt.number().default(100) }))
     .output(lt.array(CarDto))
     .query((opts) => {
-      return new Array(opts.input.count).map<DbCar>((_, idx) => {
+      return new Array(opts.input.count).fill(null).map<DbCar>((_, idx) => {
         return {
           id: idx,
           name: 'Foobarmo',
