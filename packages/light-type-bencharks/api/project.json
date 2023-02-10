@@ -1,0 +1,52 @@
+{
+  "name": "light-type-bencharks-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/light-type-bencharks/api/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/light-type-bencharks/api",
+        "format": ["cjs"],
+        "main": "packages/light-type-bencharks/api/src/main.ts",
+        "tsConfig": "packages/light-type-bencharks/api/tsconfig.app.json",
+        "assets": ["packages/light-type-bencharks/api/src/assets"]
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/js:node",
+      "options": {
+        "buildTarget": "light-type-bencharks-api:build"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "light-type-bencharks-api:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["packages/light-type-bencharks/api/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/light-type-bencharks/api/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

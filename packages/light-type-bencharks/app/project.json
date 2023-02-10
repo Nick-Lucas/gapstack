@@ -1,0 +1,91 @@
+{
+  "name": "light-type-bencharks-app",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/light-type-bencharks/app/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "compiler": "babel",
+        "outputPath": "dist/packages/light-type-bencharks/app",
+        "index": "packages/light-type-bencharks/app/src/index.html",
+        "baseHref": "/",
+        "main": "packages/light-type-bencharks/app/src/main.tsx",
+        "tsConfig": "packages/light-type-bencharks/app/tsconfig.app.json",
+        "assets": [
+          "packages/light-type-bencharks/app/src/favicon.ico",
+          "packages/light-type-bencharks/app/src/assets"
+        ],
+        "styles": ["packages/light-type-bencharks/app/src/styles.css"],
+        "scripts": [],
+        "webpackConfig": "packages/light-type-bencharks/app/webpack.config.js"
+      },
+      "configurations": {
+        "development": {
+          "extractLicenses": false,
+          "optimization": false,
+          "sourceMap": true,
+          "vendorChunk": true
+        },
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "packages/light-type-bencharks/app/src/environments/environment.ts",
+              "with": "packages/light-type-bencharks/app/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/webpack:dev-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "light-type-bencharks-app:build",
+        "hmr": true
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "light-type-bencharks-app:build:development"
+        },
+        "production": {
+          "buildTarget": "light-type-bencharks-app:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "packages/light-type-bencharks/app/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/light-type-bencharks/app/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}
