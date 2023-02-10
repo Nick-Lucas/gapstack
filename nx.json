@@ -1,10 +1,4 @@
 {
-  "extends": "nx/presets/npm.json",
-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
-  "npmScope": "gapstack",
-  "affected": {
-    "defaultBase": "main"
-  },
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
@@ -18,6 +12,12 @@
         ]
       }
     }
+  },
+  "extends": "nx/presets/npm.json",
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "npmScope": "gapstack",
+  "affected": {
+    "defaultBase": "main"
   },
   "generators": {
     "@nrwl/react": {
@@ -37,10 +37,24 @@
   },
   "targetDefaults": {
     "test": {
-      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"]
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/jest.preset.js"
+      ]
     },
     "lint": {
-      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.json"
+      ]
+    },
+    "build-storybook": {
+      "inputs": [
+        "default",
+        "^default",
+        "{workspaceRoot}/.storybook/**/*"
+      ]
     }
   },
   "defaultProject": "imperative-render-example"

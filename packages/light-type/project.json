@@ -35,7 +35,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/light-type"],
+      "outputs": ["{workspaceRoot}/coverage/packages/light-type"],
       "options": {
         "jestConfig": "packages/light-type/jest.config.ts",
         "passWithNoTests": true

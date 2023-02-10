@@ -14,7 +14,7 @@
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/docs"],
+      "outputs": ["{workspaceRoot}/coverage/packages/docs"],
       "options": {
         "jestConfig": "packages/docs/jest.config.ts",
         "passWithNoTests": true
@@ -25,9 +25,7 @@
       "options": {
         "uiFramework": "@storybook/react",
         "port": 4400,
-        "config": {
-          "configFolder": "packages/docs/.storybook"
-        }
+        "configDir": "packages/docs/.storybook"
       },
       "configurations": {
         "ci": {
@@ -37,13 +35,11 @@
     },
     "build-storybook": {
       "executor": "@nrwl/storybook:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": ["{options.outputDir}"],
       "options": {
         "uiFramework": "@storybook/react",
-        "outputPath": "dist/storybook/docs",
-        "config": {
-          "configFolder": "packages/docs/.storybook"
-        }
+        "configDir": "packages/docs/.storybook",
+        "outputDir": "dist/storybook/docs"
       },
       "configurations": {
         "ci": {
