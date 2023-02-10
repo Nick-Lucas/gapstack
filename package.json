@@ -11,6 +11,7 @@
     "docs:base:publish": "gh-pages -d dist/storybook/docs",
     "docs:deploy": "yarn run docs:base:build && yarn run docs:base:publish",
     "docs": "nx storybook docs",
+    "light-type-benchmark:start": "yarn nx run-many --target=serve --projects=light-type-bencharks*",
     "tsc:trace": "yarn run tsc -p tsconfig.base.json --noEmit --incremental false --jsx react-jsx --allowSyntheticDefaultImports --generateTrace ./.trace"
   },
   "private": true,

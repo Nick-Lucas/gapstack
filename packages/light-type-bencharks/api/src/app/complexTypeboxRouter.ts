@@ -23,7 +23,7 @@ const PersonDto = t.Intersect([
   t.Object({
     firstName: t.String(),
     lastName: t.String(),
-    tel: t.String().optional(),
+    tel: t.Optional(t.String()),
   }),
 ])
 
@@ -32,16 +32,16 @@ const CarDto = t.Intersect([
   t.Object({
     name: t.String(),
     age: t.Number(),
-    brand: t
-      .Union([
+    brand: t.Optional(
+      t.Union([
         t.Literal('Volvo'),
         t.Literal('Mercedes'),
         t.Literal('BMW'),
         t.Literal('Ferrari'),
         t.Literal('Bazmus'),
       ])
-      .optional(),
-    previousOwners: t.Array(PersonDto).default([]),
+    ),
+    previousOwners: t.Array(PersonDto, { default: [] }),
   }),
 ])
 
@@ -50,7 +50,7 @@ type Brand = Static<typeof CarDto>['brand']
 
 export const complexTypeboxRouter = router({
   list: publicProcedure
-    .input(Compile(t.Object({ count: t.Number().default(100) })))
+    .input(Compile(t.Object({ count: t.Number({ default: 100 }) })))
     .output(Compile(t.Array(CarDto)))
     .query((opts) => {
       return new Array(opts.input.count).map<DbCar>((_, idx) => {

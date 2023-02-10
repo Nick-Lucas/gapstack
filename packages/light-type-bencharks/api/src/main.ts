@@ -1,21 +1,33 @@
-import { nodeHTTPRequestHandler } from '@trpc/server/adapters/node-http'
+import { createHTTPHandler } from '@trpc/server/adapters/standalone'
 import { createServer } from 'http'
+
 import { appRouter } from './appRouter'
 
+const handler = createHTTPHandler({
+  router: appRouter,
+  batching: {
+    enabled: false,
+  },
+})
+
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': '*',
+  'Access-Control-Expose-Headers': '*',
+}
+
 const server = createServer((req, res) => {
-  nodeHTTPRequestHandler({
-    router: appRouter,
-    path: '/',
-    req,
-    res,
-    createContext() {
-      return {}
-    },
-  })
+  res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Access-Control-Allow-Methods', '*')
+  res.setHeader('Access-Control-Expose-Headers', '*')
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(200)
+    res.end()
+    return
+  }
+
+  return handler(req, res)
 })
 
-server.on('listening', () => {
-  console.log('Started listening on 5000')
-})
-
-server.listen(5000)
+server.listen(3333)

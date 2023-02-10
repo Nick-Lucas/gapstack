@@ -18,23 +18,23 @@ const PersonDto = t.Object({
   id: t.Number(),
   firstName: t.String(),
   lastName: t.String(),
-  tel: t.String().optional(),
+  tel: t.Optional(t.String()),
 })
 
 const CarDto = t.Object({
   id: t.Number(),
   name: t.String(),
   age: t.Number(),
-  brand: t
-    .Union([
+  brand: t.Optional(
+    t.Union([
       t.Literal('Volvo'),
       t.Literal('Mercedes'),
       t.Literal('BMW'),
       t.Literal('Ferrari'),
       t.Literal('Bazmus'),
     ])
-    .optional(),
-  previousOwners: t.Array(PersonDto).default([]),
+  ),
+  previousOwners: t.Array(PersonDto, { default: [] }),
 })
 
 type DbCar = Static<typeof CarDto>
@@ -42,7 +42,7 @@ type Brand = Static<typeof CarDto>['brand']
 
 export const simpleTypeboxRouter = router({
   list: publicProcedure
-    .input(Compile(t.Object({ count: t.Number().default(100) })))
+    .input(Compile(t.Object({ count: t.Number({ default: 100 }) })))
     .output(Compile(t.Array(CarDto)))
     .query((opts) => {
       return new Array(opts.input.count).map<DbCar>((_, idx) => {
