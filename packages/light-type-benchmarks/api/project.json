@@ -1,28 +1,28 @@
 {
-  "name": "light-type-bencharks-api",
+  "name": "light-type-benchmarks-api",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "packages/light-type-bencharks/api/src",
+  "sourceRoot": "packages/light-type-benchmarks/api/src",
   "projectType": "application",
   "targets": {
     "build": {
       "executor": "@nrwl/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/packages/light-type-bencharks/api",
+        "outputPath": "dist/packages/light-type-benchmarks/api",
         "format": ["cjs"],
-        "main": "packages/light-type-bencharks/api/src/main.ts",
-        "tsConfig": "packages/light-type-bencharks/api/tsconfig.app.json",
-        "assets": ["packages/light-type-bencharks/api/src/assets"]
+        "main": "packages/light-type-benchmarks/api/src/main.ts",
+        "tsConfig": "packages/light-type-benchmarks/api/tsconfig.app.json",
+        "assets": ["packages/light-type-benchmarks/api/src/assets"]
       }
     },
     "serve": {
       "executor": "@nrwl/js:node",
       "options": {
-        "buildTarget": "light-type-bencharks-api:build"
+        "buildTarget": "light-type-benchmarks-api:build"
       },
       "configurations": {
         "production": {
-          "buildTarget": "light-type-bencharks-api:build:production"
+          "buildTarget": "light-type-benchmarks-api:build:production"
         }
       }
     },
@@ -30,14 +30,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["packages/light-type-bencharks/api/**/*.ts"]
+        "lintFilePatterns": ["packages/light-type-benchmarks/api/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "packages/light-type-bencharks/api/jest.config.ts",
+        "jestConfig": "packages/light-type-benchmarks/api/jest.config.ts",
         "passWithNoTests": true
       },
       "configurations": {
