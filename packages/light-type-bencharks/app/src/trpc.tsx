@@ -1,3 +1,5 @@
+/* eslint-disable @nrwl/nx/enforce-module-boundaries */
+
 import React, { ReactNode, useState } from 'react'
 import { createTRPCReact } from '@trpc/react-query'
 import type { AppRouter } from '../../api/src/appRouter'
