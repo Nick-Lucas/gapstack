@@ -14,6 +14,10 @@
   },
   "private": true,
   "dependencies": {
+    "@tanstack/react-query": "^4.24.4",
+    "@trpc/client": "^10.11.0",
+    "@trpc/react-query": "^10.11.0",
+    "@trpc/server": "^10.11.0",
     "axios": "^1.0.0",
     "core-js": "^3.6.5",
     "react": "18.2.0",

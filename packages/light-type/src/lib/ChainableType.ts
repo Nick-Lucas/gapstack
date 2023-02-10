@@ -5,7 +5,7 @@ export class ChainableType<TOutput, TInput = TOutput>
 {
   constructor(private readonly t: LightType<TOutput, TInput>) {}
 
-  parse(input: unknown): TOutput {
+  parse(input: TInput): TOutput {
     return this.t.parse(input)
   }
 
@@ -43,7 +43,7 @@ export class ChainableType<TOutput, TInput = TOutput>
   default = (defaultValue: TOutput): ChainableType<TOutput, TInput> => {
     const t = this.t
 
-    return new ChainableType<TOutput, TInput>({
+    return new ChainableType<TOutput, TInput | undefined | null>({
       parse(input) {
         if (input === undefined || input === null) {
           return defaultValue

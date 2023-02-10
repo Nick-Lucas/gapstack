@@ -11,11 +11,13 @@ import { Simplify, Primitive, LiteralBase } from './util-types'
 
 // TODO: extend all types with validations
 export const lt = {
-  object<TDef extends LightObject>(def: TDef) {
-    const keys = Object.keys(def) as (keyof TDef)[]
+  object<TKey extends string, TLightObject extends LightObject<TKey>>(
+    lightObject: TLightObject
+  ) {
+    const keys = Object.keys(lightObject) as TKey[]
 
-    type TOutput = Simplify<InferLightObjectOutput<TDef>>
-    type TInput = Simplify<InferLightObjectInput<TDef>>
+    type TOutput = Simplify<InferLightObjectOutput<TLightObject>>
+    type TInput = Simplify<InferLightObjectInput<TLightObject>>
 
     // TODO: extend Modifiable with extra methods (extend, omit, pick, etc)
     return new ChainableType<TOutput, TInput>({
@@ -24,7 +26,7 @@ export const lt = {
           const obj = input as TInput
 
           return keys.reduce((aggr, key) => {
-            const parser = def[key]
+            const parser = lightObject[key]
 
             // TODO: catch and aggregate errors?
             // TODO: fix any type
