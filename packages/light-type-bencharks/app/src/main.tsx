@@ -8,6 +8,8 @@ import { SimpleZod } from './app/SimpleZod'
 import { ComplexZod } from './app/ComplexZod'
 import { SimpleSuperstruct } from './app/SimpleSuperstruct'
 import { ComplexSuperstruct } from './app/ComplexSuperstruct'
+import { SimpleTypebox } from './app/SimpleTypebox'
+import { ComplexTypebox } from './app/ComplexTypebox'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
@@ -22,6 +24,9 @@ root.render(
 
         <SimpleSuperstruct />
         <ComplexSuperstruct />
+
+        <SimpleTypebox />
+        <ComplexTypebox />
       </div>
     </TrpcProviders>
   </StrictMode>
