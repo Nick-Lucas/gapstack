@@ -10,7 +10,8 @@
     "docs:base:build": "nx build-storybook docs",
     "docs:base:publish": "gh-pages -d dist/storybook/docs",
     "docs:deploy": "yarn run docs:base:build && yarn run docs:base:publish",
-    "docs": "nx storybook docs"
+    "docs": "nx storybook docs",
+    "tsc:trace": "yarn run tsc -p tsconfig.base.json --noEmit --incremental false --generateTrace ./.trace"
   },
   "private": true,
   "dependencies": {
