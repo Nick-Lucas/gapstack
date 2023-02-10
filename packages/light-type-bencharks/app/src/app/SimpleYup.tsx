@@ -11,8 +11,7 @@ export function SimpleYup() {
 
   return (
     <div>
-      Simple Light Types {item.data?.name} - others:{' '}
-      {items.data?.length ?? 'Loading'}
+      Simple Yup {item.data?.name} - others: {items.data?.length ?? 'Loading'}
     </div>
   )
 }

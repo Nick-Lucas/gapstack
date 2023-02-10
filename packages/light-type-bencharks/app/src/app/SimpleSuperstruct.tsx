@@ -11,7 +11,8 @@ export function SimpleSuperstruct() {
 
   return (
     <div>
-      Simple Zod {item.data?.name} - others: {items.data?.length ?? 'Loading'}
+      Simple Superstruct {item.data?.name} - others:{' '}
+      {items.data?.length ?? 'Loading'}
     </div>
   )
 }

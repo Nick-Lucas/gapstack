@@ -11,7 +11,8 @@ export function ComplexTypebox() {
 
   return (
     <div>
-      Simple Zod {item.data?.name} - others: {items.data?.length ?? 'Loading'}
+      Simple Typebox {item.data?.name} - others:{' '}
+      {items.data?.length ?? 'Loading'}
     </div>
   )
 }

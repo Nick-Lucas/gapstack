@@ -11,7 +11,8 @@ export function ComplexSuperstruct() {
 
   return (
     <div>
-      Complex Zod {item.data?.name} - others: {items.data?.length ?? 'Loading'}
+      Complex Superstruct {item.data?.name} - others:{' '}
+      {items.data?.length ?? 'Loading'}
     </div>
   )
 }
