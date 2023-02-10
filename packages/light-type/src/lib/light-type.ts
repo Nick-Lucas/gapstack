@@ -6,6 +6,7 @@ import {
   InferLightObjectOutput,
 } from './base-types'
 import { Simplify, Primitive, LiteralBase } from './util-types'
+import { ChainableObject } from './ChainableObject'
 
 // TODO: add .implements method to enforce recreation of deep TS type
 
@@ -20,7 +21,7 @@ export const lt = {
     type TInput = Simplify<InferLightObjectInput<TLightObject>>
 
     // TODO: extend Modifiable with extra methods (extend, omit, pick, etc)
-    return new ChainableType<TInput, TOutput>({
+    return new ChainableObject<TInput, TOutput>({
       parse(input) {
         if (typeof input === 'object' && input !== null) {
           const obj = input as TInput

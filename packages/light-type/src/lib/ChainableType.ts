@@ -6,13 +6,13 @@ export class ChainableType<TInput, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  constructor(private readonly t: LightType<TInput, TOutput>) {}
+  constructor(protected readonly t: LightType<TInput, TOutput>) {}
 
-  parse(input: TInput): TOutput {
+  parse = (input: TInput): TOutput => {
     return this.t.parse(input)
   }
 
-  seal(): LightType<TInput, TOutput> {
+  seal = (): LightType<TInput, TOutput> => {
     return this.t
   }
 
@@ -43,7 +43,9 @@ export class ChainableType<TInput, TOutput = TInput>
     })
   }
 
-  default = (defaultValue: TOutput): ChainableType<TInput, TOutput> => {
+  default = (
+    defaultValue: TOutput
+  ): ChainableType<TInput | undefined | null, TOutput> => {
     const t = this.t
 
     return new ChainableType<TInput | undefined | null, TOutput>({
@@ -51,7 +53,6 @@ export class ChainableType<TInput, TOutput = TInput>
         if (input === undefined || input === null) {
           return defaultValue
         }
-
         return t.parse(input)
       },
     })
