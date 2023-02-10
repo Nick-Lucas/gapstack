@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import * as ReactDOM from 'react-dom/client'
+import { ComplexLightTypes } from './app/ComplexLightTypes'
 import { ComplexZod } from './app/ComplexZod'
 import { SimpleLightTypes } from './app/SimpleLightTypes'
 import { SimpleZod } from './app/SimpleZod'
@@ -11,6 +12,7 @@ root.render(
     <TrpcProviders>
       <div>
         <SimpleLightTypes />
+        <ComplexLightTypes />
         <SimpleZod />
         <ComplexZod />
       </div>

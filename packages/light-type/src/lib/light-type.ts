@@ -5,7 +5,7 @@ import {
   InferLightObjectInput,
   InferLightObjectOutput,
 } from './base-types'
-import { Simplify, Primitive, LiteralBase } from './util-types'
+import { Primitive, LiteralBase } from './util-types'
 import { ChainableObject } from './ChainableObject'
 
 // TODO: add .implements method to enforce recreation of deep TS type
@@ -15,31 +15,7 @@ export const lt = {
   object<TKey extends string, TLightObject extends LightObject<TKey>>(
     lightObject: TLightObject
   ) {
-    const keys = Object.keys(lightObject) as TKey[]
-
-    type TOutput = Simplify<InferLightObjectOutput<TLightObject>>
-    type TInput = Simplify<InferLightObjectInput<TLightObject>>
-
-    // TODO: extend Modifiable with extra methods (extend, omit, pick, etc)
-    return new ChainableObject<TInput, TOutput>({
-      parse(input) {
-        if (typeof input === 'object' && input !== null) {
-          const obj = input as TInput
-
-          return keys.reduce((aggr, key) => {
-            const parser = lightObject[key]
-
-            // TODO: catch and aggregate errors?
-            // TODO: fix any type
-            aggr[key] = parser.parse(obj[key]) as any
-
-            return aggr
-          }, {} as TOutput)
-        }
-
-        throw new Error(`Not an Object, received "${input}"`)
-      },
-    })
+    return new ChainableObject<TKey, TLightObject>(lightObject)
   },
   array<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
     // TODO: extend Modifiable with extra methods

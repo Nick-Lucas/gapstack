@@ -1,34 +1,32 @@
 import {
+  LightObject,
+  LightType,
   InferLightObjectInput,
   InferLightObjectOutput,
-  LightObject,
 } from './base-types'
 import { ChainableType } from './ChainableType'
+import { lt } from './light-type'
 import { Simplify } from './util-types'
 
-export class ChainableObject<TInput, TOutput = TInput> extends ChainableType<
-  TInput,
-  TOutput
-> {
-  extend = <TKey extends string, TLightObject extends LightObject<TKey>>(
-    lightObject: TLightObject
-  ) => {
-    const t = this.t
+type OmitParam<T> = { [TKey in keyof T]?: true }
 
+type TI<LO extends LightObject> = Simplify<InferLightObjectInput<LO>>
+type TO<LO extends LightObject> = Simplify<InferLightObjectOutput<LO>>
+
+export class ChainableObject<
+  TKey extends string,
+  TLightObject extends LightObject<TKey>,
+  TInput extends TI<TLightObject> = TI<TLightObject>,
+  TOutput extends TO<TLightObject> = TO<TLightObject>
+> extends ChainableType<TInput, TOutput> {
+  constructor(protected readonly lightObject: TLightObject) {
     const keys = Object.keys(lightObject) as TKey[]
 
-    type TExtendedInput = Simplify<InferLightObjectInput<TLightObject>> & TInput
-    type TExtendedOutput = Simplify<InferLightObjectOutput<TLightObject>> &
-      TOutput
-
-    return new ChainableObject<TExtendedInput, TExtendedOutput>({
+    super({
       parse(input) {
         if (typeof input === 'object' && input !== null) {
-          const obj = input as TExtendedInput
+          const obj = input as TInput
 
-          const superObject = t.parse(input)
-
-          // TODO: this is identical to the lt.object() method, abstract it out?
           return keys.reduce((aggr, key) => {
             const parser = lightObject[key]
 
@@ -37,11 +35,52 @@ export class ChainableObject<TInput, TOutput = TInput> extends ChainableType<
             aggr[key] = parser.parse(obj[key]) as any
 
             return aggr
-          }, superObject as TExtendedOutput)
+          }, {} as TOutput)
         }
 
         throw new Error(`Not an Object, received "${input}"`)
       },
     })
+  }
+
+  extend = <
+    TExtendKey extends string,
+    TExtendLightObject extends LightObject<TExtendKey>
+  >(
+    extendLightObject: TExtendLightObject
+  ) => {
+    const lightObject = this.lightObject
+
+    type NextLightObject = Simplify<
+      Omit<TLightObject, TExtendKey> & TExtendLightObject
+    >
+
+    const extendedLightObject: NextLightObject = {
+      ...lightObject,
+      ...extendLightObject,
+    }
+
+    return lt.object(extendedLightObject)
+  }
+
+  omit = <TOmit extends OmitParam<TLightObject>>(omit: TOmit) => {
+    const lightObject = this.lightObject
+
+    type TOmitKeys = keyof {
+      [key in keyof TOmit]: TOmit[key] extends true ? key : never
+    }
+    type TOmittedLightObject = Simplify<Omit<TLightObject, TOmitKeys>>
+
+    const omittedLightObject: TOmittedLightObject = {
+      ...lightObject,
+    }
+    for (const key in omit) {
+      if (omit[key] === true) {
+        // TODO: fix this keying type
+        delete omittedLightObject[key as unknown as keyof TOmittedLightObject]
+      }
+    }
+
+    return lt.object(omittedLightObject)
   }
 }
