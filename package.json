@@ -15,6 +15,7 @@
   },
   "private": true,
   "dependencies": {
+    "@sinclair/typebox": "^0.25.21",
     "@tanstack/react-query": "^4.24.4",
     "@trpc/client": "^10.11.0",
     "@trpc/react-query": "^10.11.0",

@@ -7,6 +7,7 @@ import { simpleLightTypeRouter } from './app/simpleLightTypeRouter'
 import { simpleSuperstructRouter } from './app/simpleSuperstructRouter'
 import { simpleZodRouter } from './app/simpleZodRouter'
 import { simpleYupRouter } from './app/simpleYupRouter'
+import { simpleTypeboxRouter } from './app/simpleTypeboxRouter'
 
 export const appRouter = router({
   simpleLightType: simpleLightTypeRouter,
@@ -16,6 +17,7 @@ export const appRouter = router({
   simpleSuperstruct: simpleSuperstructRouter,
   complexSuperstruct: complexSuperstructRouter,
   simpleYup: simpleYupRouter,
+  simpleTypebox: simpleTypeboxRouter,
 })
 
 export type AppRouter = typeof appRouter
