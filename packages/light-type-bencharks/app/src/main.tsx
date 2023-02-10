@@ -6,6 +6,7 @@ import { SimpleLightTypes } from './app/SimpleLightTypes'
 import { ComplexLightTypes } from './app/ComplexLightTypes'
 import { SimpleZod } from './app/SimpleZod'
 import { ComplexZod } from './app/ComplexZod'
+import { SimpleSuperstruct } from './app/SimpleSuperstruct'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
@@ -14,8 +15,11 @@ root.render(
       <div>
         <SimpleLightTypes />
         <ComplexLightTypes />
+
         <SimpleZod />
         <ComplexZod />
+
+        <SimpleSuperstruct />
       </div>
     </TrpcProviders>
   </StrictMode>

@@ -25,6 +25,7 @@
     "react-dom": "18.2.0",
     "regenerator-runtime": "0.13.7",
     "superjson": "^1.12.2",
+    "superstruct": "^1.0.3",
     "tslib": "^2.3.0",
     "zod": "^3.20.6"
   },
