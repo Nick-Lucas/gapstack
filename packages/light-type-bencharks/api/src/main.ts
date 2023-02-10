@@ -1,5 +1,21 @@
-import { router } from './trpc'
+import { nodeHTTPRequestHandler } from '@trpc/server/adapters/node-http'
+import { createServer } from 'http'
+import { appRouter } from './appRouter'
 
-const appRouter = router({})
+const server = createServer((req, res) => {
+  nodeHTTPRequestHandler({
+    router: appRouter,
+    path: '/',
+    req,
+    res,
+    createContext() {
+      return {}
+    },
+  })
+})
 
-export type AppRouter = typeof appRouter
+server.on('listening', () => {
+  console.log('Started listening on 5000')
+})
+
+server.listen(5000)

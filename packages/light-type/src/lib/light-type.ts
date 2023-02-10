@@ -20,7 +20,7 @@ export const lt = {
     type TInput = Simplify<InferLightObjectInput<TLightObject>>
 
     // TODO: extend Modifiable with extra methods (extend, omit, pick, etc)
-    return new ChainableType<TOutput, TInput>({
+    return new ChainableType<TInput, TOutput>({
       parse(input) {
         if (typeof input === 'object' && input !== null) {
           const obj = input as TInput
@@ -40,9 +40,9 @@ export const lt = {
       },
     })
   },
-  array<TOutput, TInput>(valueType: LightType<TOutput, TInput>) {
+  array<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
     // TODO: extend Modifiable with extra methods
-    return new ChainableType<TOutput[], TInput[]>({
+    return new ChainableType<TInput[], TOutput[]>({
       parse(input) {
         if (Array.isArray(input)) {
           return input.map((element) => valueType.parse(element))
@@ -101,7 +101,7 @@ export const lt = {
   literal<TLiteral extends Primitive>(literal: readonly TLiteral[]) {
     const values = new Set(literal)
 
-    return new ChainableType<TLiteral, LiteralBase<TLiteral>>({
+    return new ChainableType<LiteralBase<TLiteral>, TLiteral>({
       parse(input: unknown) {
         if (values.has(input as TLiteral)) {
           return input as TLiteral

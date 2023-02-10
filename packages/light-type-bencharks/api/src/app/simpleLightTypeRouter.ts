@@ -43,4 +43,29 @@ export const simpleLightTypeRouter = router({
         }
       })
     }),
+  get: publicProcedure
+    .input(lt.object({ id: lt.number() }))
+    .output(CarDto)
+    .query((opts) => {
+      return {
+        id: opts.input.id,
+        name: 'Foobarmo',
+        age: 3,
+        brand: 'Bazmus' as Brand,
+        previousOwners: [
+          {
+            id: opts.input.id * 100,
+            firstName: 'Bob',
+            lastName: 'Owneverythingman',
+            tel: undefined,
+          },
+        ],
+      }
+    }),
+  update: publicProcedure
+    .input(CarDto)
+    .output(CarDto)
+    .mutation((opts) => {
+      return opts.input as DbCar
+    }),
 })

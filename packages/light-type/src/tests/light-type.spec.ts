@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { lt } from '..'
 
 describe('lightType', () => {
@@ -35,7 +37,7 @@ describe('lightType', () => {
         num: undefined,
         str: undefined,
         bool: undefined,
-      }
+      } as any
 
       // TODO: assert some exact aggregated error
       expect(() => simpleObject.parse({ ...input })).toThrowError(Error)
@@ -52,7 +54,7 @@ describe('lightType', () => {
     it('should throw invalid', () => {
       const simpleArray = lt.array(lt.number()).seal()
 
-      expect(() => simpleArray.parse([1, 2, null])).toThrowError(Error)
+      expect(() => simpleArray.parse([1, 2, null] as any)).toThrowError(Error)
     })
   })
 
@@ -100,7 +102,7 @@ describe('lightType', () => {
 
       const simpleArray = lt.array(simpleObject).seal()
 
-      expect(() => simpleArray.parse([...input])).toThrowError(Error)
+      expect(() => simpleArray.parse([...input] as any)).toThrowError(Error)
     })
   })
 
