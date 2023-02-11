@@ -71,7 +71,7 @@ export const complexZodRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(CarDto.omit({ id: true }))
     .output(CarDto)
     .mutation((opts) => {

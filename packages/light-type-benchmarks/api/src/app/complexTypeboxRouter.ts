@@ -89,7 +89,7 @@ export const complexTypeboxRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(Compile(t.Omit(CarDto, ['id'])))
     .output(Compile(CarDto))
     .mutation((opts) => {

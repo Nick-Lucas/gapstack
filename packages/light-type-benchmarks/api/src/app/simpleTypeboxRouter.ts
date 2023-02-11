@@ -81,7 +81,7 @@ export const simpleTypeboxRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(Compile(CarDto))
     .output(Compile(CarDto))
     .mutation((opts) => {

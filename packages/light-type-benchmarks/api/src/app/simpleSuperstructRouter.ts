@@ -68,7 +68,7 @@ export const simpleSuperstructRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(CarDto)
     .output(CarDto)
     .mutation((opts) => {

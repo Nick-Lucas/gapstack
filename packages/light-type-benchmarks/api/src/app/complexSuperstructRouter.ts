@@ -77,7 +77,7 @@ export const complexSuperstructRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(s.omit(CarDto, ['id']))
     .output(CarDto)
     .mutation((opts) => {

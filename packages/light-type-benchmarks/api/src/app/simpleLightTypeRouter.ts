@@ -62,7 +62,7 @@ export const simpleLightTypeRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(CarDto)
     .output(CarDto)
     .mutation((opts) => {

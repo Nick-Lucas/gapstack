@@ -65,7 +65,7 @@ export const complexLightTypeRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(CarDto.omit({ id: true }))
     .output(CarDto)
     .mutation((opts) => {

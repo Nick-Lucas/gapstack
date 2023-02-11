@@ -63,7 +63,7 @@ export const simpleYupRouter = router({
         ],
       }
     }),
-  update: publicProcedure
+  create: publicProcedure
     .input(CarDto)
     .output(CarDto)
     .mutation((opts) => {
