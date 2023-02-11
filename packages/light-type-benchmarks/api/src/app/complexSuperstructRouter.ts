@@ -8,7 +8,6 @@ const EntityDto = s.object({
 const PersonDto = s.assign(
   EntityDto,
   s.object({
-    id: s.number(),
     firstName: s.string(),
     lastName: s.string(),
     tel: s.optional(s.string()),

@@ -1,11 +1,11 @@
 import {
   LightObject,
-  LightType,
   InferLightObjectInput,
   InferLightObjectOutput,
 } from './base-types'
 import { ChainableType } from './ChainableType'
 import { lt } from './light-type'
+import { mergeLightObjects } from './mergeLightObjects'
 import { Simplify } from './util-types'
 
 type OmitParam<T> = { [TKey in keyof T]?: true }
@@ -51,14 +51,10 @@ export class ChainableObject<
   ) => {
     const lightObject = this.lightObject
 
-    type NextLightObject = Simplify<
-      Omit<TLightObject, TExtendKey> & TExtendLightObject
-    >
-
-    const extendedLightObject: NextLightObject = {
-      ...lightObject,
-      ...extendLightObject,
-    }
+    const extendedLightObject = mergeLightObjects(
+      lightObject,
+      extendLightObject
+    )
 
     return lt.object(extendedLightObject)
   }

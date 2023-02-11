@@ -12,7 +12,6 @@ const PersonDto = EntityDto.extend({
 })
 
 const CarDto = EntityDto.extend({
-  id: z.number(),
   name: z.string(),
   age: z.number(),
   brand: z

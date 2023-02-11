@@ -10,15 +10,19 @@ describe('lightType', () => {
       bool: lt.boolean(),
     })
 
-    const extendedObject = simpleObject
-      .extend({
-        id: lt.number(),
-        createdAt: lt.date(),
-        createdBy: lt.string().default('unknown'),
-        // Overide:
-        num: lt.boolean(),
-      })
-      .seal()
+    const extendedObject = simpleObject.extend({
+      id: lt.number(),
+      createdAt: lt.date(),
+      createdBy: lt.string().default('unknown'),
+      // Overide:
+      num: lt.boolean(),
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function checkTypes() {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numIsReplacedByBool: boolean = extendedObject._output.num
+    }
 
     it('should parse a extended type', () => {
       const input = {
@@ -58,13 +62,11 @@ describe('lightType', () => {
       createdBy: lt.string().default('unknown'),
     })
 
-    const omittedObject = simpleObject
-      .omit({
-        id: true,
-        createdBy: true,
-        createdAt: true,
-      })
-      .seal()
+    const omittedObject = simpleObject.omit({
+      id: true,
+      createdBy: true,
+      createdAt: true,
+    })
 
     it('should parse a ommitted type', () => {
       const input = {
