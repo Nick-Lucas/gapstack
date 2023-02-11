@@ -6,8 +6,10 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nrwl/web:rollup",
-      "outputs": ["{options.outputPath}"],
+      "executor": "@nrwl/rollup:rollup",
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "options": {
         "outputPath": "dist/packages/imperative-render",
         "tsConfig": "packages/imperative-render/tsconfig.lib.json",
@@ -26,14 +28,20 @@
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["packages/imperative-render/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "packages/imperative-render/**/*.{ts,tsx,js,jsx}"
+        ]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["coverage/packages/imperative-render"],
+      "outputs": [
+        "{workspaceRoot}/coverage/packages/imperative-render"
+      ],
       "options": {
         "jestConfig": "packages/imperative-render/jest.config.ts",
         "passWithNoTests": true

@@ -14,9 +14,11 @@
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "strict": true,
     "paths": {
       "!!raw-loader!*": ["packages/docs/src/lib/*"],
       "@gapstack/docs": ["packages/docs/src/index.ts"],
+      "@gapstack/light-type": ["packages/light-type/src/index.ts"],
       "@gapstack/react-imperative-render": [
         "packages/imperative-render/src/index.ts"
       ]
