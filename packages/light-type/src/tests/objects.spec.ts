@@ -1,8 +1,71 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { lt } from '..'
+import { LightTypeError } from '../lib/errors/LightTypeError'
+import { aggregated, throws } from './errors'
 
 describe('lightType', () => {
+  describe('simple object with primitive types', () => {
+    it('should parse', () => {
+      const simpleObject = lt
+        .object({
+          num: lt.number(),
+          str: lt.string(),
+          bool: lt.boolean(),
+        })
+        .seal()
+
+      const input = {
+        num: 1,
+        str: 'hello',
+        bool: false,
+      }
+
+      expect(simpleObject.parse({ ...input })).toEqual({
+        ...input,
+      })
+    })
+
+    it('should throw a invalid', () => {
+      const simpleObject = lt
+        .object({
+          num: lt.number(),
+          str: lt.string(),
+          bool: lt.boolean(),
+        })
+        .seal()
+
+      const input = {
+        num: undefined,
+        str: undefined,
+        bool: undefined,
+      } as any
+
+      throws(
+        () => simpleObject.parse({ ...input }),
+        aggregated(
+          new LightTypeError({
+            path: 'num',
+            message: 'Not a Number',
+            value: undefined,
+          }),
+          new LightTypeError({
+            path: 'str',
+            message: 'Not a String',
+            value: undefined,
+          }),
+          new LightTypeError({
+            path: 'bool',
+            message: 'Not a Boolean',
+            value: undefined,
+          })
+        )
+      )
+    })
+  })
+})
+
+describe('object methods', () => {
   describe('extend', () => {
     const simpleObject = lt.object({
       num: lt.number(),
@@ -47,8 +110,26 @@ describe('lightType', () => {
         bool: false,
       } as any
 
-      // TODO: assert some exact aggregated error
-      expect(() => extendedObject.parse({ ...input })).toThrowError(Error)
+      throws(
+        () => extendedObject.parse({ ...input }),
+        aggregated(
+          new LightTypeError({
+            path: 'id',
+            message: 'Not a Number',
+            value: undefined,
+          }),
+          new LightTypeError({
+            path: 'num',
+            message: 'Not a Boolean',
+            value: 1,
+          }),
+          new LightTypeError({
+            path: 'createdAt',
+            message: 'Not a Date',
+            value: undefined,
+          })
+        )
+      )
     })
   })
 
@@ -87,8 +168,16 @@ describe('lightType', () => {
         bool: null,
       } as any
 
-      // TODO: assert some exact aggregated error
-      expect(() => omittedObject.parse({ ...input })).toThrowError(Error)
+      throws(
+        () => omittedObject.parse({ ...input }),
+        aggregated(
+          new LightTypeError({
+            path: 'bool',
+            message: 'Not a Boolean',
+            value: null,
+          })
+        )
+      )
     })
   })
 })

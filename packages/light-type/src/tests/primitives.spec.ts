@@ -1,18 +1,26 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { lt } from '..'
+import { LightTypeError } from '../lib/errors/LightTypeError'
 
 describe('primitives', () => {
   describe('number', () => {
     describe('simple', () => {
+      const t = lt.number()
+
       it.each([1, 0, -1])('parses valid input %p', (input: any) => {
-        expect(lt.number().parse(input)).toEqual(input)
+        expect(t.parse(input)).toEqual(input)
       })
 
       it.each(['1', null, undefined])(
         'rejects invalid input %p',
         (input: any) => {
-          expect(() => lt.number().parse(input)).toThrowError(Error)
+          expect(() => t.parse(input)).toThrowError(
+            new LightTypeError({
+              message: 'Not a Number',
+              value: input,
+            })
+          )
         }
       )
     })
@@ -27,7 +35,12 @@ describe('primitives', () => {
       it.each(['', '0', false, new Date(), new Object(), Symbol()])(
         'rejects invalid input %p',
         (input: any) => {
-          expect(() => t.parse(input)).toThrowError(Error)
+          expect(() => t.parse(input)).toThrowError(
+            new LightTypeError({
+              message: 'Not a Number',
+              value: input,
+            })
+          )
         }
       )
     })
@@ -42,7 +55,12 @@ describe('primitives', () => {
       it.each([null, '', '1', true, new Date()])(
         'rejects invalid input: %p',
         (input: any) => {
-          expect(() => t.parse(input)).toThrowError(Error)
+          expect(() => t.parse(input)).toThrowError(
+            new LightTypeError({
+              message: 'Not a Number',
+              value: input,
+            })
+          )
         }
       )
     })
@@ -57,7 +75,12 @@ describe('primitives', () => {
       it.each([undefined, '', '1', true, new Date()])(
         'rejects invalid input: %p',
         (input: any) => {
-          expect(() => t.parse(input)).toThrowError(Error)
+          expect(() => t.parse(input)).toThrowError(
+            new LightTypeError({
+              message: 'Not a Number',
+              value: input,
+            })
+          )
         }
       )
     })

@@ -13,7 +13,7 @@ export class ChainableType<TInput, TOutput = TInput>
   }
 
   seal = (): LightType<TInput, TOutput> => {
-    return this.t
+    return this
   }
 
   // TODO: maybe omit each key after applying it?

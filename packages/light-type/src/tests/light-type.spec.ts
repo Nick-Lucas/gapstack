@@ -1,128 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { lt } from '..'
+import { LightTypeError } from '../lib/errors/LightTypeError'
+import { aggregated, throws } from './errors'
 
 describe('lightType', () => {
-  describe('simple object with primitive types', () => {
-    it('should parse', () => {
-      const simpleObject = lt
-        .object({
-          num: lt.number(),
-          str: lt.string(),
-          bool: lt.boolean(),
-        })
-        .seal()
-
-      const input = {
-        num: 1,
-        str: 'hello',
-        bool: false,
-      }
-
-      expect(simpleObject.parse({ ...input })).toEqual({
-        ...input,
-      })
-    })
-
-    it('should throw a invalid', () => {
-      const simpleObject = lt
-        .object({
-          num: lt.number(),
-          str: lt.string(),
-          bool: lt.boolean(),
-        })
-        .seal()
-
-      const input = {
-        num: undefined,
-        str: undefined,
-        bool: undefined,
-      } as any
-
-      // TODO: assert some exact aggregated error
-      expect(() => simpleObject.parse({ ...input })).toThrowError(Error)
-    })
-  })
-
-  describe('array of numbers', () => {
-    it('should parse', () => {
-      const simpleArray = lt.array(lt.number()).seal()
-
-      expect(simpleArray.parse([1, 2, 3])).toEqual([1, 2, 3])
-    })
-
-    it('should throw invalid', () => {
-      const simpleArray = lt.array(lt.number()).seal()
-
-      expect(() => simpleArray.parse([1, 2, null] as any)).toThrowError(Error)
-    })
-  })
-
-  describe('array of objects', () => {
-    const simpleObject = lt
-      .object({
-        num: lt.number(),
-        str: lt.string(),
-        bool: lt.boolean(),
-      })
-      .seal()
-
-    it('should parse', () => {
-      const input = [
-        {
-          num: 1,
-          str: 'hello',
-          bool: false,
-        },
-        {
-          num: 1,
-          str: 'hello',
-          bool: false,
-        },
-      ]
-
-      const simpleArray = lt.array(simpleObject).seal()
-
-      expect(simpleArray.parse([...input])).toEqual([...input])
-    })
-
-    it('should throw invalid', () => {
-      const input = [
-        {
-          num: 1,
-          str: 'hello',
-          bool: false,
-        },
-        {
-          num: 1,
-          str: 'hello',
-          bool: null, // Error!
-        },
-      ]
-
-      const simpleArray = lt.array(simpleObject).seal()
-
-      expect(() => simpleArray.parse([...input] as any)).toThrowError(Error)
-    })
-
-    it.each([null, undefined])(
-      'should throw invalid for array of %p',
-      (input) => {
-        const simpleArray = lt.array(simpleObject).seal()
-
-        expect(() =>
-          simpleArray.parse([input, input, input] as any)
-        ).toThrowError(Error)
-      }
-    )
-
-    it('should throw invalid for array of emptys', () => {
-      const simpleArray = lt.array(simpleObject).seal()
-
-      expect(() => simpleArray.parse(new Array(3) as any)).toThrowError(Error)
-    })
-  })
-
   describe('complex case', () => {
     const fooBarLiteral = ['foo', 'bar'] as const
     const fooBarLiteral2 = [0, 'bar'] as const
@@ -144,6 +26,62 @@ describe('lightType', () => {
         arr: lt.array(tObj),
       })
       .seal()
+
+    it('errors', () => {
+      const input = {
+        someNum: undefined,
+        someOptionalNum: undefined,
+        someDate: new Date(),
+        someString: 'Random String',
+        someLiteral: 'bar',
+        obj: {
+          deepOptionalNum: null,
+          deepDate: new Date(),
+          deepString: null,
+          deepLiteral: 'bar',
+        },
+        arr: [
+          {
+            deepOptionalNum: null,
+            deepDate: new Date(),
+            deepString: 'Random String 2',
+            deepLiteral: 0,
+          },
+          {
+            deepOptionalNum: null,
+            deepDate: null,
+            deepString: 'Random String 2',
+            deepLiteral: null,
+          },
+        ],
+      }
+
+      throws(
+        () => t.parse(input as any),
+        aggregated(
+          new LightTypeError({
+            path: 'someNum',
+            message: 'Not a Number',
+            value: undefined,
+          }),
+          new LightTypeError({
+            path: 'obj.deepString',
+            message: 'Not a String',
+            value: null,
+          }),
+          new LightTypeError({
+            path: 'arr.1.deepDate',
+            message: 'Not a Date',
+            value: null,
+          }),
+          new LightTypeError({
+            path: 'arr.1.deepLiteral',
+            message: 'Does not match literal, expected one of 0, bar',
+            value: null,
+          })
+        )
+      )
+    })
 
     it('parses', () => {
       const input = {

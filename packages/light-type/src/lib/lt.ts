@@ -3,6 +3,8 @@ import { LightType } from './types/LightType'
 import { LightObject } from './types/LightObject'
 import { Primitive, LiteralBase } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
+import { LightTypeError } from './errors/LightTypeError'
+import { ChainableArray } from './chainable/ChainableArray'
 
 // TODO: add .implements method to enforce recreation of deep TS type
 
@@ -14,16 +16,7 @@ export const lt = {
     return new ChainableObject<TKey, TLightObject>(lightObject)
   },
   array<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
-    // TODO: extend Modifiable with extra methods
-    return new ChainableType<TInput[], TOutput[]>({
-      parse(input) {
-        if (Array.isArray(input)) {
-          return [...input].map((element) => valueType.parse(element))
-        }
-
-        throw new Error(`Not an Array, received "${input}"`)
-      },
-    })
+    return new ChainableArray<TInput, TOutput>(valueType)
   },
   boolean() {
     return new ChainableType<boolean, boolean>({
@@ -32,9 +25,10 @@ export const lt = {
           return input
         }
 
-        throw new Error(
-          `Not a Boolean, received "${input}", received "${input}"`
-        )
+        throw new LightTypeError({
+          message: `Not a Boolean`,
+          value: input,
+        })
       },
     })
   },
@@ -45,7 +39,10 @@ export const lt = {
           return input
         }
 
-        throw new Error(`Not a Number, received "${input}"`)
+        throw new LightTypeError({
+          message: `Not a Number`,
+          value: input,
+        })
       },
     })
   },
@@ -56,7 +53,10 @@ export const lt = {
           return input
         }
 
-        throw new Error(`Not a String, received "${input}"`)
+        throw new LightTypeError({
+          message: `Not a String`,
+          value: input,
+        })
       },
     })
   },
@@ -67,7 +67,10 @@ export const lt = {
           return input
         }
 
-        throw new Error(`Not a Date, received "${input}"`)
+        throw new LightTypeError({
+          message: `Not a Date`,
+          value: input,
+        })
       },
     })
   },
@@ -80,11 +83,12 @@ export const lt = {
           return input as TLiteral
         }
 
-        throw new Error(
-          `Does not match literal, received "${input}" but expected one of ${Array.from(
+        throw new LightTypeError({
+          message: `Does not match literal, expected one of ${Array.from(
             values
-          ).join(', ')}`
-        )
+          ).join(', ')}`,
+          value: input,
+        })
       },
     })
   },
