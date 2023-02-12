@@ -153,7 +153,7 @@ export const lt = {
           }
 
           const errors = new LightTypeAggregatedErrors()
-          const result = [] as TOutput
+          const result = new Array(tuple.length) as TOutput
           for (let i = 0; i < tuple.length; i++) {
             errors.aggregate(String(i), () => {
               result[i] = tuple[i].parse(input[i])
@@ -167,6 +167,38 @@ export const lt = {
 
         throw new LightTypeError({
           message: `Not a Tuple`,
+          value: input,
+        })
+      },
+    })
+  },
+  set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
+    return new ChainableType<TInput[] | Set<TInput>, Set<TOutput>>({
+      parse(_input) {
+        let input = [] as TInput[]
+        if (_input instanceof Set) {
+          input = Array.from(_input)
+        } else {
+          input = _input
+        }
+
+        if (Array.isArray(input)) {
+          const errors = new LightTypeAggregatedErrors()
+          const result = new Set<TOutput>()
+
+          for (let i = 0; i < input.length; i++) {
+            errors.aggregate(String(i), () => {
+              result.add(valueType.parse(input[i]))
+            })
+          }
+
+          errors.throwIfAny()
+
+          return result
+        }
+
+        throw new LightTypeError({
+          message: `Not a Set or Arraylike`,
           value: input,
         })
       },

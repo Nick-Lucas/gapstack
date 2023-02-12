@@ -23,9 +23,10 @@ TODO list:
 * Object Unions / Discriminated Unions
 * Any type
 * Unknown type
-* Maps & Sets
+* Maps
 * ISO Date parsing
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
 * Validators (min, max, length, string.regex, )
 * String Template Literals
+* Permit Parse to receive Unknown types
