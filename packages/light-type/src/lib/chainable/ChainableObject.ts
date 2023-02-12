@@ -10,7 +10,7 @@ import { Simplify } from '../types/utils'
 import { LightTypeError } from '../errors/LightTypeError'
 import { LightTypeAggregatedErrors } from '../errors/LightTypeAggregatedErrors'
 
-type OmitParam<T> = { [TKey in keyof T]?: true }
+type KeysParam<T> = { [TKey in keyof T]?: true }
 
 type TI<LO extends LightObject> = Simplify<InferLightObjectInput<LO>>
 type TO<LO extends LightObject> = Simplify<InferLightObjectOutput<LO>>
@@ -71,7 +71,7 @@ export class ChainableObject<
     return lt.object(extendedLightObject)
   }
 
-  omit = <TOmit extends OmitParam<TLightObject>>(omit: TOmit) => {
+  omit = <TOmit extends KeysParam<TLightObject>>(omit: TOmit) => {
     const lightObject = this.lightObject
 
     type TOmitKeys = keyof {
@@ -90,5 +90,28 @@ export class ChainableObject<
     }
 
     return lt.object(omittedLightObject)
+  }
+
+  pick = <TPick extends KeysParam<TLightObject>>(pick: TPick) => {
+    const lightObject = this.lightObject
+
+    type TPickKeys = keyof {
+      [key in keyof TPick]: TPick[key] extends true ? key : never
+    }
+    type TPickedLightObject = Simplify<
+      Pick<TLightObject, Extract<TPickKeys, TKey>>
+    >
+
+    const pickedLightObject = {} as TPickedLightObject
+    for (const key in pick) {
+      if (pick[key] === true) {
+        // TODO: fix this keying type
+        pickedLightObject[key as unknown as keyof TPickedLightObject] =
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          lightObject[key as unknown as TKey] as unknown as any
+      }
+    }
+
+    return lt.object(pickedLightObject)
   }
 }

@@ -149,7 +149,7 @@ describe('object methods', () => {
       createdAt: true,
     })
 
-    it('should parse a ommitted type', () => {
+    it('should parse a omitted type', () => {
       const input = {
         num: 1,
         str: 'hello',
@@ -175,6 +175,61 @@ describe('object methods', () => {
             path: 'bool',
             message: 'Not a Boolean',
             value: null,
+          })
+        )
+      )
+    })
+  })
+
+  describe('pick', () => {
+    const simpleObject = lt.object({
+      id: lt.number(),
+      num: lt.number(),
+      str: lt.string(),
+      bool: lt.boolean(),
+      createdAt: lt.date(),
+      createdBy: lt.string().default('unknown'),
+    })
+
+    const pickedObject = simpleObject.pick({
+      id: true,
+      createdBy: true,
+      createdAt: true,
+    })
+
+    it('picks', () => {
+      const input = {
+        id: 1,
+        num: 1,
+        str: 'Foo',
+        bool: true,
+        createdAt: new Date(),
+        createdBy: undefined,
+      }
+
+      expect(pickedObject.parse(input)).toEqual({
+        id: 1,
+        createdAt: new Date(),
+        createdBy: 'unknown',
+      })
+    })
+
+    it('picks', () => {
+      const input = {
+        num: 1,
+        str: 'Foo',
+        bool: true,
+        createdAt: new Date(),
+        createdBy: undefined,
+      } as any
+
+      throws(
+        () => pickedObject.parse(input),
+        aggregated(
+          new LightTypeError({
+            message: 'Not a Number',
+            path: 'id',
+            value: undefined,
           })
         )
       )
