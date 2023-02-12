@@ -1,96 +1,125 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { lt } from '..'
+import { ChainableType } from '../lib/chainable/ChainableType'
 import { LightTypeError } from '../lib/errors/LightTypeError'
 
 describe('primitives', () => {
-  describe('number', () => {
-    describe('simple', () => {
-      const t = lt.number()
+  type ProceduralTest = [
+    name: string,
+    type: ChainableType<any>,
+    validInputs: unknown[],
+    invalidInputs: unknown[],
+    error: string
+  ]
 
-      it.each([1, 0, -1])('parses valid input %p', (input: any) => {
-        expect(t.parse(input)).toEqual(input)
+  describe.each<ProceduralTest>([
+    [
+      'Number',
+      lt.number(),
+      [1, 0, -1],
+      ['', '1', true, new Date()],
+      'Not a Number',
+    ],
+    [
+      'String',
+      lt.string(),
+      ['foo', ''],
+      [0, 1, true, new Date()],
+      'Not a String',
+    ],
+    [
+      'Boolean',
+      lt.boolean(),
+      [false, true],
+      ['', 'true', 0, 1, new Date()],
+      'Not a Boolean',
+    ],
+    [
+      'Date',
+      lt.date(),
+      [new Date()],
+      ['', 'true', 0, 1, true, false, new Date().toISOString()],
+      'Not a Date',
+    ],
+    [
+      'Literal',
+      lt.literal(['foo', 'bar', 1] as const),
+      ['foo', 'bar', 1],
+      ['', 'true', 0, true, false, new Date()],
+      'Does not match literal, expected one of foo, bar, 1',
+    ],
+  ])('%s', (name, type, validInputs, invalidInputs, error) => {
+    describe('simple', () => {
+      it.each(validInputs)('parses valid input %p', (input: any) => {
+        expect(type.parse(input)).toEqual(input)
       })
 
-      it.each(['1', null, undefined])(
-        'rejects invalid input %p',
-        (input: any) => {
-          expect(() => t.parse(input)).toThrowError(
-            new LightTypeError({
-              message: 'Not a Number',
-              value: input,
-            })
-          )
-        }
-      )
+      it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
+        expect(() => type.parse(input)).toThrowError(
+          new LightTypeError({
+            message: error,
+            value: input,
+          })
+        )
+      })
     })
 
     describe('default', () => {
-      const t = lt.number().default(0)
+      const t = type.default(0)
 
       it.each([null, undefined])('defaults to %p', (input: any) => {
         expect(t.parse(input)).toEqual(0)
       })
 
-      it.each(['', '0', false, new Date(), new Object(), Symbol()])(
-        'rejects invalid input %p',
-        (input: any) => {
-          expect(() => t.parse(input)).toThrowError(
-            new LightTypeError({
-              message: 'Not a Number',
-              value: input,
-            })
-          )
-        }
-      )
+      it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
+        expect(() => t.parse(input)).toThrowError(
+          new LightTypeError({
+            message: error,
+            value: input,
+          })
+        )
+      })
     })
 
     describe('optional', () => {
-      const t = lt.number().optional()
+      const t = type.optional()
 
-      it.each([1, undefined])('parses valid input: %p', (input: any) => {
-        expect(t.parse(input)).toEqual(input)
-      })
-
-      it.each([null, '', '1', true, new Date()])(
-        'rejects invalid input: %p',
+      it.each([...validInputs, undefined])(
+        'parses valid input: %p',
         (input: any) => {
-          expect(() => t.parse(input)).toThrowError(
-            new LightTypeError({
-              message: 'Not a Number',
-              value: input,
-            })
-          )
+          expect(t.parse(input)).toEqual(input)
         }
       )
+
+      it.each([invalidInputs])('rejects invalid input: %p', (input: any) => {
+        expect(() => t.parse(input)).toThrowError(
+          new LightTypeError({
+            message: error,
+            value: input,
+          })
+        )
+      })
     })
 
     describe('nullable', () => {
-      const t = lt.number().nullable()
+      const t = type.nullable()
 
-      it.each([1, null])('parses valid input: %p', (input: any) => {
-        expect(t.parse(input)).toEqual(input)
-      })
-
-      it.each([undefined, '', '1', true, new Date()])(
-        'rejects invalid input: %p',
+      it.each([...validInputs, null])(
+        'parses valid input: %p',
         (input: any) => {
-          expect(() => t.parse(input)).toThrowError(
-            new LightTypeError({
-              message: 'Not a Number',
-              value: input,
-            })
-          )
+          expect(t.parse(input)).toEqual(input)
         }
       )
+
+      it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
+        expect(() => t.parse(input)).toThrowError(
+          new LightTypeError({
+            message: error,
+            value: input,
+          })
+        )
+      })
     })
   })
-
-  // TODO: string
-
-  // TODO: literal
-
-  // TODO: boolean
-
-  // TODO: date
 })
