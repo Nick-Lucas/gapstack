@@ -42,7 +42,7 @@ export class ChainableObject<
             return aggr
           }, {} as TOutput)
 
-          errors.propagate()
+          errors.throwIfAny()
 
           return output
         }

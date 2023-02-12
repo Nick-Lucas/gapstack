@@ -4,7 +4,7 @@ import { lt } from '..'
 import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
-describe('lightType', () => {
+describe('object', () => {
   describe('simple object with primitive types', () => {
     it('should parse', () => {
       const simpleObject = lt
@@ -214,7 +214,7 @@ describe('object methods', () => {
       })
     })
 
-    it('picks', () => {
+    it('throws', () => {
       const input = {
         num: 1,
         str: 'Foo',

@@ -27,7 +27,7 @@ export class LightTypeAggregatedErrors extends Error {
     return undefined
   }
 
-  propagate = () => {
+  throwIfAny = () => {
     if (this.errors.length === 0) {
       return
     }

@@ -22,8 +22,9 @@ TODO list:
 * Value coersion
 * Object Unions / Discriminated Unions
 * Tuple type
-* Record<A, B> type
+* Maps & Sets
 * ISO Date parsing
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
 * Validators (min, max, length, string.regex, )
+* String Template Literals

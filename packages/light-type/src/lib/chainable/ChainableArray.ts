@@ -20,7 +20,7 @@ export class ChainableArray<TInput, TOutput = TInput> extends ChainableType<
             })
           }
 
-          errors.propagate()
+          errors.throwIfAny()
 
           return items
         }
