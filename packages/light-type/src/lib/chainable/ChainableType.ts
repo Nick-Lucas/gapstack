@@ -1,4 +1,4 @@
-import { LightType } from './base-types'
+import { LightType } from '../types/LightType'
 
 export class ChainableType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>

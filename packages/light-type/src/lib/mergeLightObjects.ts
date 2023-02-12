@@ -1,5 +1,5 @@
-import { LightObject } from './base-types'
-import { Simplify } from './util-types'
+import { LightObject } from './types/LightObject'
+import { Simplify } from './types/utils'
 
 /**
  * Merge B onto A and return, replacing conflicting keys

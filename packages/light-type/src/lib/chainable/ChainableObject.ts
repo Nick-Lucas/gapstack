@@ -2,11 +2,11 @@ import {
   LightObject,
   InferLightObjectInput,
   InferLightObjectOutput,
-} from './base-types'
+} from '../types/LightObject'
 import { ChainableType } from './ChainableType'
-import { lt } from './lt'
-import { mergeLightObjects } from './mergeLightObjects'
-import { Simplify } from './util-types'
+import { lt } from '../lt'
+import { mergeLightObjects } from '../mergeLightObjects'
+import { Simplify } from '../types/utils'
 
 type OmitParam<T> = { [TKey in keyof T]?: true }
 

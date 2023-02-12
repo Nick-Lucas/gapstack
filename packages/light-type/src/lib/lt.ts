@@ -1,12 +1,8 @@
-import { ChainableType } from './ChainableType'
-import {
-  LightType,
-  LightObject,
-  InferLightObjectInput,
-  InferLightObjectOutput,
-} from './base-types'
-import { Primitive, LiteralBase } from './util-types'
-import { ChainableObject } from './ChainableObject'
+import { ChainableType } from './chainable/ChainableType'
+import { LightType } from './types/LightType'
+import { LightObject } from './types/LightObject'
+import { Primitive, LiteralBase } from './types/utils'
+import { ChainableObject } from './chainable/ChainableObject'
 
 // TODO: add .implements method to enforce recreation of deep TS type
 
