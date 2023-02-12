@@ -149,6 +149,51 @@ export const lt = {
       },
     })
   },
+  map<TKey extends LightType<AnyKey>, TValue extends LightType<unknown>>(
+    key: TKey,
+    value: TValue
+  ) {
+    type KeyInput = InferInput<TKey>
+    type KeyOutput = InferInput<TKey>
+    type ValueInput = InferInput<TValue>
+    type ValueOutput = InferInput<TValue>
+
+    type TInput = Map<KeyInput, ValueInput> | Record<KeyInput, ValueInput>
+    type TOutput = Map<KeyOutput, ValueOutput>
+
+    return new ChainableType<TInput, TOutput>({
+      parse(_input) {
+        const input =
+          _input instanceof Map
+            ? (Object.fromEntries(_input) as Record<KeyInput, ValueInput>)
+            : _input
+
+        if (typeof input === 'object' && input !== null) {
+          const errors = new LightTypeAggregatedErrors()
+
+          const inputKeys = Object.keys(input) as (keyof TInput)[]
+
+          const result = new Map() as TOutput
+          for (let i = 0; i < inputKeys.length; i++) {
+            errors.aggregate(String(inputKeys[i]), () => {
+              result.set(
+                key.parse(inputKeys[i]) as KeyOutput,
+                value.parse(input[inputKeys[i]]) as ValueOutput
+              )
+            })
+          }
+          errors.throwIfAny()
+
+          return result
+        }
+
+        throw new LightTypeError({
+          message: 'Not a Map or Object',
+          value: input,
+        })
+      },
+    })
+  },
   tuple<T extends [LightType<unknown>, ...LightType<unknown>[]]>(tuple: T) {
     type TInput = {
       [key in keyof T]: InferInput<T[key]>
