@@ -1,5 +1,5 @@
 import { ChainableType } from './chainable/ChainableType'
-import { InferInput, LightType } from './types/LightType'
+import { InferInput, InferOutput, LightType } from './types/LightType'
 import { LightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
@@ -129,6 +129,44 @@ export const lt = {
 
         throw new LightTypeError({
           message: 'Not a Record',
+          value: input,
+        })
+      },
+    })
+  },
+  tuple<T extends [LightType<unknown>, ...LightType<unknown>[]]>(tuple: T) {
+    type TInput = {
+      [key in keyof T]: InferInput<T[key]>
+    }
+    type TOutput = {
+      [key in keyof T]: InferOutput<T[key]>
+    }
+
+    return new ChainableType<TInput, TOutput>({
+      parse(input) {
+        if (Array.isArray(input)) {
+          if (input.length !== tuple.length) {
+            throw new LightTypeError({
+              message: `Invalid Tuple: ${input.length} elements instead of ${tuple.length}`,
+              value: input,
+            })
+          }
+
+          const errors = new LightTypeAggregatedErrors()
+          const result = [] as TOutput
+          for (let i = 0; i < tuple.length; i++) {
+            errors.aggregate(String(i), () => {
+              result[i] = tuple[i].parse(input[i])
+            })
+          }
+
+          errors.throwIfAny()
+
+          return result
+        }
+
+        throw new LightTypeError({
+          message: `Not a Tuple`,
           value: input,
         })
       },
