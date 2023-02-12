@@ -13,7 +13,21 @@ describe('primitives', () => {
     error: string
   ]
 
-  describe.each<ProceduralTest>([
+  const tests: ProceduralTest[] = [
+    [
+      'Any',
+      lt.any(),
+      [1, '', '1', true, new Date(), {}, [], new Set(), new Map()],
+      [],
+      '',
+    ],
+    [
+      'Unknown',
+      lt.unknown(),
+      [1, '', '1', true, new Date(), {}, [], new Set(), new Map()],
+      [],
+      '',
+    ],
     [
       'Number',
       lt.number(),
@@ -49,77 +63,86 @@ describe('primitives', () => {
       ['', 'true', 0, true, false, new Date()],
       'Does not match literal, expected one of foo, bar, 1',
     ],
-  ])('%s', (name, type, validInputs, invalidInputs, error) => {
-    describe('simple', () => {
-      it.each(validInputs)('parses valid input %p', (input: any) => {
-        expect(type.parse(input)).toEqual(input)
-      })
+  ]
 
-      it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
-        expect(() => type.parse(input)).toThrowError(
-          new LightTypeError({
-            message: error,
-            value: input,
+  describe.each<ProceduralTest>(tests)(
+    '%s',
+    (name, type, validInputs, invalidInputs, error) => {
+      describe('simple', () => {
+        it.each(validInputs)('parses valid input %p', (input: any) => {
+          expect(type.parse(input)).toEqual(input)
+        })
+
+        if (invalidInputs.length > 0)
+          it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
+            expect(() => type.parse(input)).toThrowError(
+              new LightTypeError({
+                message: error,
+                value: input,
+              })
+            )
           })
-        )
-      })
-    })
-
-    describe('default', () => {
-      const t = type.default(0)
-
-      it.each([null, undefined])('defaults to %p', (input: any) => {
-        expect(t.parse(input)).toEqual(0)
       })
 
-      it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
-        expect(() => t.parse(input)).toThrowError(
-          new LightTypeError({
-            message: error,
-            value: input,
+      describe('default', () => {
+        const t = type.default(0)
+
+        it.each([null, undefined])('defaults to %p', (input: any) => {
+          expect(t.parse(input)).toEqual(0)
+        })
+
+        if (invalidInputs.length > 0)
+          it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
+            expect(() => t.parse(input)).toThrowError(
+              new LightTypeError({
+                message: error,
+                value: input,
+              })
+            )
           })
-        )
       })
-    })
 
-    describe('optional', () => {
-      const t = type.optional()
+      describe('optional', () => {
+        const t = type.optional()
 
-      it.each([...validInputs, undefined])(
-        'parses valid input: %p',
-        (input: any) => {
-          expect(t.parse(input)).toEqual(input)
-        }
-      )
+        it.each([...validInputs, undefined])(
+          'parses valid input: %p',
+          (input: any) => {
+            expect(t.parse(input)).toEqual(input)
+          }
+        )
 
-      it.each([invalidInputs])('rejects invalid input: %p', (input: any) => {
-        expect(() => t.parse(input)).toThrowError(
-          new LightTypeError({
-            message: error,
-            value: input,
+        if (invalidInputs.length > 0)
+          it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
+            expect(() => t.parse(input)).toThrowError(
+              new LightTypeError({
+                message: error,
+                value: input,
+              })
+            )
           })
-        )
       })
-    })
 
-    describe('nullable', () => {
-      const t = type.nullable()
+      describe('nullable', () => {
+        const t = type.nullable()
 
-      it.each([...validInputs, null])(
-        'parses valid input: %p',
-        (input: any) => {
-          expect(t.parse(input)).toEqual(input)
-        }
-      )
+        it.each([...validInputs, null])(
+          'parses valid input: %p',
+          (input: any) => {
+            expect(t.parse(input)).toEqual(input)
+          }
+        )
 
-      it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
-        expect(() => t.parse(input)).toThrowError(
-          new LightTypeError({
-            message: error,
-            value: input,
+        if (invalidInputs.length > 0)
+          it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
+            expect(() => t.parse(input)).toThrowError(
+              new LightTypeError({
+                message: error,
+                value: input,
+              })
+            )
           })
-        )
       })
-    })
-  })
+    }
+  )
 })

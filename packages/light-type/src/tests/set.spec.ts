@@ -7,6 +7,8 @@ import { aggregated, throws } from './errors'
 describe('set', () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   function checkTypes() {
+    lt.set(lt.any())
+    lt.set(lt.unknown())
     lt.set(lt.string())
     lt.set(lt.number())
     lt.set(lt.boolean())

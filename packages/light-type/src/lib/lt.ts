@@ -19,6 +19,21 @@ export const lt = {
   array<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
     return new ChainableArray<TInput, TOutput>(valueType)
   },
+  any() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new ChainableType<any, any>({
+      parse(input) {
+        return input
+      },
+    })
+  },
+  unknown() {
+    return new ChainableType<unknown, unknown>({
+      parse(input) {
+        return input
+      },
+    })
+  },
   boolean() {
     return new ChainableType<boolean, boolean>({
       parse(input) {

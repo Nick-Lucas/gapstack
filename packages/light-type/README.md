@@ -21,8 +21,6 @@ TODO list:
 * Calculated values
 * Value coersion
 * Object Unions / Discriminated Unions
-* Any type
-* Unknown type
 * Maps
 * ISO Date parsing
 * .partial("deep" | "shallow")
