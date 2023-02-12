@@ -16,6 +16,10 @@ export class ChainableType<TInput, TOutput = TInput>
     return this
   }
 
+  //
+  // Null / Undefined Typing
+  //
+
   // TODO: maybe omit each key after applying it?
   optional = (): ChainableType<TInput | undefined, TOutput | undefined> => {
     const t = this.t
@@ -54,6 +58,22 @@ export class ChainableType<TInput, TOutput = TInput>
           return defaultValue
         }
         return t.parse(input)
+      },
+    })
+  }
+
+  //
+  // Custom Processing
+  //
+
+  after = <TNextOutput>(postprocess: (input: TOutput) => TNextOutput) => {
+    const t = this.t
+
+    return new ChainableType<TInput, TNextOutput>({
+      parse(input) {
+        const nextInput = t.parse(input)
+
+        return postprocess(nextInput)
       },
     })
   }

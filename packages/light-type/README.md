@@ -16,8 +16,6 @@ New feature goals:
 
 TODO list:
 
-* Value Preprocessing
-* Value Postprocessing
 * Calculated values
 * Value coersion
 * Object Unions / Discriminated Unions

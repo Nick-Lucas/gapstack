@@ -264,4 +264,17 @@ export const lt = {
       },
     })
   },
+
+  before<TBeforeResult, TType extends LightType<TBeforeResult>>(
+    preprocess: (input: unknown) => TBeforeResult,
+    type: TType
+  ) {
+    return new ChainableType<unknown, InferOutput<TType>>({
+      parse(input) {
+        const processedInput = preprocess(input)
+
+        return type.parse(processedInput) as InferOutput<TType>
+      },
+    })
+  },
 }
