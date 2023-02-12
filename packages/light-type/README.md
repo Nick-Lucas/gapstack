@@ -25,3 +25,5 @@ TODO list:
 * Validators (min, max, length, string.regex, )
 * String Template Literals
 * Permit Parse to receive Unknown types
+* Set up Compiler benchmarks
+* Set up Runtime benchmarks
