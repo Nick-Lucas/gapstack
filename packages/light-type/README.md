@@ -7,8 +7,23 @@ Experimental runtime type safety solution with the following goals:
 * Typescript types should be inferable and have both inputs and outputs
 * Integrate with tools like tRPC
 * Be comfortable for a Zod user to move over from
+* Don't do anything which JS/TS can do natively, like literal unions from `["foo", "bar"] as const`
 
 New feature goals:
 
 * Be able to "implement" a type from an un-controlled library or codegen types, in a type-safe way
 * Be able to map in reverse
+
+TODO list:
+
+* Value Preprocessing
+* Value Postprocessing
+* Calculated values
+* Value coersion
+* Object Unions / Discriminated Unions
+* Tuple type
+* Record<A, B> type
+* ISO Date parsing
+* .partial("deep" | "shallow")
+* .required("deep" | "shallow")
+* Validators (min, max, length, string.regex, )
