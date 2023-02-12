@@ -4,7 +4,7 @@ import {
   InferLightObjectOutput,
 } from './base-types'
 import { ChainableType } from './ChainableType'
-import { lt } from './light-type'
+import { lt } from './lt'
 import { mergeLightObjects } from './mergeLightObjects'
 import { Simplify } from './util-types'
 
