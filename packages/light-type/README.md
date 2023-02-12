@@ -27,3 +27,4 @@ TODO list:
 * Permit Parse to receive Unknown types
 * Set up Compiler benchmarks
 * Set up Runtime benchmarks
+* Allow "after" to receive a optional type parameter. Make "before" optional too
