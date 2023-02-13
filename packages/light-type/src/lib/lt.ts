@@ -52,7 +52,7 @@ export const lt = {
     })
   },
   number() {
-    const t = new ChainableType<number, number>({
+    const that = new ChainableType<number, number>({
       parse(input) {
         if (typeof input === 'number') {
           return input
@@ -65,9 +65,9 @@ export const lt = {
       },
     })
 
-    return Object.assign(t, {
+    return Object.assign(that, {
       min(value: number) {
-        return t.after((num) => {
+        return that.after((num) => {
           if (num < value) {
             throw new LightTypeError({
               message: 'Min Value is ' + value,
@@ -79,7 +79,7 @@ export const lt = {
         })
       },
       max(value: number) {
-        return t.after((num) => {
+        return that.after((num) => {
           if (num > value) {
             throw new LightTypeError({
               message: 'Max Value is ' + value,
@@ -93,7 +93,7 @@ export const lt = {
     })
   },
   string() {
-    return new ChainableType<string, string>({
+    const that = new ChainableType<string, string>({
       parse(input) {
         if (typeof input === 'string') {
           return input
@@ -102,6 +102,45 @@ export const lt = {
         throw new LightTypeError({
           message: `Not a String`,
           value: input,
+        })
+      },
+    })
+
+    return Object.assign(that, {
+      min(value: number) {
+        return that.after((str) => {
+          if (str.length < value) {
+            throw new LightTypeError({
+              message: 'Min Length is ' + value,
+              value: str,
+            })
+          }
+
+          return str
+        })
+      },
+      max(value: number) {
+        return that.after((num) => {
+          if (num.length > value) {
+            throw new LightTypeError({
+              message: 'Max Length is ' + value,
+              value: num,
+            })
+          }
+
+          return num
+        })
+      },
+      length(value: number) {
+        return that.after((num) => {
+          if (num.length !== value) {
+            throw new LightTypeError({
+              message: 'Expected Length is ' + value,
+              value: num,
+            })
+          }
+
+          return num
         })
       },
     })
