@@ -19,7 +19,7 @@ function checkTypes() {
   lt.before(() => '', lt.boolean())
 }
 
-describe('before/after', () => {
+describe('before', () => {
   const DateType = lt.before((input) => {
     if (input instanceof Date && !isNaN(input.valueOf())) {
       return input
@@ -56,41 +56,5 @@ describe('before/after', () => {
         )
       }
     )
-  })
-
-  describe('After: Converts DateType to ISO String', () => {
-    const IsoDate = DateType.after((date) => date.toISOString())
-
-    const date = new Date()
-
-    it.each([date, date.toISOString(), date.valueOf()])(
-      'preprocesses a parseable date value',
-      (input) => {
-        expect(IsoDate.parse(input)).toEqual(date.toISOString())
-      }
-    )
-
-    it.each([null, undefined, '', 'foo'])(
-      'rejects a non-parseable value',
-      (value) => {
-        expect(() => IsoDate.parse(value)).toThrow(
-          new LightTypeError({
-            message: 'Not a Date',
-            value: value,
-          })
-        )
-      }
-    )
-  })
-
-  describe('After: chaining', () => {
-    const date = lt
-      .number()
-      .after((num) => num + 1)
-      .after((num) => num * 10)
-      .after((num) => String(num))
-      .after((str) => `FooBar: ${str}`)
-
-    expect(date.parse(5)).toBe('FooBar: 60')
   })
 })

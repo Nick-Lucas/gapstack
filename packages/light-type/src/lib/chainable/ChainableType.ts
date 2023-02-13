@@ -1,4 +1,5 @@
 import { LightType } from '../types/LightType'
+import { createPipeFunction } from '../types/pipes'
 
 export function createExtendedChainableType<
   TInput,
@@ -73,19 +74,5 @@ export class ChainableType<TInput, TOutput = TInput>
     })
   }
 
-  //
-  // Custom Processing
-  //
-
-  after = <TNextOutput>(postprocess: (input: TOutput) => TNextOutput) => {
-    const t = this.t
-
-    return new ChainableType<TInput, TNextOutput>({
-      parse(input) {
-        const nextInput = t.parse(input)
-
-        return postprocess(nextInput)
-      },
-    })
-  }
+  pipe = createPipeFunction(this.t)
 }

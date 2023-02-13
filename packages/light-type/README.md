@@ -2,7 +2,7 @@
 
 Experimental runtime type safety solution with the following goals:
 
-* Be highly performant at both compile-time and run-time. No compromises just for more flexibility
+* Typescript first, performant for both code-intelligence and at runtime. No compromises just for more flexibility
 * Be 1-1 compatible with typescript types
 * Typescript types should be inferable and have both inputs and outputs
 * Integrate with tools like tRPC
@@ -16,19 +16,19 @@ New feature goals:
 
 TODO list:
 
-* Support validator chaining - right now only one can be added at a time
 * .default and .optional should make the property optional like `abc?: number`, not *just* undefined
 * .extend should accept a record type (implement .and if necessary)
 * Object Unions / Discriminated Unions
 * Support type unions like .union([string, number])
 * Support literal strings being passed directly as types without wrapping in .literal([])
-* Permit Parse to receive Unknown types
+* Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type
 * String Template Literals
 * Set up Compiler benchmarks
 * Set up Runtime benchmarks
+* Permit Parse to receive Unknown types
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
-* Validators (string.regex)
+* More Validators (string.regex, arrays, sets, )
 * Calculated values
 * Allow "after" to receive a optional type parameter. Make "before" optional too
 * Bundled before/after parsers or a recommended library/pattern

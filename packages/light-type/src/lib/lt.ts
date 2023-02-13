@@ -1,7 +1,4 @@
-import {
-  ChainableType,
-  createExtendedChainableType,
-} from './chainable/ChainableType'
+import { ChainableType } from './chainable/ChainableType'
 import { InferInput, InferOutput, LightType } from './types/LightType'
 import { LightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
@@ -52,7 +49,7 @@ export const lt = {
     })
   },
   number() {
-    const that = new ChainableType<number, number>({
+    return new ChainableType<number, number>({
       parse(input) {
         if (typeof input === 'number') {
           return input
@@ -64,36 +61,9 @@ export const lt = {
         })
       },
     })
-
-    return Object.assign(that, {
-      min(value: number) {
-        return that.after((num) => {
-          if (num < value) {
-            throw new LightTypeError({
-              message: 'Min Value is ' + value,
-              value: num,
-            })
-          }
-
-          return num
-        })
-      },
-      max(value: number) {
-        return that.after((num) => {
-          if (num > value) {
-            throw new LightTypeError({
-              message: 'Max Value is ' + value,
-              value: num,
-            })
-          }
-
-          return num
-        })
-      },
-    })
   },
   string() {
-    const that = new ChainableType<string, string>({
+    return new ChainableType<string, string>({
       parse(input) {
         if (typeof input === 'string') {
           return input
@@ -102,45 +72,6 @@ export const lt = {
         throw new LightTypeError({
           message: `Not a String`,
           value: input,
-        })
-      },
-    })
-
-    return Object.assign(that, {
-      min(value: number) {
-        return that.after((str) => {
-          if (str.length < value) {
-            throw new LightTypeError({
-              message: 'Min Length is ' + value,
-              value: str,
-            })
-          }
-
-          return str
-        })
-      },
-      max(value: number) {
-        return that.after((num) => {
-          if (num.length > value) {
-            throw new LightTypeError({
-              message: 'Max Length is ' + value,
-              value: num,
-            })
-          }
-
-          return num
-        })
-      },
-      length(value: number) {
-        return that.after((num) => {
-          if (num.length !== value) {
-            throw new LightTypeError({
-              message: 'Expected Length is ' + value,
-              value: num,
-            })
-          }
-
-          return num
         })
       },
     })

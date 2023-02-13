@@ -4,16 +4,16 @@ import { InferInput, lt } from '..'
 import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function checkTypes() {
+  lt.tuple([lt.string()])
+  lt.tuple([lt.string(), lt.boolean()])
+
+  // @ts-expect-error tuples must have at least 1 element
+  lt.tuple([])
+}
+
 describe('tuple', () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function checkTypes() {
-    lt.tuple([lt.string()])
-    lt.tuple([lt.string(), lt.boolean()])
-
-    // @ts-expect-error tuples must have at least 1 element
-    lt.tuple([])
-  }
-
   describe('simple object with primitive types', () => {
     const tuple = lt.tuple([lt.string(), lt.number().optional()])
 
