@@ -16,15 +16,20 @@ New feature goals:
 
 TODO list:
 
+* Support validator chaining - right now only one can be added at a time
+* .default and .optional should make the property optional like `abc?: number`, not *just* undefined
+* .extend should accept a record type (implement .and if necessary)
 * Object Unions / Discriminated Unions
-* Calculated values
+* Support type unions like .union([string, number])
+* Support literal strings being passed directly as types without wrapping in .literal([])
+* Permit Parse to receive Unknown types
+* String Template Literals
+* Set up Compiler benchmarks
+* Set up Runtime benchmarks
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
 * Validators (string.regex)
-* String Template Literals
-* Permit Parse to receive Unknown types
-* Set up Compiler benchmarks
-* Set up Runtime benchmarks
+* Calculated values
 * Allow "after" to receive a optional type parameter. Make "before" optional too
 * Bundled before/after parsers or a recommended library/pattern
   * ISO Date parsing
