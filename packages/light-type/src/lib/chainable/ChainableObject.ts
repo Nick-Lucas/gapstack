@@ -16,13 +16,20 @@ type GetTInput<LO extends AnyLightObject> = Simplify<InferLightObjectInput<LO>>
 type GetTOutput<LO extends AnyLightObject> = Simplify<
   InferLightObjectOutput<LO>
 >
-type GetTKey<LO extends AnyLightObject> = Extract<keyof LO, string>
+type GetTKey<A extends AnyLightObject, B, C> =
+  | Extract<keyof A, string> &
+      Extract<keyof B, string> &
+      Extract<keyof C, string>
 
 export class ChainableObject<
   TLightObject extends AnyLightObject,
   TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
   TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
-  TKey extends GetTKey<TLightObject> = GetTKey<TLightObject>
+  TKey extends GetTKey<TLightObject, TInput, TOutput> = GetTKey<
+    TLightObject,
+    TInput,
+    TOutput
+  >
 > extends ChainableType<TInput, TOutput> {
   constructor(protected readonly lightObject: TLightObject) {
     const keys = Object.keys(lightObject) as TKey[]
@@ -108,7 +115,7 @@ export class ChainableObject<
         // TODO: fix this keying type
         pickedLightObject[key as unknown as keyof TPickedLightObject] =
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          lightObject[key as unknown as TKey] as unknown as any
+          lightObject[key] as unknown as any
       }
     }
 

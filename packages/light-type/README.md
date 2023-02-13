@@ -16,7 +16,6 @@ New feature goals:
 
 TODO list:
 
-* .default and .optional should make the property optional like `abc?: number`, not *just* undefined
 * .extend should accept a record type (implement .and if necessary)
 * Object Unions / Discriminated Unions
 * Support type unions like .union([string, number])

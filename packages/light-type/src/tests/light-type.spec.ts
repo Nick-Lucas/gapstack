@@ -15,17 +15,15 @@ describe('lightType', () => {
       deepString: lt.string(),
       deepLiteral: lt.literal(fooBarLiteral2),
     })
-    const t = lt
-      .object({
-        someNum: lt.number(),
-        someOptionalNum: lt.number().optional(),
-        someDate: lt.date(),
-        someString: lt.string(),
-        someLiteral: lt.literal(fooBarLiteral),
-        obj: tObj,
-        arr: lt.array(tObj),
-      })
-      .seal()
+    const t = lt.object({
+      someNum: lt.number(),
+      someOptionalNum: lt.number().optional(),
+      someDate: lt.date(),
+      someString: lt.string(),
+      someLiteral: lt.literal(fooBarLiteral),
+      obj: tObj,
+      arr: lt.array(tObj),
+    })
 
     it('errors', () => {
       const input = {
