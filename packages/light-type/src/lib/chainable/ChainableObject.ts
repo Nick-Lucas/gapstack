@@ -1,5 +1,5 @@
 import {
-  LightObject,
+  AnyLightObject,
   InferLightObjectInput,
   InferLightObjectOutput,
 } from '../types/LightObject'
@@ -12,14 +12,17 @@ import { LightTypeAggregatedErrors } from '../errors/LightTypeAggregatedErrors'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
-type TI<LO extends LightObject> = Simplify<InferLightObjectInput<LO>>
-type TO<LO extends LightObject> = Simplify<InferLightObjectOutput<LO>>
+type GetTInput<LO extends AnyLightObject> = Simplify<InferLightObjectInput<LO>>
+type GetTOutput<LO extends AnyLightObject> = Simplify<
+  InferLightObjectOutput<LO>
+>
+type GetTKey<LO extends AnyLightObject> = Extract<keyof LO, string>
 
 export class ChainableObject<
-  TKey extends string,
-  TLightObject extends LightObject<TKey>,
-  TInput extends TI<TLightObject> = TI<TLightObject>,
-  TOutput extends TO<TLightObject> = TO<TLightObject>
+  TLightObject extends AnyLightObject,
+  TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
+  TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
+  TKey extends GetTKey<TLightObject> = GetTKey<TLightObject>
 > extends ChainableType<TInput, TOutput> {
   constructor(protected readonly lightObject: TLightObject) {
     const keys = Object.keys(lightObject) as TKey[]
@@ -55,10 +58,7 @@ export class ChainableObject<
     })
   }
 
-  extend = <
-    TExtendKey extends string,
-    TExtendLightObject extends LightObject<TExtendKey>
-  >(
+  extend = <TExtendLightObject extends AnyLightObject>(
     extendLightObject: TExtendLightObject
   ) => {
     const lightObject = this.lightObject

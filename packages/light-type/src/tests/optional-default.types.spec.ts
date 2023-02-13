@@ -12,7 +12,12 @@ function checkTypes() {
   type OptionalVal = InferInput<typeof optionalVal>
 
   // val should be totally optional, not just undefined
-  const optional: OptionalVal = {}
+  const optionalExample: OptionalVal = {}
+
+  // val should accept valid value
+  const optionalExample2: OptionalVal = {
+    val: 1,
+  }
 
   //
   // Optional should not be required
@@ -23,7 +28,22 @@ function checkTypes() {
   type DefaultVal = InferInput<typeof defaultVal>
 
   // val should be totally optional, not just undefined
-  const defaultExample: OptionalVal = {}
+  const defaultExample: DefaultVal = {}
+
+  // val should also accept null
+  const defaultExample2: DefaultVal = {
+    val: null,
+  }
+
+  // val should also accept undefined
+  const defaultExample3: DefaultVal = {
+    val: undefined,
+  }
+
+  // val should accept valid value
+  const defaultExample4: DefaultVal = {
+    val: 1,
+  }
 
   //
   // Nullable should be required but nullable
@@ -34,5 +54,20 @@ function checkTypes() {
   type NullableVal = InferInput<typeof nullableVal>
 
   // @ts-expect-error val should be nullable, but required
-  const nullable: OptionalVal = {}
+  const nullableExample: NullableVal = {}
+
+  // val should also accept null
+  const nullableExample2: NullableVal = {
+    val: null,
+  }
+
+  const nullableExample3: NullableVal = {
+    // @ts-expect-error val should not accept undefined
+    val: undefined,
+  }
+
+  // val should accept valid value
+  const nullableExample4: NullableVal = {
+    val: 1,
+  }
 }

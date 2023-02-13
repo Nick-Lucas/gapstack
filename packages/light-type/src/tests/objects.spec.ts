@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { lt } from '..'
+import { InferInput, lt } from '..'
 import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
@@ -83,6 +83,10 @@ describe('object methods', () => {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     function checkTypes() {
+      // @ts-expect-error Object types should be inferred by typescript and not permit an empty object assignment
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const a: InferInput<typeof extendedObject> = {}
+
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const numIsReplacedByBool: boolean = extendedObject._output.num
     }

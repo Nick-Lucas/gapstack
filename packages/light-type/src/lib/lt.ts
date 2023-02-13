@@ -1,6 +1,6 @@
 import { ChainableType } from './chainable/ChainableType'
 import { InferInput, InferOutput, LightType } from './types/LightType'
-import { LightObject } from './types/LightObject'
+import { AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
 import { LightTypeError } from './errors/LightTypeError'
@@ -11,10 +11,8 @@ import { LightTypeAggregatedErrors } from './errors/LightTypeAggregatedErrors'
 
 // TODO: extend all types with validations
 export const lt = {
-  object<TKey extends string, TLightObject extends LightObject<TKey>>(
-    lightObject: TLightObject
-  ) {
-    return new ChainableObject<TKey, TLightObject>(lightObject)
+  object<TLightObject extends AnyLightObject>(lightObject: TLightObject) {
+    return new ChainableObject<TLightObject>(lightObject)
   },
   array<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
     return new ChainableArray<TInput, TOutput>(valueType)
