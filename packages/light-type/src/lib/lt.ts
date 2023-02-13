@@ -1,4 +1,7 @@
-import { ChainableType } from './chainable/ChainableType'
+import {
+  ChainableType,
+  createExtendedChainableType,
+} from './chainable/ChainableType'
 import { InferInput, InferOutput, LightType } from './types/LightType'
 import { LightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
@@ -49,7 +52,7 @@ export const lt = {
     })
   },
   number() {
-    return new ChainableType<number, number>({
+    const t = new ChainableType<number, number>({
       parse(input) {
         if (typeof input === 'number') {
           return input
@@ -58,6 +61,33 @@ export const lt = {
         throw new LightTypeError({
           message: `Not a Number`,
           value: input,
+        })
+      },
+    })
+
+    return Object.assign(t, {
+      min(value: number) {
+        return t.after((num) => {
+          if (num < value) {
+            throw new LightTypeError({
+              message: 'Min Value is ' + value,
+              value: num,
+            })
+          }
+
+          return num
+        })
+      },
+      max(value: number) {
+        return t.after((num) => {
+          if (num > value) {
+            throw new LightTypeError({
+              message: 'Max Value is ' + value,
+              value: num,
+            })
+          }
+
+          return num
         })
       },
     })

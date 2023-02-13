@@ -1,5 +1,16 @@
 import { LightType } from '../types/LightType'
 
+export function createExtendedChainableType<
+  TInput,
+  TOutput,
+  TExtraMethods extends Record<string, unknown> = Record<never, never>
+>(
+  chainable: ChainableType<TInput, TOutput>,
+  extraMethods: (t: ChainableType<TInput, TOutput>) => TExtraMethods
+) {
+  return Object.assign(chainable, extraMethods(chainable))
+}
+
 export class ChainableType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>
 {
