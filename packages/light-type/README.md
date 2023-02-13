@@ -16,7 +16,6 @@ New feature goals:
 
 TODO list:
 
-* .extend should accept a record type (implement .and if necessary)
 * Object Unions / Discriminated Unions
 * Support type unions like .union([string, number])
 * Support literal strings being passed directly as types without wrapping in .literal([])
@@ -24,6 +23,9 @@ TODO list:
 * String Template Literals
 * Set up Compiler benchmarks
 * Set up Runtime benchmarks
+* .extend should accept a record type (implement .and if necessary)
+  * maybe implement .and?
+  * maybe implement .open to 'open' a type for extension?
 * Permit Parse to receive Unknown types
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
