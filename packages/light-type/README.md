@@ -16,15 +16,15 @@ New feature goals:
 
 TODO list:
 
-* Calculated values
-* Value coersion
 * Object Unions / Discriminated Unions
-* ISO Date parsing
+* Calculated values
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
-* Validators (min, max, length, string.regex, )
+* Validators (string.regex)
 * String Template Literals
 * Permit Parse to receive Unknown types
 * Set up Compiler benchmarks
 * Set up Runtime benchmarks
 * Allow "after" to receive a optional type parameter. Make "before" optional too
+* Bundled before/after parsers or a recommended library/pattern
+  * ISO Date parsing
