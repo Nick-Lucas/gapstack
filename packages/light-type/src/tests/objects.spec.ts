@@ -209,7 +209,7 @@ describe('object methods', () => {
 
       expect(pickedObject.parse(input)).toEqual({
         id: 1,
-        createdAt: new Date(),
+        createdAt: input.createdAt,
         createdBy: 'unknown',
       })
     })
