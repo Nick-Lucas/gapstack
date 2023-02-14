@@ -6,6 +6,7 @@ import { ChainableObject } from './chainable/ChainableObject'
 import { LightTypeError } from './errors/LightTypeError'
 import { ChainableArray } from './chainable/ChainableArray'
 import { LightTypeAggregatedErrors } from './errors/LightTypeAggregatedErrors'
+import { AnyTupleInput, AnyUnionInput } from './types/creators'
 
 // TODO: add .implements method to enforce recreation of deep TS type
 
@@ -192,7 +193,7 @@ export const lt = {
       },
     })
   },
-  tuple<T extends [LightType<unknown>, ...LightType<unknown>[]]>(tuple: T) {
+  tuple<T extends AnyTupleInput>(tuple: T) {
     type TInput = {
       [key in keyof T]: InferInput<T[key]>
     }
@@ -225,6 +226,40 @@ export const lt = {
 
         throw new LightTypeError({
           message: `Not a Tuple`,
+          value: input,
+        })
+      },
+    })
+  },
+  union<T extends AnyUnionInput>(types: T) {
+    //TODO: could these types be moved upward by genericising UnionInput?
+    type TInput = {
+      [key in keyof T]: InferInput<T[key]>
+    }[number]
+    type TOutput = {
+      [key in keyof T]: InferOutput<T[key]>
+    }[number]
+
+    return new ChainableType<TInput, TOutput>({
+      parse(input) {
+        for (const type of types) {
+          try {
+            return type.parse(input) as TOutput
+          } catch (e) {
+            if (
+              e instanceof LightTypeError ||
+              e instanceof LightTypeAggregatedErrors
+            ) {
+              // We're looking for a successful type
+              continue
+            } else {
+              throw e
+            }
+          }
+        }
+
+        throw new LightTypeError({
+          message: 'No Matching Type in Union',
           value: input,
         })
       },

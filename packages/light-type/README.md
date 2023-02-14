@@ -16,7 +16,8 @@ New feature goals:
 
 TODO list:
 
-* Object Unions / Discriminated Unions
+* Object Discriminated Unions
+* Remove .literal in favour of supporting primitives directly in .union?
 * Support type unions like .union([string, number])
 * Support literal strings being passed directly as types without wrapping in .literal([])
 * Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type
