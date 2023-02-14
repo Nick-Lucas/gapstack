@@ -16,7 +16,12 @@ New feature goals:
 
 TODO list:
 
+* probably more focus on being a drop-in Zod replacement is painful
+* .extends should not override, add .merge method. Maintain same behaviour as Zod
 * Object Discriminated Unions
+* Permit .default to operate only on null or only on undefined?
+  * Maybe separate into .default .defaultForNull .defaultForOptional 
+* Custom error messages for validation errors
 * Remove .literal in favour of supporting primitives directly in .union?
 * Support type unions like .union([string, number])
 * Support literal strings being passed directly as types without wrapping in .literal([])
@@ -30,8 +35,11 @@ TODO list:
 * Permit Parse to receive Unknown types
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
-* More Validators (string.regex, arrays, sets, )
+* More validators (.assert(boolean, "message") string.regex|startsWith|endsWith|contains, arrays, sets, )
 * Calculated values
 * Allow "after" to receive a optional type parameter. Make "before" optional too
 * Bundled before/after parsers or a recommended library/pattern
   * ISO Date parsing
+
+Docs on performance:
+- https://github.com/microsoft/TypeScript/wiki/Performance

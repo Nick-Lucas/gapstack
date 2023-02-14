@@ -13,6 +13,7 @@
     "docs:deploy": "yarn run docs:base:build && yarn run docs:base:publish",
     "docs": "nx storybook docs",
     "light-type-benchmark:start": "yarn nx run-many --target=serve --projects=light-type-benchmarks*",
+    "light-type-benchmark-2:run": "yarn node -r ts-node/register packages/light-type-benchmarks-2/run.ts",
     "tsc:check": "yarn run tsc -p tsconfig.base.json --noEmit --incremental false --jsx react-jsx --allowSyntheticDefaultImports",
     "tsc:trace": "yarn run tsc:check --generateTrace ./.trace"
   },
