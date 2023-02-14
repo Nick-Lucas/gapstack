@@ -122,6 +122,14 @@ function benchmarkCompiles() {
 
   console.log('Benchmarking', collections.length, 'collections')
 
+  const overallResults: Record<
+    string,
+    {
+      winner: Framework
+      by: string
+      percent: string
+    }
+  > = {}
   for (const { name, variants } of collections) {
     console.log('Benchmarking Compiles for case:', `"${name}"`)
 
@@ -173,7 +181,25 @@ function benchmarkCompiles() {
       console.log('Average results')
       console.table(resultsByFramework)
     }
+
+    const winner =
+      resultsByFramework['lt']! > resultsByFramework['zod']! ? 'zod' : 'lt'
+
+    const by = Math.abs(resultsByFramework['lt']! - resultsByFramework['zod']!)
+    const percent = Math.trunc(
+      (by / Math.max(...Object.values(resultsByFramework))) * 100
+    )
+
+    // TODO: support multiple variants
+    overallResults[name] = {
+      winner: winner,
+      by: by + 'ms',
+      percent: percent + '%',
+    }
   }
+
+  console.log('Results')
+  console.table(overallResults)
 }
 
 function takeAverageMS(_times: number[], samplesPer: number) {
