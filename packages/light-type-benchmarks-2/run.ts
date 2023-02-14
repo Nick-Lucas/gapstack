@@ -182,8 +182,9 @@ function takeAverageMS(_times: number[], samplesPer: number) {
   times.sort()
 
   // Remove Outliers
-  console.log('    Discarding Slowest', [times.pop(), times.pop()])
-  console.log('    Discarding Fastest', times.splice(0, 2))
+  times.pop()
+  times.pop()
+  times.splice(0, 2)
 
   const averageMS = times.reduce((sum, num) => sum + num, 0) / times.length
 
