@@ -112,7 +112,7 @@ function benchmarkCompiles() {
     const { timeMS } = typecheck(baselineFile)
     times.push(timeMS)
   }
-  const baselineMS = takeTimeMeasurement(0, times, samplesPer)
+  const baselineMS = takeTimeMeasurement(0, times)
   console.log('  First calculated baseline time of ', baselineMS)
   console.log('')
 
@@ -169,11 +169,7 @@ function benchmarkCompiles() {
           )
         }
 
-        resultsByFramework[framework] = takeTimeMeasurement(
-          baselineMS,
-          times,
-          samplesPer
-        )
+        resultsByFramework[framework] = takeTimeMeasurement(baselineMS, times)
       }
 
       console.log('Average results')
@@ -203,11 +199,7 @@ function benchmarkCompiles() {
   console.table(overallResults)
 }
 
-function takeTimeMeasurement(
-  baselineTime: number,
-  _times: number[],
-  samplesPer: number
-) {
+function takeTimeMeasurement(baselineTime: number, _times: number[]) {
   const times = [..._times]
 
   times.sort()
