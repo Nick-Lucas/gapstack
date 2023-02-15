@@ -18,8 +18,16 @@ import fs from 'fs'
 import path from 'path'
 import { performance } from 'perf_hooks'
 
-const Frameworks = ['lt', 'zod'] as const
-type Framework = typeof Frameworks[number]
+const FrameworkLabels = {
+  lt: 'Light Type',
+  ts: 'Typescript (Interfaces)',
+  tst: 'Typescript (Types)',
+  zod: 'Zod',
+} as const
+type Framework = keyof typeof FrameworkLabels
+type FrameworkLabel = typeof FrameworkLabels[Framework]
+const Frameworks = Object.keys(FrameworkLabels) as Framework[]
+
 const Cases = 'cases' as const
 
 type BenchmarkFile = {
@@ -70,13 +78,17 @@ const BASELINE_FILENAME = '.empty-baseline.ts'
 function listBenchmarks(): Collection[] {
   const collections: Record<string, Collection> = {}
 
-  const files = getDeepFiles(path.join(__dirname, 'benchmarks')).filter(
-    (f) => f !== BASELINE_FILENAME
-  )
+  const benchmarksDir = path.join(__dirname, 'benchmarks')
+  const files = getDeepFiles(path.join(__dirname, 'benchmarks'))
+    .filter((f) => !f.endsWith(BASELINE_FILENAME))
+    .map((f) => f.replace(benchmarksDir, ''))
 
   for (const f of files) {
     const segments = f.split(/\//)
-    const name = segments.slice(0, segments.length - 1).join('/')
+    const name = segments
+      .slice(0, segments.length - 1)
+      .filter(Boolean)
+      .join('.')
     const [variantName, maybeFramework] =
       segments[segments.length - 1].split(/\./)
 
@@ -138,15 +150,7 @@ function benchmarkCompiles() {
 
   console.log('Benchmarking', collections.length, 'collections')
 
-  const overallResults: Record<
-    string,
-    {
-      winner: Framework
-      time: string
-      by: string
-      percent: string
-    }
-  > = {}
+  const overallResultsTable: Record<string, Record<FrameworkLabel, string>> = {}
   for (const { name, variants } of collections) {
     console.log('Benchmarking Compiles for case:', `"${name}"`)
 
@@ -155,33 +159,23 @@ function benchmarkCompiles() {
 
       const resultsByFramework: Partial<Record<Framework, number>> = {}
       for (const { relativePath, fullPath, framework } of benchmarks) {
+        console.log('    Benchmarking Compile for', relativePath)
+
         let times: number[] = []
         for (let i = 0; i < samplesPer; i++) {
-          console.log('    Benchmarking Compile for', relativePath)
-
           const { program, emitResult, timeMS } = typecheck(fullPath)
-
-          //
-          // Report Time
-          //
 
           times.push(timeMS)
 
-          //
-          // Report Errors
-          //
-
-          let preEmitDiagnostics = getPreEmitDiagnostics(program).concat(
-            emitResult.diagnostics
-          )
-          for (const d of preEmitDiagnostics) {
-            console.error('    PreEmit Diagnostic Error: ', d.messageText)
-            throw 'File could not compile: ' + relativePath
-          }
+          assertNoErrors(program, emitResult, relativePath)
 
           const relativeTimeMS = timeMS - baselineMS
           console.debug(
-            `    Compiled sample ${i}/${samplesPer} in ${relativeTimeMS}ms (relative to baseline)`
+            `      Compiled sample `,
+            i,
+            '/',
+            samplesPer,
+            `in ${Math.trunc(relativeTimeMS)}ms (relative to baseline)`
           )
         }
 
@@ -191,28 +185,42 @@ function benchmarkCompiles() {
       console.log('Average results')
       console.table(resultsByFramework)
 
-      const winner =
-        resultsByFramework['lt']! > resultsByFramework['zod']! ? 'zod' : 'lt'
-      const time =
-        winner === 'lt' ? resultsByFramework['lt']! : resultsByFramework['zod']!
-      const by = Math.abs(
-        resultsByFramework['lt']! - resultsByFramework['zod']!
-      )
-      const percent = Math.trunc(
-        (by / Math.max(...Object.values(resultsByFramework))) * 100
-      )
-
-      overallResults[`${name}: ${variant}`] = {
-        winner: winner,
-        time: time + 'ms',
-        by: by + 'ms',
-        percent: percent + '%',
+      function formatTime(framework: Framework) {
+        if (typeof resultsByFramework[framework] === 'undefined') {
+          return 'n/a'
+        }
+        return resultsByFramework[framework] + 'ms'
+      }
+      overallResultsTable[`${name}: ${variant}`] = {
+        'Light Type': formatTime('lt'),
+        Zod: formatTime('zod'),
+        'Typescript (Interfaces)': formatTime('ts'),
+        'Typescript (Types)': formatTime('tst'),
       }
     }
   }
 
   console.log('Results')
-  console.table(overallResults)
+  console.table(overallResultsTable, [
+    'Typescript (Interfaces)',
+    'Typescript (Types)',
+    'Light Type',
+    'Zod',
+  ] as FrameworkLabel[])
+}
+
+function assertNoErrors(
+  program: Program,
+  emitResult: ReturnType<Program['emit']>,
+  relativePath: string
+) {
+  let preEmitDiagnostics = getPreEmitDiagnostics(program).concat(
+    emitResult.diagnostics
+  )
+  for (const d of preEmitDiagnostics) {
+    console.error('    PreEmit Diagnostic Error: ', d.messageText)
+    throw 'File could not compile: ' + relativePath
+  }
 }
 
 function takeTimeMeasurement(baselineTime: number, _times: number[]) {
@@ -239,6 +247,9 @@ function typecheck(fullPath: string) {
     allowSyntheticDefaultImports: true,
     noEmit: true,
     skipLibCheck: true,
+    paths: {
+      'dist-lt': ['../../dist/packages/light-type/src'],
+    },
   })
 
   const start = performance.now()
