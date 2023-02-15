@@ -112,7 +112,7 @@ function benchmarkCompiles() {
     const { timeMS } = typecheck(baselineFile)
     times.push(timeMS)
   }
-  const baselineMS = takeAverageMS(times, samplesPer)
+  const baselineMS = takeTimeMeasurement(0, times, samplesPer)
   console.log('  First calculated baseline time of ', baselineMS)
   console.log('')
 
@@ -126,6 +126,7 @@ function benchmarkCompiles() {
     string,
     {
       winner: Framework
+      time: string
       by: string
       percent: string
     }
@@ -133,10 +134,10 @@ function benchmarkCompiles() {
   for (const { name, variants } of collections) {
     console.log('Benchmarking Compiles for case:', `"${name}"`)
 
-    const resultsByFramework: Partial<Record<Framework, number>> = {}
     for (const { variant, benchmarks, cases } of Object.values(variants)) {
       console.log('  Variant:', variant)
 
+      const resultsByFramework: Partial<Record<Framework, number>> = {}
       for (const { relativePath, fullPath, framework } of benchmarks) {
         let times: number[] = []
         for (let i = 0; i < samplesPer; i++) {
@@ -162,39 +163,39 @@ function benchmarkCompiles() {
             throw 'File could not compile: ' + relativePath
           }
 
+          const relativeTimeMS = timeMS - baselineMS
           console.debug(
-            '    Compiled sample',
-            i,
-            '/',
-            samplesPer,
-            '-',
-            timeMS - baselineMS,
-            'ms'
+            `    Compiled sample ${i}/${samplesPer} in ${relativeTimeMS}ms (relative to baseline)`
           )
         }
 
-        resultsByFramework[framework] = Math.trunc(
-          takeAverageMS(times, samplesPer) - baselineMS
+        resultsByFramework[framework] = takeTimeMeasurement(
+          baselineMS,
+          times,
+          samplesPer
         )
       }
 
       console.log('Average results')
       console.table(resultsByFramework)
-    }
 
-    const winner =
-      resultsByFramework['lt']! > resultsByFramework['zod']! ? 'zod' : 'lt'
+      const winner =
+        resultsByFramework['lt']! > resultsByFramework['zod']! ? 'zod' : 'lt'
+      const time =
+        winner === 'lt' ? resultsByFramework['lt']! : resultsByFramework['zod']!
+      const by = Math.abs(
+        resultsByFramework['lt']! - resultsByFramework['zod']!
+      )
+      const percent = Math.trunc(
+        (by / Math.max(...Object.values(resultsByFramework))) * 100
+      )
 
-    const by = Math.abs(resultsByFramework['lt']! - resultsByFramework['zod']!)
-    const percent = Math.trunc(
-      (by / Math.max(...Object.values(resultsByFramework))) * 100
-    )
-
-    // TODO: support multiple variants
-    overallResults[name] = {
-      winner: winner,
-      by: by + 'ms',
-      percent: percent + '%',
+      overallResults[`${name}: ${variant}`] = {
+        winner: winner,
+        time: time + 'ms',
+        by: by + 'ms',
+        percent: percent + '%',
+      }
     }
   }
 
@@ -202,19 +203,25 @@ function benchmarkCompiles() {
   console.table(overallResults)
 }
 
-function takeAverageMS(_times: number[], samplesPer: number) {
+function takeTimeMeasurement(
+  baselineTime: number,
+  _times: number[],
+  samplesPer: number
+) {
   const times = [..._times]
 
   times.sort()
 
   // Remove Outliers
-  times.pop()
-  times.pop()
-  times.splice(0, 2)
+  // times.pop()
+  // times.pop()
+  // times.splice(0, 2)
+  // const ms = times.reduce((sum, num) => sum + num, 0) / times.length
 
-  const averageMS = times.reduce((sum, num) => sum + num, 0) / times.length
+  // Take the simple best time
+  const ms = times[0]
 
-  return averageMS
+  return Math.trunc(ms - baselineTime)
 }
 
 function typecheck(fullPath: string) {
