@@ -98,7 +98,7 @@ describe('object methods', () => {
         str: 'hello',
         bool: false,
         createdAt: new Date(),
-        createdBy: null,
+        createdBy: undefined,
       }
 
       expect(mergedObject.parse({ ...input })).toEqual({
@@ -169,7 +169,7 @@ describe('object methods', () => {
         str: 'hello',
         bool: false,
         createdAt: new Date(),
-        createdBy: null,
+        createdBy: undefined,
       }
 
       expect(extendedObject.parse({ ...input })).toEqual({

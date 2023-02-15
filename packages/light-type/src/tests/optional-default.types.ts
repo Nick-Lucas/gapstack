@@ -20,7 +20,7 @@ function checkTypes() {
   }
 
   //
-  // Optional should not be required
+  // Default should allow undefined
 
   const defaultVal = lt.object({
     val: lt.number().default(0),
@@ -30,8 +30,8 @@ function checkTypes() {
   // val should be totally optional, not just undefined
   const defaultExample: DefaultVal = {}
 
-  // val should also accept null
   const defaultExample2: DefaultVal = {
+    // @ts-expect-error val should not accept null
     val: null,
   }
 
@@ -42,6 +42,32 @@ function checkTypes() {
 
   // val should accept valid value
   const defaultExample4: DefaultVal = {
+    val: 1,
+  }
+
+  //
+  // defaultNull should allow null
+
+  const defaultNullVal = lt.object({
+    val: lt.number().defaultNull(0),
+  })
+  type DefaultNullVal = InferInput<typeof defaultNullVal>
+
+  // @ts-expect-error empty object is not allowed
+  const defaultNullExample: DefaultNullVal = {}
+
+  const defaultNullExample2: DefaultNullVal = {
+    val: null,
+  }
+
+  // val should not accept undefined
+  const defaultNullExample3: DefaultNullVal = {
+    // @ts-expect-error undefined not allowed
+    val: undefined,
+  }
+
+  // val should accept valid value
+  const defaultNullExample4: DefaultNullVal = {
     val: 1,
   }
 

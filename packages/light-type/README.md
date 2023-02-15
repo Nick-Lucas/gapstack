@@ -17,11 +17,10 @@ New feature goals:
 TODO list:
 
 * probably more focus on being a drop-in Zod replacement is painful
-* Object Discriminated Unions
-* Permit .default to operate only on null or only on undefined?
-  * Maybe separate into .default .defaultForNull .defaultForOptional 
+* Convert Chainables to store a pipeline and simply return `this` but cast to the new generic type? Check performance impact!
+  * Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type
+* Object Discriminated Unions - later, they auto-discriminate just not at great runtime performance
 * Custom error messages for validation errors
-* Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type
 * String Template Literals
 * Set up Runtime benchmarks
   * Consider changing all chainable methods to prototype methods if performance can be improved

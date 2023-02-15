@@ -74,7 +74,7 @@ describe('lightType', () => {
           }),
           new LightTypeError({
             path: 'arr.1.deepLiteral',
-            message: 'Does not match literal, expected one of 0, bar',
+            message: 'Does not match literal, expected one of: 0, bar',
             value: null,
           })
         )

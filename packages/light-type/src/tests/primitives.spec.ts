@@ -108,7 +108,25 @@ describe('primitives', () => {
       describe('default', () => {
         const t = type.default(0)
 
-        it.each([null, undefined])('defaults to %p', (input: any) => {
+        it.each([undefined])('defaults to %p', (input: any) => {
+          expect(t.parse(input)).toEqual(0)
+        })
+
+        if (invalidInputs.length > 0)
+          it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
+            expect(() => t.parse(input)).toThrowError(
+              new LightTypeError({
+                message: error,
+                value: input,
+              })
+            )
+          })
+      })
+
+      describe('defaultNull', () => {
+        const t = type.defaultNull(0)
+
+        it.each([null])('defaults to %p', (input: any) => {
           expect(t.parse(input)).toEqual(0)
         })
 

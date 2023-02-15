@@ -61,12 +61,27 @@ export class ChainableType<TInput, TOutput = TInput>
 
   default = (
     defaultValue: TOutput
-  ): ChainableType<TInput | undefined | null, TOutput> => {
+  ): ChainableType<TInput | undefined, TOutput> => {
     const t = this.t
 
-    return new ChainableType<TInput | undefined | null, TOutput>({
+    return new ChainableType<TInput | undefined, TOutput>({
       parse(input) {
-        if (input === undefined || input === null) {
+        if (input === undefined) {
+          return defaultValue
+        }
+        return t.parse(input)
+      },
+    })
+  }
+
+  defaultNull = (
+    defaultValue: TOutput
+  ): ChainableType<TInput | null, TOutput> => {
+    const t = this.t
+
+    return new ChainableType<TInput | null, TOutput>({
+      parse(input) {
+        if (input === null) {
           return defaultValue
         }
         return t.parse(input)
