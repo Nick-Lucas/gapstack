@@ -66,14 +66,14 @@ describe('object', () => {
 })
 
 describe('object methods', () => {
-  describe('extend', () => {
+  describe('merge', () => {
     const simpleObject = lt.object({
       num: lt.number(),
       str: lt.string(),
       bool: lt.boolean(),
     })
 
-    const extendedObject = simpleObject.extend({
+    const mergedObject = simpleObject.merge({
       id: lt.number(),
       createdAt: lt.date(),
       createdBy: lt.string().default('unknown'),
@@ -85,16 +85,87 @@ describe('object methods', () => {
     function checkTypes() {
       // @ts-expect-error Object types should be inferred by typescript and not permit an empty object assignment
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const a: InferInput<typeof extendedObject> = {}
+      const a: InferInput<typeof mergedObject> = {}
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const numIsReplacedByBool: boolean = extendedObject._output.num
+      const numIsReplacedByBool: boolean = mergedObject._output.num
     }
 
-    it('should parse a extended type', () => {
+    it('should parse a merged type', () => {
       const input = {
         id: 1542,
         num: true,
+        str: 'hello',
+        bool: false,
+        createdAt: new Date(),
+        createdBy: null,
+      }
+
+      expect(mergedObject.parse({ ...input })).toEqual({
+        ...input,
+        createdBy: 'unknown',
+      })
+    })
+
+    it('should throw a invalid', () => {
+      const input = {
+        num: 1,
+        str: 'hello',
+        bool: false,
+      } as any
+
+      throws(
+        () => mergedObject.parse({ ...input }),
+        aggregated(
+          new LightTypeError({
+            path: 'id',
+            message: 'Not a Number',
+            value: undefined,
+          }),
+          new LightTypeError({
+            path: 'num',
+            message: 'Not a Boolean',
+            value: 1,
+          }),
+          new LightTypeError({
+            path: 'createdAt',
+            message: 'Not a Date',
+            value: undefined,
+          })
+        )
+      )
+    })
+  })
+
+  describe('extend', () => {
+    const simpleObject = lt.object({
+      num: lt.number(),
+      str: lt.string(),
+      bool: lt.boolean(),
+    })
+
+    const extendedObject = simpleObject.extend({
+      id: lt.number(),
+      createdAt: lt.date(),
+      createdBy: lt.string().default('unknown'),
+      // Will be stripped:
+      num: lt.boolean(),
+    })
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    function checkTypes() {
+      // @ts-expect-error Object types should be inferred by typescript and not permit an empty object assignment
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const a: InferInput<typeof mergedObject> = {}
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numIsReplacedByBool: number = extendedObject._output.num
+    }
+
+    it('should parse a merged type', () => {
+      const input = {
+        id: 1542,
+        num: 1,
         str: 'hello',
         bool: false,
         createdAt: new Date(),
@@ -109,7 +180,7 @@ describe('object methods', () => {
 
     it('should throw a invalid', () => {
       const input = {
-        num: 1,
+        num: true,
         str: 'hello',
         bool: false,
       } as any
@@ -124,8 +195,8 @@ describe('object methods', () => {
           }),
           new LightTypeError({
             path: 'num',
-            message: 'Not a Boolean',
-            value: 1,
+            message: 'Not a Number',
+            value: true,
           }),
           new LightTypeError({
             path: 'createdAt',

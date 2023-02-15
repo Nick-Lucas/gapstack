@@ -71,6 +71,19 @@ export class ChainableObject<
     const lightObject = this.lightObject
 
     const extendedLightObject = mergeLightObjects(
+      extendLightObject,
+      lightObject
+    )
+
+    return lt.object(extendedLightObject)
+  }
+
+  merge = <TExtendLightObject extends AnyLightObject>(
+    extendLightObject: TExtendLightObject
+  ) => {
+    const lightObject = this.lightObject
+
+    const extendedLightObject = mergeLightObjects(
       lightObject,
       extendLightObject
     )
