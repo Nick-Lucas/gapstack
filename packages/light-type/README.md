@@ -22,7 +22,7 @@ TODO list:
 * Permit .default to operate only on null or only on undefined?
   * Maybe separate into .default .defaultForNull .defaultForOptional 
 * Custom error messages for validation errors
-* Remove .literal in favour of supporting primitives directly in .union?
+* Remove .literal in favour of supporting primitives directly in .union. Replace .literal with a zod-like interface
 * Support type unions like .union([string, number])
 * Support literal strings being passed directly as types without wrapping in .literal([])
 * Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type

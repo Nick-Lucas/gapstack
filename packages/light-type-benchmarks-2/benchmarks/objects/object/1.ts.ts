@@ -4,5 +4,5 @@ export interface CarDto {
   age: number
   brand: string
   isScrapped: boolean
-  previousOwners: any[]
+  previousOwners: unknown[]
 }
