@@ -54,15 +54,31 @@ function isFramework(
   }
 }
 
+function getDeepFiles(dir: string): string[] {
+  const dirents = fs.readdirSync(dir, { withFileTypes: true })
+
+  const files = dirents.map((dirent) => {
+    const res = path.resolve(dir, dirent.name)
+    return dirent.isDirectory() ? getDeepFiles(res) : res
+  })
+
+  return Array.prototype.concat(...files)
+}
+
+const BASELINE_FILENAME = '.empty-baseline.ts'
+
 function listBenchmarks(): Collection[] {
   const collections: Record<string, Collection> = {}
 
-  const files = fs
-    .readdirSync(path.join(__dirname, 'benchmarks'))
-    .filter((f) => !f.startsWith('.'))
+  const files = getDeepFiles(path.join(__dirname, 'benchmarks')).filter(
+    (f) => f !== BASELINE_FILENAME
+  )
 
   for (const f of files) {
-    const [name, variantName, maybeFramework] = f.split(/\./)
+    const segments = f.split(/\//)
+    const name = segments.slice(0, segments.length - 1).join('/')
+    const [variantName, maybeFramework] =
+      segments[segments.length - 1].split(/\./)
 
     isFramework(f, maybeFramework)
 
@@ -105,7 +121,7 @@ function benchmarkCompiles() {
   // The time which typescript takes to load a file and setup
   //
 
-  const baselineFile = path.join(__dirname, 'benchmarks', '.empty-baseline.ts')
+  const baselineFile = path.join(__dirname, 'benchmarks', BASELINE_FILENAME)
   const times: number[] = []
   for (let i = 0; i < samplesPer; i++) {
     console.log('  Taking baseline measurement', i, '/', samplesPer)

@@ -1,8 +1,4 @@
-import {
-  lt,
-  InferInput,
-  InferOutput,
-} from '../../../dist/packages/light-type/src'
+import { lt } from 'dist-lt'
 
 export const EntityDto = lt.object({
   id: lt.number(),

@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "types": ["node"],
+    "paths": {
+      "dist-lt": ["../../dist/packages/light-type/src"]
+    }
+  },
+  "include": ["**/*.ts"]
+}

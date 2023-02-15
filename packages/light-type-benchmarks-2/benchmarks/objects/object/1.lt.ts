@@ -1,4 +1,4 @@
-import { lt } from '../../../dist/packages/light-type/src'
+import { lt } from 'dist-lt'
 
 export const CarDto = lt.object({
   id: lt.number(),
