@@ -4,4 +4,5 @@ A collection of utilities to fill gaps in the Javascript/Typescript and React ec
 
 |     | Package                                                           |
 | --- | ----------------------------------------------------------------- |
-| 🟢 | [react-imperative-render](./packages/imperative-render/README.md) |
+| 🟢   | [react-imperative-render](./packages/imperative-render/README.md) |
+| 🟠   | [light-type](./packages/light-type/README.md)                     |
