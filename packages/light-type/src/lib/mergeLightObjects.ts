@@ -1,13 +1,9 @@
 import { AnyLightObject } from './types/LightObject'
-import { Simplify } from './types/utils'
 
 /**
  * Merge B onto A and return, replacing conflicting keys
  */
-export type MergeLightObjects<
-  A extends AnyLightObject,
-  B extends AnyLightObject
-> = {
+export type MergeLightObjects<A, B> = {
   [K in keyof A | keyof B]: K extends keyof B
     ? B[K]
     : K extends keyof A
@@ -25,5 +21,5 @@ export function mergeLightObjects<
   return {
     ...a,
     ...b,
-  } as Simplify<MergeLightObjects<A, B>>
+  } as MergeLightObjects<A, B>
 }
