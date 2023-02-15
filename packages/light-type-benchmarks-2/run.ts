@@ -27,6 +27,9 @@ const args = parseArgs({
     },
   },
 })
+const selectedTestNames = args.values.name
+
+console.log('Running tests matching names:', selectedTestNames ?? '{any}')
 
 const FrameworkLabels = {
   lt: 'Light Type',
@@ -162,6 +165,11 @@ function benchmarkCompiles() {
 
   const overallResultsTable: Record<string, Record<FrameworkLabel, string>> = {}
   for (const { name, variants } of collections) {
+    if (!(selectedTestNames?.includes(name) ?? true)) {
+      console.log('Skipping benchmarks for:', `"${name}"`)
+      continue
+    }
+
     console.log('Benchmarking Compiles for case:', `"${name}"`)
 
     for (const { variant, benchmarks, cases } of Object.values(variants)) {
