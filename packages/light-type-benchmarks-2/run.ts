@@ -3,6 +3,7 @@ import { parseArgs } from 'util'
 import { Framework, FrameworkLabel } from './types'
 import { BASELINE_FILENAME, listBenchmarks } from './listBenchmarks'
 import { typecheck, assertNoErrors } from './typecheck'
+import { minimatch } from 'minimatch'
 
 //
 // Inputs
@@ -10,6 +11,7 @@ import { typecheck, assertNoErrors } from './typecheck'
 
 const args = parseArgs({
   options: {
+    // Will match using https://github.com/isaacs/minimatch (supports simple globbing syntax)
     name: {
       type: 'string',
       multiple: true,
@@ -53,8 +55,12 @@ function benchmarkCompiles() {
 
   const overallResultsTable: Record<string, Record<FrameworkLabel, string>> = {}
   for (const { name, variants } of collections) {
-    if (!(selectedTestNames?.includes(name) ?? true)) {
-      console.log('gsSkipping benchmarks for:', `"${name}"`)
+    if (
+      Array.isArray(selectedTestNames) &&
+      selectedTestNames?.length > 0 &&
+      !selectedTestNames.some((pattern) => minimatch(name, pattern))
+    ) {
+      console.log('Skipping benchmarks for:', `"${name}"`)
       continue
     }
 
