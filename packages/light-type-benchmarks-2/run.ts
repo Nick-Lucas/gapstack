@@ -17,6 +17,16 @@ import { createProgram, getPreEmitDiagnostics, Program } from 'typescript'
 import fs from 'fs'
 import path from 'path'
 import { performance } from 'perf_hooks'
+import { parseArgs } from 'util'
+
+const args = parseArgs({
+  options: {
+    name: {
+      type: 'string',
+      multiple: true,
+    },
+  },
+})
 
 const FrameworkLabels = {
   lt: 'Light Type',
