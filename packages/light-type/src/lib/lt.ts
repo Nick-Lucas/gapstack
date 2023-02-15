@@ -89,8 +89,9 @@ export const lt = {
       },
     })
   },
-  literal<TLiteral extends Primitive>(literal: readonly TLiteral[]) {
-    const values = new Set(literal)
+  literal<TLiteral extends Primitive>(literal: TLiteral | readonly TLiteral[]) {
+    const values = new Set(Array.isArray(literal) ? literal : [literal])
+    const list = Array.from(values).join(', ')
 
     return new ChainableType<LiteralBase<TLiteral>, TLiteral>({
       parse(input: unknown) {
@@ -99,9 +100,7 @@ export const lt = {
         }
 
         throw new LightTypeError({
-          message: `Does not match literal, expected one of ${Array.from(
-            values
-          ).join(', ')}`,
+          message: `Does not match literal, expected one of: ${list}`,
           value: input,
         })
       },
@@ -297,7 +296,6 @@ export const lt = {
       },
     })
   },
-
   before<TBeforeResult, TType extends LightType<TBeforeResult>>(
     preprocess: (input: unknown) => TBeforeResult,
     type: TType

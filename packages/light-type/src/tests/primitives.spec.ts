@@ -57,11 +57,32 @@ describe('primitives', () => {
       'Not a Date',
     ],
     [
-      'Literal',
-      lt.literal(['foo', 'bar', 1] as const),
-      ['foo', 'bar', 1],
-      ['', 'true', 0, true, false, new Date()],
-      'Does not match literal, expected one of foo, bar, 1',
+      'Literal Union',
+      lt.literal(['foo', 'bar', 1, true]),
+      ['foo', 'bar', 1, true],
+      ['', '1', 'false', 'true', 0, false, new Date()],
+      'Does not match literal, expected one of: foo, bar, 1, true',
+    ],
+    [
+      'Literal String',
+      lt.literal('foo'),
+      ['foo'],
+      ['', 'bar', 0, true, new Date()],
+      'Does not match literal, expected one of: foo',
+    ],
+    [
+      'Literal Number',
+      lt.literal(1),
+      [1],
+      ['1', '', 'bar', 0, true, new Date()],
+      'Does not match literal, expected one of: 1',
+    ],
+    [
+      'Literal Boolean',
+      lt.literal(true),
+      [true],
+      ['true', '', 'bar', 1, 0, false, new Date()],
+      'Does not match literal, expected one of: true',
     ],
   ]
 
