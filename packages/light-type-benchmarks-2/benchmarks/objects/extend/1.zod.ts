@@ -24,6 +24,3 @@ export const CarDto = EntityDto.extend({
     .optional(),
   previousOwners: z.array(PersonDto).default([]),
 })
-
-export type DbCar = typeof CarDto['_input']
-export type Brand = typeof CarDto['_output']['brand']
