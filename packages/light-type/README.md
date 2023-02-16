@@ -16,24 +16,32 @@ New feature goals:
 
 TODO list:
 
-* probably more focus on being a drop-in Zod replacement is painful
-* Convert Chainables to store a pipeline and simply return `this` but cast to the new generic type? Check performance impact!
-  * Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type
-* Object Discriminated Unions - later, they auto-discriminate just not at great runtime performance
+* probably more focus on being a drop-in Zod replacement as this is painful
+
+<!-- Now -->
+* Permit Parse to receive Unknown types
 * Custom error messages for validation errors
-* String Template Literals
-* Set up Runtime benchmarks
-  * Consider changing all chainable methods to prototype methods if performance can be improved
 * .extend should accept a record type (implement .and if necessary)
   * maybe implement .and?
   * maybe implement .open to 'open' a type for extension?
-* Permit Parse to receive Unknown types
+
+<!-- Next -->
+* Allow before to be chained the same as pipe - maybe just rename to pipe?
+* Structure of classes, options:
+  * Convert Chainables to store a pipeline and simply return `this`?
+    * https://stackoverflow.com/questions/44204129/extending-builder-in-typescript
+  * Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type with specially implemented versions of each method
+* Object Discriminated Unions - later, they auto-discriminate just not at great runtime performance
+* More validators (.assert(boolean, "message") string.regex|startsWith|endsWith|contains, arrays, sets, )
+
+<!-- After Next -->
+* String Template Literals
+* Set up Runtime benchmarks
+  * Consider changing all chainable methods to prototype methods if performance can be improved
 * .partial("deep" | "shallow")
 * .required("deep" | "shallow")
-* More validators (.assert(boolean, "message") string.regex|startsWith|endsWith|contains, arrays, sets, )
 * Calculated values
-* Allow "after" to receive a optional type parameter. Make "before" optional too
-* Bundled before/after parsers or a recommended library/pattern
+* Bundled parsers or a recommended library/pattern
   * ISO Date parsing
 
 Docs on performance:
