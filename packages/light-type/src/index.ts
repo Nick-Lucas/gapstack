@@ -1,2 +1,4 @@
-export * from './lib/light-type'
-export * from './lib/base-types'
+export * from './lib'
+
+import { lt } from './lib'
+export default lt

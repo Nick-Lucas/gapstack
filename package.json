@@ -7,12 +7,17 @@
     "test": "jest",
     "build": "nx run-many --target=build --production",
     "publish:imperative-render": "cd dist/packages/imperative-render && npm publish --access=public",
+    "publish:light-type": "cd dist/packages/light-type && npm publish --access=public && cd - || cd -",
     "docs:base:build": "nx build-storybook docs",
     "docs:base:publish": "gh-pages -d dist/storybook/docs",
     "docs:deploy": "yarn run docs:base:build && yarn run docs:base:publish",
     "docs": "nx storybook docs",
     "light-type-benchmark:start": "yarn nx run-many --target=serve --projects=light-type-benchmarks*",
-    "tsc:trace": "yarn run tsc -p tsconfig.base.json --noEmit --incremental false --jsx react-jsx --allowSyntheticDefaultImports --generateTrace ./.trace"
+    "light-type-benchmark-2:run": "yarn node -r ts-node/register packages/light-type-benchmarks-2/run.ts",
+    "light-type-benchmark-2:run:mac": "taskpolicy -c utility yarn run light-type-benchmark-2:run",
+    "light-type-benchmark-2:run:nux": "taskset -c 1 yarn run light-type-benchmark-2:run",
+    "tsc:check": "yarn run tsc -p tsconfig.base.json --noEmit --incremental false --jsx react-jsx --allowSyntheticDefaultImports",
+    "tsc:trace": "yarn run tsc:check --generateTrace ./.trace"
   },
   "private": true,
   "dependencies": {
@@ -80,6 +85,7 @@
     "gh-pages": "^4.0.0",
     "jest": "28.1.1",
     "jest-environment-jsdom": "28.1.1",
+    "minimatch": "^6.2.0",
     "nx": "15.6.3",
     "prettier": "^2.6.2",
     "react-refresh": "^0.10.0",
