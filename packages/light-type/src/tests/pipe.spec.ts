@@ -16,6 +16,8 @@ function checkTypes() {
     // @ts-expect-error should be statically typed
     (notNum) => notNum + 1
   )
+
+  lt.string().pipe((s) => (s ? 'bar' : undefined), lt.literal('foo'))
 }
 
 describe('pipe', () => {

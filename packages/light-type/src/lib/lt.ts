@@ -11,6 +11,25 @@ import { AnyTupleInput, AnyUnionInput } from './types/creators'
 // TODO: add .implements method to enforce recreation of deep TS type
 
 // TODO: extend all types with validations
+
+function before<
+  TBeforeResult,
+  TType extends LightType<
+    TBeforeResult extends Primitive
+      ? LiteralBase<TBeforeResult>
+      : TBeforeResult,
+    unknown
+  >
+>(preprocess: (input: unknown) => TBeforeResult, type: TType) {
+  return new ChainableType<unknown, InferOutput<TType>>({
+    parse(input) {
+      const processedInput = preprocess(input)
+
+      return type.parse(processedInput) as InferOutput<TType>
+    },
+  })
+}
+
 export const lt = {
   object<TLightObject extends AnyLightObject>(lightObject: TLightObject) {
     return new ChainableObject<TLightObject>(lightObject)
@@ -298,16 +317,5 @@ export const lt = {
       },
     })
   },
-  before<TBeforeResult, TType extends LightType<TBeforeResult>>(
-    preprocess: (input: unknown) => TBeforeResult,
-    type: TType
-  ) {
-    return new ChainableType<unknown, InferOutput<TType>>({
-      parse(input) {
-        const processedInput = preprocess(input)
-
-        return type.parse(processedInput) as InferOutput<TType>
-      },
-    })
-  },
+  before,
 }

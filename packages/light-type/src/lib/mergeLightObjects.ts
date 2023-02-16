@@ -1,4 +1,5 @@
 import { AnyLightObject } from './types/LightObject'
+import { Simplify } from './types/utils'
 
 /**
  * Merge B onto A and return, replacing conflicting keys
@@ -21,5 +22,5 @@ export function mergeLightObjects<
   return {
     ...a,
     ...b,
-  } as MergeLightObjects<A, B>
+  } as Simplify<MergeLightObjects<A, B>>
 }

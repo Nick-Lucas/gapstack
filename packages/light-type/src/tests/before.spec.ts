@@ -10,6 +10,8 @@ function checkTypes() {
     (i) => (i === 1 ? ('' as string) : undefined),
     lt.string().optional()
   )
+  lt.before((i) => (i === 1 ? 'foo' : undefined), lt.literal('foo'))
+  lt.before((i) => (i === 1 ? 'foo' : undefined), lt.literal(['foo']))
   lt.before(
     (i) => (i === 1 ? 'foo' : undefined),
     lt.literal(['foo']).optional()
