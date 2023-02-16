@@ -2,6 +2,7 @@
 
 import { ChainableType } from '../chainable/ChainableType'
 import { LightType } from './LightType'
+import { TypeInner } from './TypeInner'
 
 export type PipeFunc<TInput = any, TOutput = any> = (input: TInput) => TOutput
 
@@ -12,7 +13,7 @@ export type PipeElem<TInput = any, TOutput = any> =
   | PipeType<TInput, TOutput>
 
 export function createPipeFunction<TInput, TOutput>(
-  t: LightType<TInput, TOutput>
+  t: TypeInner<TInput, TOutput>
 ) {
   function pipe<A extends TOutput, TFinalOutput>(
     a: PipeElem<A, TFinalOutput>

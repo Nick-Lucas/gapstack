@@ -1,4 +1,5 @@
 import { LightType } from '../types/LightType'
+import { TypeInner } from '../types/TypeInner'
 import { createPipeFunction } from '../types/pipes'
 
 export class ChainableType<TInput, TOutput = TInput>
@@ -7,9 +8,13 @@ export class ChainableType<TInput, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  constructor(protected readonly t: LightType<TInput, TOutput>) {}
+  constructor(protected readonly t: TypeInner<TInput, TOutput>) {}
 
   parse = (input: unknown): TOutput => {
+    return this.t.parse(input)
+  }
+
+  check(input: TInput): TOutput {
     return this.t.parse(input)
   }
 

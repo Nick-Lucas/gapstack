@@ -196,10 +196,10 @@ export const lt = {
   },
   tuple<T extends AnyTupleInput>(tuple: T) {
     type TInput = {
-      [key in keyof T]: InferInput<T[key]>
+      [K in keyof T]: InferInput<T[K]>
     }
     type TOutput = {
-      [key in keyof T]: InferOutput<T[key]>
+      [K in keyof T]: InferOutput<T[K]>
     }
 
     return new ChainableType<TInput, TOutput>({

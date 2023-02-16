@@ -1,7 +1,12 @@
-export type LightType<TInput, TOutput = TInput> = {
+export interface LightType<TInput, TOutput = TInput> {
+  readonly _input: TInput
+  readonly _output: TOutput
+
   parse(input: unknown): TOutput
+  check(input: TInput): TOutput
 }
 
+// TODO: is the second/recursive branch here really needed?
 export type InferInput<TLightType extends LightType<unknown>> =
   TLightType extends LightType<infer T, unknown>
     ? T extends LightType<unknown>

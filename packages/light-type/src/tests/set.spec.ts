@@ -15,7 +15,7 @@ describe('set', () => {
     lt.set(lt.object({}))
     lt.set(lt.array(lt.number()))
 
-    // @ts-expect-error sets must be given
+    // Accepts an invalid input
     lt.set(lt.string()).parse(1)
   }
 
