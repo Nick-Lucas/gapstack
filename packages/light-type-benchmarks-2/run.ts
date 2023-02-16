@@ -38,8 +38,8 @@ function benchmarkCompiles() {
 
   const baselineFile = path.join(__dirname, 'benchmarks', BASELINE_FILENAME)
   const times: number[] = []
-  for (let i = 0; i < samplesPer; i++) {
-    console.log('  Taking baseline measurement', i, '/', samplesPer)
+  for (let i = 0; i < 10; i++) {
+    console.log('  Taking baseline measurement', i, '/', 10)
     const { timeMS } = typecheck(baselineFile)
     times.push(timeMS)
   }
@@ -64,9 +64,8 @@ function benchmarkCompiles() {
       continue
     }
 
-    console.log('Benchmarking Compiles for case:', `"${name}"`)
-
     for (const { variant, benchmarks } of Object.values(variants)) {
+      console.log('Benchmarking Compiles for case:', `"${name}"`)
       console.log('  Variant:', variant)
 
       const resultsByFramework: Partial<Record<Framework, number>> = {}
@@ -94,8 +93,12 @@ function benchmarkCompiles() {
         resultsByFramework[framework] = takeTimeMeasurement(baselineMS, times)
       }
 
-      console.log('Average results')
+      console.log()
+      console.log(`${name} Results`)
       console.table(resultsByFramework)
+      console.log()
+      console.log('-------------------------')
+      console.log()
 
       function formatTime(framework: Framework) {
         if (typeof resultsByFramework[framework] === 'undefined') {
