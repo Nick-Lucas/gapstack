@@ -14,6 +14,8 @@
     "docs": "nx storybook docs",
     "light-type-benchmark:start": "yarn nx run-many --target=serve --projects=light-type-benchmarks*",
     "light-type-benchmark-2:run": "yarn node -r ts-node/register packages/light-type-benchmarks-2/run.ts",
+    "light-type-benchmark-2:run:mac": "taskpolicy -c utility yarn run light-type-benchmark-2:run",
+    "light-type-benchmark-2:run:nux": "taskset -c 1 yarn run light-type-benchmark-2:run",
     "tsc:check": "yarn run tsc -p tsconfig.base.json --noEmit --incremental false --jsx react-jsx --allowSyntheticDefaultImports",
     "tsc:trace": "yarn run tsc:check --generateTrace ./.trace"
   },
