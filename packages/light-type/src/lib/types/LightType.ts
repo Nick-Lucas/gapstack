@@ -1,5 +1,5 @@
 export type LightType<TInput, TOutput = TInput> = {
-  parse(input: TInput): TOutput
+  parse(input: unknown): TOutput
 }
 
 export type InferInput<TLightType extends LightType<unknown>> =

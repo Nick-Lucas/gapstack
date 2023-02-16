@@ -19,7 +19,6 @@ TODO list:
 * probably more focus on being a drop-in Zod replacement as this is painful
 
 <!-- Now -->
-* Permit Parse to receive Unknown types
 * Custom error messages for validation errors
 * .extend should accept a record type (implement .and if necessary)
   * maybe implement .and?

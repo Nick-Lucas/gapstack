@@ -1,17 +1,6 @@
 import { LightType } from '../types/LightType'
 import { createPipeFunction } from '../types/pipes'
 
-export function createExtendedChainableType<
-  TInput,
-  TOutput,
-  TExtraMethods extends Record<string, unknown> = Record<never, never>
->(
-  chainable: ChainableType<TInput, TOutput>,
-  extraMethods: (t: ChainableType<TInput, TOutput>) => TExtraMethods
-) {
-  return Object.assign(chainable, extraMethods(chainable))
-}
-
 export class ChainableType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>
 {
@@ -20,7 +9,7 @@ export class ChainableType<TInput, TOutput = TInput>
 
   constructor(protected readonly t: LightType<TInput, TOutput>) {}
 
-  parse = (input: TInput): TOutput => {
+  parse = (input: unknown): TOutput => {
     return this.t.parse(input)
   }
 
@@ -32,7 +21,6 @@ export class ChainableType<TInput, TOutput = TInput>
   // Null / Undefined Typing
   //
 
-  // TODO: maybe omit each key after applying it?
   optional = (): ChainableType<TInput | undefined, TOutput | undefined> => {
     const t = this.t
 

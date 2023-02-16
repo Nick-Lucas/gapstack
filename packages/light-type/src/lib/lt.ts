@@ -121,9 +121,10 @@ export const lt = {
     return new ChainableType<TInput, TOutput>({
       parse(input) {
         if (typeof input === 'object' && input !== null) {
+          const maybeTInput = input as TInput
           const errors = new LightTypeAggregatedErrors()
 
-          const inputKeys = Object.keys(input) as KeyInput[]
+          const inputKeys = Object.keys(maybeTInput) as KeyInput[]
 
           const result = {} as TOutput
           for (let i = 0; i < inputKeys.length; i++) {
@@ -131,7 +132,7 @@ export const lt = {
               const outputKey = key.parse(inputKeys[i]) as KeyOutput
 
               result[outputKey] = value.parse(
-                input[inputKeys[i]]
+                maybeTInput[inputKeys[i]]
               ) as ValueOutput
             })
           }
@@ -167,16 +168,17 @@ export const lt = {
             : _input
 
         if (typeof input === 'object' && input !== null) {
+          const maybeTInput = input as TInput
           const errors = new LightTypeAggregatedErrors()
 
-          const inputKeys = Object.keys(input) as (keyof TInput)[]
+          const inputKeys = Object.keys(maybeTInput) as (keyof TInput)[]
 
           const result = new Map() as TOutput
           for (let i = 0; i < inputKeys.length; i++) {
             errors.aggregate(String(inputKeys[i]), () => {
               result.set(
                 key.parse(inputKeys[i]) as KeyOutput,
-                value.parse(input[inputKeys[i]]) as ValueOutput
+                value.parse(maybeTInput[inputKeys[i]]) as ValueOutput
               )
             })
           }
@@ -271,7 +273,7 @@ export const lt = {
         if (_input instanceof Set) {
           input = Array.from(_input)
         } else {
-          input = _input
+          input = _input as TInput[]
         }
 
         if (Array.isArray(input)) {
