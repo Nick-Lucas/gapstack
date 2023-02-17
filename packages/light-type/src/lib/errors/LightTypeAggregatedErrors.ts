@@ -1,14 +1,7 @@
 import { LightTypeError } from './LightTypeError'
 
-// TODO: separate this into an aggregator and error throw, stack currently gets captured on new-up
-export class LightTypeAggregatedErrors extends Error {
+export class LightTypeErrorAggregator {
   readonly errors: LightTypeError[] = []
-
-  constructor() {
-    super('LightTypeAggregatedErrors')
-
-    Object.setPrototypeOf(this, LightTypeAggregatedErrors.prototype)
-  }
 
   aggregate = (basePath: string, callback: () => void) => {
     try {
@@ -33,14 +26,14 @@ export class LightTypeAggregatedErrors extends Error {
       return
     }
 
-    throw this
+    throw new LightTypeAggregatedErrors(this.errors)
   }
+}
 
-  override get message() {
-    return this.toString()
-  }
+export class LightTypeAggregatedErrors extends Error {
+  constructor(readonly errors: LightTypeError[]) {
+    super('LightTypeAggregatedErrors')
 
-  override toString() {
-    return 'Light Type errors:' + JSON.stringify(this.errors, null, 2)
+    Object.setPrototypeOf(this, LightTypeAggregatedErrors.prototype)
   }
 }
