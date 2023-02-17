@@ -1,3 +1,3 @@
 import { lt } from 'dist-lt'
 
-export const t = lt.before(Boolean, lt.boolean())
+export const t = lt.pipe(Boolean, lt.boolean())
