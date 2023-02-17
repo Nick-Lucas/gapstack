@@ -2,8 +2,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { InferInput, LightType, lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
-import { aggregated, throws } from './errors'
 
 describe('factories', () => {
   describe('simple object with primitive types', () => {
@@ -60,6 +58,19 @@ describe('factories', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const literalOut: LiteralType = PagedLiteralDto._output['content']![0]
+
+      //
+      // Also check with an array factory
+
+      const ArrayDto = <T extends LightType<unknown, unknown>>(item: T) =>
+        lt.array(item)
+      const NumberArray = ArrayDto(lt.number())
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numArrayIn: number = NumberArray._inputElement
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numArrayOut: number = NumberArray._outputElement
     }
 
     it.each([
