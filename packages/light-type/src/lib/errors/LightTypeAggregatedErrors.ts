@@ -33,9 +33,11 @@ export class LightTypeAggregatedErrors extends Error {
       return
     }
 
-    this.message = this.toString()
-
     throw this
+  }
+
+  override get message() {
+    return this.toString()
   }
 
   override toString() {

@@ -1,7 +1,10 @@
 import { LightType } from './LightType'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyLightObject = Record<string, LightType<any, any>>
+export type AnyLightObject = Record<string, LightType<unknown, unknown>>
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyLightArrayElement = LightType<unknown, unknown>
 
 export type InferLightObjectOutput<TDef extends AnyLightObject> =
   ApplyOptionals<{
