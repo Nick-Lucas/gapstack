@@ -16,18 +16,44 @@ import { createPipeFunction } from './types/pipes'
 
 // TODO: extend all types with validations
 
+/**
+ * Validate an object type with a given shape:
+ *
+ * ```ts
+ * const myObject = lt.object({
+ *   id: lt.number(),
+ *   name: lt.string()
+ * })
+ * ```
+ */
 export function object<TLightObject extends AnyLightObject>(
   lightObject: TLightObject
 ) {
   return new ChainableObject<TLightObject>(lightObject)
 }
 
+/**
+ * Validate an array with a given element type:
+ *
+ * ```ts
+ * const arrayOfNumbers = lt.array(lt.number())
+ *
+ * const arrayOfObjects = lt.array(lt.object({ ...etc... }))
+ * ```
+ */
 export function array<TLightArrayElement extends AnyLightArrayElement>(
   valueType: TLightArrayElement
 ) {
   return new ChainableArray<TLightArrayElement>(valueType)
 }
 
+/**
+ * Validate a typescript `any` type
+ *
+ * ```ts
+ * const myAny = lt.any()
+ * ```
+ */
 export function any() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new ChainableType<any, any>({
@@ -37,6 +63,13 @@ export function any() {
   })
 }
 
+/**
+ * Validate a typescript `unknown` type
+ *
+ * ```ts
+ * const myUnknown = lt.unknown()
+ * ```
+ */
 export function unknown() {
   return new ChainableType<unknown, unknown>({
     parse(input) {
@@ -45,6 +78,13 @@ export function unknown() {
   })
 }
 
+/**
+ * Validate a typescript `boolean` type
+ *
+ * ```ts
+ * const myBoolean = lt.boolean()
+ * ```
+ */
 export function boolean() {
   return new ChainableType<boolean, boolean>({
     parse(input) {
@@ -60,6 +100,13 @@ export function boolean() {
   })
 }
 
+/**
+ * Validate a typescript `number` type
+ *
+ * ```ts
+ * const myNumber = lt.number()
+ * ```
+ */
 export function number() {
   return new ChainableType<number, number>({
     parse(input) {
@@ -75,6 +122,13 @@ export function number() {
   })
 }
 
+/**
+ * Validate a typescript `string` type
+ *
+ * ```ts
+ * const myString = lt.string()
+ * ```
+ */
 export function string() {
   return new ChainableType<string, string>({
     parse(input) {
@@ -90,6 +144,13 @@ export function string() {
   })
 }
 
+/**
+ * Validate a typescript `Date` type
+ *
+ * ```ts
+ * const myDate = lt.date()
+ * ```
+ */
 export function date() {
   return new ChainableType<Date, Date>({
     parse(input) {
@@ -105,6 +166,20 @@ export function date() {
   })
 }
 
+/**
+ * Validate a typescript literal. Any valid typescript literal is supported
+ *
+ * ```ts
+ * // Create a simple literal
+ * const foo = lt.literal('foo')
+ * const one = lt.literal(1)
+ * const trueBool = lt.literal(true)
+ *
+ * // Create a literal union
+ * const foobar = lt.literal(['foo', 'bar'])
+ * const onebar = lt.literal([1, 'bar'])
+ * ```
+ */
 export function literal<TLiteral extends Primitive>(
   literal: TLiteral | readonly TLiteral[]
 ) {
@@ -125,6 +200,14 @@ export function literal<TLiteral extends Primitive>(
   })
 }
 
+/**
+ * Validate a typescript `Record<K, V>`
+ *
+ * ```ts
+ * const record = lt.record(lt.string(), lt.number())
+ * // `Record<string, number>`
+ * ```
+ */
 export function record<
   TKey extends LightType<AnyKey>,
   TValue extends LightType<unknown>
@@ -168,6 +251,14 @@ export function record<
   })
 }
 
+/**
+ * Validate a typescript `Map<K, V>`
+ *
+ * ```ts
+ * const map = lt.map(lt.string(), lt.number())
+ * // `Map<string, number>`
+ * ```
+ */
 export function map<
   TKey extends LightType<AnyKey>,
   TValue extends LightType<unknown>
@@ -215,6 +306,14 @@ export function map<
   })
 }
 
+/**
+ * Validate a typescript tuple type
+ *
+ * ```ts
+ * const tuple = lt.tuple([lt.string(), lt.number(), lt.number()])
+ * // `[string, number, number]`
+ * ```
+ */
 export function tuple<T extends AnyTupleInput>(tuple: T) {
   type TInput = {
     [K in keyof T]: InferInput<T[K]>
@@ -254,11 +353,22 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
   })
 }
 
+/**
+ * Validate a typescript union type
+ *
+ * ```ts
+ * const union = lt.union([lt.string(), lt.number()])
+ * // `string | number`
+ *
+ * const objectUnion = lt.union([object1, object2])
+ * // `object1 | object2`
+ * ```
+ */
 export function union<T extends AnyUnionInput>(types: T) {
-  //TODO: could these types be moved upward by genericising UnionInput?
   type TInput = {
     [key in keyof T]: InferInput<T[key]>
   }[number]
+
   type TOutput = {
     [key in keyof T]: InferOutput<T[key]>
   }[number]
@@ -290,6 +400,14 @@ export function union<T extends AnyUnionInput>(types: T) {
   })
 }
 
+/**
+ * Validate a typescript `Set<T>`
+ *
+ * ```ts
+ * const set = lt.set(lt.string())
+ * // `Set<string>`
+ * ```
+ */
 export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
   return new ChainableType<TInput[] | Set<TInput>, Set<TOutput>>({
     parse(_input) {
@@ -323,4 +441,12 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
   })
 }
 
+/**
+ * Set up a 'Pipe' which chains together functors and types, and generates a new type output
+ *
+ * ```ts
+ * const datePipe = lt.pipe(lt.string(), transformStringToDate, lt.date())
+ * // `unknown -> Date`
+ * ```
+ */
 export const pipe = createPipeFunction(unknown())
