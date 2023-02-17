@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { InferInput, LightType, lt } from '..'
+import { AnyLightType, InferInput, LightType, lt } from '..'
 
 describe('factories', () => {
   describe('simple object with primitive types', () => {
@@ -71,6 +71,42 @@ describe('factories', () => {
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const numArrayOut: number = NumberArray._outputElement
+
+      //
+      // Also check straight object factory
+
+      const ObjectDto = <T extends LightType<unknown, unknown>>(item: T) =>
+        lt.object({
+          id: lt.number(),
+          generic: item,
+        })
+      const NumberObject = ObjectDto(lt.number())
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numObjectIn: number = NumberObject._input['generic']
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numObjectOut: number = NumberObject._output['generic']
+
+      //
+      // Also check wrapped object factory
+
+      const creator = <T extends AnyLightType>(input: T) =>
+        lt.object({ value: input })
+      const CreatorObjectDto = <T extends AnyLightType>(item: T) =>
+        lt.object({
+          id: lt.number(),
+          generic: creator(item),
+        })
+      const CreatorNumberObject = CreatorObjectDto(lt.number())
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numCreatorObjectIn: number =
+        CreatorNumberObject._input['generic']['value']
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const numCreatorObjectOut: number =
+        CreatorNumberObject._output['generic']['value']
     }
 
     it.each([
