@@ -4,9 +4,7 @@ import { expect } from '@jest/globals'
 import { fail } from 'assert'
 
 export function aggregated(...inners: LightTypeError[]) {
-  const agg = new LightTypeAggregatedErrors()
-  agg.errors.push(...inners)
-  return agg
+  return new LightTypeAggregatedErrors(inners)
 }
 
 export function throws(

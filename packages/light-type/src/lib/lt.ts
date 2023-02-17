@@ -5,7 +5,10 @@ import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
 import { LightTypeError } from './errors/LightTypeError'
 import { ChainableArray } from './chainable/ChainableArray'
-import { LightTypeAggregatedErrors } from './errors/LightTypeAggregatedErrors'
+import {
+  LightTypeAggregatedErrors,
+  LightTypeErrorAggregator,
+} from './errors/LightTypeAggregatedErrors'
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 
 // TODO: add .implements method to enforce recreation of deep TS type
@@ -143,7 +146,7 @@ export const lt = {
       parse(input) {
         if (typeof input === 'object' && input !== null) {
           const maybeTInput = input as TInput
-          const errors = new LightTypeAggregatedErrors()
+          const errors = new LightTypeErrorAggregator()
 
           const inputKeys = Object.keys(maybeTInput) as KeyInput[]
 
@@ -190,7 +193,7 @@ export const lt = {
 
         if (typeof input === 'object' && input !== null) {
           const maybeTInput = input as TInput
-          const errors = new LightTypeAggregatedErrors()
+          const errors = new LightTypeErrorAggregator()
 
           const inputKeys = Object.keys(maybeTInput) as (keyof TInput)[]
 
@@ -233,7 +236,7 @@ export const lt = {
             })
           }
 
-          const errors = new LightTypeAggregatedErrors()
+          const errors = new LightTypeErrorAggregator()
           const result = new Array(tuple.length) as TOutput
           for (let i = 0; i < tuple.length; i++) {
             errors.aggregate(String(i), () => {
@@ -281,6 +284,7 @@ export const lt = {
         }
 
         throw new LightTypeError({
+          // TODO: include some sort of aggregated errors in this from the various options
           message: 'No Matching Type in Union',
           value: input,
         })
@@ -298,7 +302,7 @@ export const lt = {
         }
 
         if (Array.isArray(input)) {
-          const errors = new LightTypeAggregatedErrors()
+          const errors = new LightTypeErrorAggregator()
           const result = new Set<TOutput>()
 
           for (let i = 0; i < input.length; i++) {

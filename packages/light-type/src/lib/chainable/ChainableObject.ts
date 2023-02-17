@@ -8,7 +8,7 @@ import { lt } from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
 import { LightTypeError } from '../errors/LightTypeError'
-import { LightTypeAggregatedErrors } from '../errors/LightTypeAggregatedErrors'
+import { LightTypeErrorAggregator } from '../errors/LightTypeAggregatedErrors'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
@@ -36,7 +36,7 @@ export class ChainableObject<
 
     super({
       parse(input) {
-        const errors = new LightTypeAggregatedErrors()
+        const errors = new LightTypeErrorAggregator()
 
         if (typeof input === 'object' && input !== null) {
           const obj = input as TInput

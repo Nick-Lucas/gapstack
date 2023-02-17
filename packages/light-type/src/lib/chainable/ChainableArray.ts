@@ -1,4 +1,4 @@
-import { LightTypeAggregatedErrors } from '../errors/LightTypeAggregatedErrors'
+import { LightTypeErrorAggregator } from '../errors/LightTypeAggregatedErrors'
 import { LightTypeError } from '../errors/LightTypeError'
 import { AnyLightArrayElement } from '../types/LightObject'
 import { InferInput, InferOutput } from '../types/LightType'
@@ -15,7 +15,7 @@ export class ChainableArray<
     super({
       parse(input) {
         if (Array.isArray(input)) {
-          const errors = new LightTypeAggregatedErrors()
+          const errors = new LightTypeErrorAggregator()
 
           const items = new Array(input.length)
           for (let i = 0; i < input.length; i++) {
