@@ -16,24 +16,6 @@ import { createPipeFunction } from './types/pipes'
 
 // TODO: extend all types with validations
 
-export function before<
-  TBeforeResult,
-  TType extends LightType<
-    TBeforeResult extends Primitive
-      ? LiteralBase<TBeforeResult>
-      : TBeforeResult,
-    unknown
-  >
->(preprocess: (input: unknown) => TBeforeResult, type: TType) {
-  return new ChainableType<unknown, InferOutput<TType>>({
-    parse(input) {
-      const processedInput = preprocess(input)
-
-      return type.parse(processedInput) as InferOutput<TType>
-    },
-  })
-}
-
 export function object<TLightObject extends AnyLightObject>(
   lightObject: TLightObject
 ) {
@@ -337,6 +319,24 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
         message: `Not a Set or Arraylike`,
         value: input,
       })
+    },
+  })
+}
+
+export function before<
+  TBeforeResult,
+  TType extends LightType<
+    TBeforeResult extends Primitive
+      ? LiteralBase<TBeforeResult>
+      : TBeforeResult,
+    unknown
+  >
+>(preprocess: (input: unknown) => TBeforeResult, type: TType) {
+  return new ChainableType<unknown, InferOutput<TType>>({
+    parse(input) {
+      const processedInput = preprocess(input)
+
+      return type.parse(processedInput) as InferOutput<TType>
     },
   })
 }
