@@ -4,6 +4,34 @@ import { lt } from '..'
 import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+function checkTypes() {
+  //
+  // Number Array
+
+  const simpleArray = lt.array(lt.number())
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const n1: number[] = simpleArray._input
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const n2: number[] = simpleArray._output
+
+  //
+  // Object Array
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const objectArray = lt.array(
+    lt.object({ id: lt.number(), name: lt.string() })
+  )
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const o1: { id: number; name: string }[] = objectArray._input
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const o2: { id: number; name: string }[] = objectArray._output
+}
+
 describe('arrays', () => {
   describe('array of numbers', () => {
     it('should parse', () => {

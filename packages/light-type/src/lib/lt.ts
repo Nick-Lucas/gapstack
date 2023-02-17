@@ -1,6 +1,6 @@
 import { ChainableType } from './chainable/ChainableType'
 import { InferInput, InferOutput, LightType } from './types/LightType'
-import { AnyLightObject } from './types/LightObject'
+import { AnyLightArrayElement, AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
 import { LightTypeError } from './errors/LightTypeError'
@@ -34,8 +34,10 @@ export const lt = {
   object<TLightObject extends AnyLightObject>(lightObject: TLightObject) {
     return new ChainableObject<TLightObject>(lightObject)
   },
-  array<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
-    return new ChainableArray<TInput, TOutput>(valueType)
+  array<TLightArrayElement extends AnyLightArrayElement>(
+    valueType: TLightArrayElement
+  ) {
+    return new ChainableArray<TLightArrayElement>(valueType)
   },
   any() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
