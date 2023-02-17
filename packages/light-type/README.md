@@ -28,6 +28,7 @@ TODO list:
   * Convert Chainables to store a pipeline and simply return `this`?
     * https://stackoverflow.com/questions/44204129/extending-builder-in-typescript
   * Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type with specially implemented versions of each method
+* Look at alternative merge/extends patterns, given benchmark differences with "spread" on merge/extend
 * Object Discriminated Unions - later, they auto-discriminate just not at great runtime performance
 * More validators (.assert(boolean, "message") string.regex|startsWith|endsWith|contains, arrays, sets, )
 
