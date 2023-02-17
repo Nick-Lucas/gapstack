@@ -323,22 +323,4 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
   })
 }
 
-export function before<
-  TBeforeResult,
-  TType extends LightType<
-    TBeforeResult extends Primitive
-      ? LiteralBase<TBeforeResult>
-      : TBeforeResult,
-    unknown
-  >
->(preprocess: (input: unknown) => TBeforeResult, type: TType) {
-  return new ChainableType<unknown, InferOutput<TType>>({
-    parse(input) {
-      const processedInput = preprocess(input)
-
-      return type.parse(processedInput) as InferOutput<TType>
-    },
-  })
-}
-
 export const pipe = createPipeFunction(unknown())
