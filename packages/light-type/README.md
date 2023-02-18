@@ -19,9 +19,7 @@ TODO list:
 * probably more focus on being a drop-in Zod replacement as this is painful
 
 <!-- Now -->
-* Doc comments on everything
 * Custom error messages for validation errors
-* Make pipe return the last input type's class as the new chain value if it's a known class?
 
 <!-- Next -->
 * Structure of classes, options:
