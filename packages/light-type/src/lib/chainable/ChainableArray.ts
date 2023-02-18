@@ -35,5 +35,7 @@ export class ChainableArray<
         })
       },
     })
+
+    Object.setPrototypeOf(this, ChainableArray.prototype)
   }
 }

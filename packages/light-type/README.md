@@ -22,6 +22,7 @@ TODO list:
 * Doc comments on everything
 * Custom error messages for validation errors
 * Make pipe return the last input type's class as the new chain value if it's a known class?
+  * Will require changing architecture to a list of functors stored in the chainables, so that it's possible to change the order of them at will
 
 <!-- Next -->
 * Structure of classes, options:

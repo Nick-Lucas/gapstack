@@ -1,6 +1,6 @@
 import { LightType } from '../types/LightType'
 import { TypeInner } from '../types/TypeInner'
-import { createPipeFunction } from '../types/pipes'
+import { createPipeFunction } from './pipes'
 
 export class ChainableType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>
@@ -8,7 +8,9 @@ export class ChainableType<TInput, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  constructor(protected readonly t: TypeInner<TInput, TOutput>) {}
+  constructor(protected readonly t: TypeInner<TInput, TOutput>) {
+    Object.setPrototypeOf(this, ChainableType.prototype)
+  }
 
   /**
    * Check an unknown input for validatity.

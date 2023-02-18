@@ -7,14 +7,14 @@ export type AnyKey = string | number | symbol
 /**
  * Determine the primitive types included in a literal union
  */
-export type LiteralBase<T extends Primitive> = T extends string
-  ? string
-  : T extends number
-  ? number
-  : T extends boolean
-  ? boolean
-  : T extends symbol
-  ? symbol
+export type LiteralBase<T> = T extends Primitive
+  ? T extends string
+    ? string
+    : T extends number
+    ? number
+    : T extends boolean
+    ? boolean
+    : never
   : T
 
 /**

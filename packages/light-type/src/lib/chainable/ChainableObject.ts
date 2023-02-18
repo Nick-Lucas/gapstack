@@ -63,6 +63,8 @@ export class ChainableObject<
         })
       },
     })
+
+    Object.setPrototypeOf(this, ChainableObject.prototype)
   }
 
   /**

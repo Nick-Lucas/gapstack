@@ -18,6 +18,55 @@ function checkTypes() {
   )
 
   lt.string().pipe((s) => (s ? 'bar' : undefined), lt.literal('foo'))
+
+  //
+  // Check that pipe returns the final argument if it's seen to be a type
+  //
+
+  // Recieved back a sub-type if passed last
+  const passValue = <T>(v: T) => v
+  const makeObject = (s) => ({ id: s })
+  const checkObject = lt.object({ id: lt.number() })
+  const pickObject = { id: true } as const
+
+  // Special case for 1 argument, pipe twice instead
+  lt.number().pipe(makeObject).pipe(checkObject).pick(pickObject)
+
+  // Check that is _doesn't_ work if not a type
+  lt.number()
+    .pipe(makeObject, passValue)
+    // @ts-expect-error Pick shouldn't be available because a functor was passed last
+    .pick({ id: true })
+
+  // Now the rest
+  lt.number()
+    .pipe(makeObject, lt.object({ id: lt.number() }))
+    .pick({ id: true })
+  lt.number()
+    .pipe(passValue, makeObject, lt.object({ id: lt.number() }))
+    .pick({ id: true })
+  lt.number()
+    .pipe(passValue, passValue, makeObject, lt.object({ id: lt.number() }))
+    .pick({ id: true })
+  lt.number()
+    .pipe(
+      passValue,
+      passValue,
+      passValue,
+      makeObject,
+      lt.object({ id: lt.number() })
+    )
+    .pick({ id: true })
+  lt.number()
+    .pipe(
+      passValue,
+      passValue,
+      passValue,
+      passValue,
+      makeObject,
+      lt.object({ id: lt.number() })
+    )
+    .pick({ id: true })
 }
 
 describe('pipe', () => {

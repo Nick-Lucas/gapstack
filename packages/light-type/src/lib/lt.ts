@@ -10,7 +10,7 @@ import {
   LightTypeErrorAggregator,
 } from './errors/LightTypeAggregatedErrors'
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
-import { createPipeFunction } from './types/pipes'
+import { createPipeFunction } from './chainable/pipes'
 
 // TODO: add .implements method to enforce recreation of deep TS type
 
