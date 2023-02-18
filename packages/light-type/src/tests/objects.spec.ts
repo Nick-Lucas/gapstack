@@ -17,6 +17,8 @@ function checkTypes() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const a2: { id: number; items: { name: string }[] } = Obj._output
+
+  const a3 = Obj.optional().extend({ id2: lt.string() }).seal()
 }
 
 describe('object', () => {

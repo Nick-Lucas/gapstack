@@ -9,6 +9,14 @@ import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
 import { LightTypeError } from '../errors/LightTypeError'
 import { LightTypeErrorAggregator } from '../errors/LightTypeAggregatedErrors'
+import { TypeInner } from '../types/TypeInner'
+import { ChainableBase } from './ChainableBase'
+import {
+  DefaultNullOrParse,
+  DefaultUndefinedOrParse,
+  NullOrParse,
+  UndefinedOrParse,
+} from './mixins'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
@@ -25,8 +33,17 @@ export class ChainableObject<
   TInput,
   TOutput,
   TLightObject extends AnyLightObject
-> extends ChainableType<TInput, TOutput> {
-  protected lightObject!: TLightObject
+> extends ChainableBase<TInput, TOutput> {
+  constructor(
+    t: TypeInner<TInput, TOutput>,
+    protected readonly lightObject: TLightObject
+  ) {
+    super(t)
+  }
+
+  private wrap = <TInput, TOutput>(t: TypeInner<TInput, TOutput>) => {
+    return new ChainableObject(t, this.lightObject)
+  }
 
   static create<
     TLightObject extends AnyLightObject,
@@ -40,37 +57,38 @@ export class ChainableObject<
   >(lightObject: TLightObject) {
     const keys = Object.keys(lightObject) as TKey[]
 
-    const chainable = new ChainableObject<TInput, TOutput, TLightObject>({
-      parse(input) {
-        const errors = new LightTypeErrorAggregator()
+    const chainable = new ChainableObject<TInput, TOutput, TLightObject>(
+      {
+        parse(input) {
+          const errors = new LightTypeErrorAggregator()
 
-        if (typeof input === 'object' && input !== null) {
-          const obj = input as TInput
+          if (typeof input === 'object' && input !== null) {
+            const obj = input as TInput
 
-          const output = keys.reduce((aggr, key) => {
-            const parser = lightObject[key]
+            const output = keys.reduce((aggr, key) => {
+              const parser = lightObject[key]
 
-            errors.aggregate(key, () => {
-              // TODO: fix any type
-              aggr[key] = parser.parse(obj[key]) as any
-            })
+              errors.aggregate(key, () => {
+                // TODO: fix any type
+                aggr[key] = parser.parse(obj[key]) as any
+              })
 
-            return aggr
-          }, {} as TOutput)
+              return aggr
+            }, {} as TOutput)
 
-          errors.throwIfAny()
+            errors.throwIfAny()
 
-          return output
-        }
+            return output
+          }
 
-        throw new LightTypeError({
-          message: `Not an Object`,
-          value: input,
-        })
+          throw new LightTypeError({
+            message: `Not an Object`,
+            value: input,
+          })
+        },
       },
-    })
-
-    chainable.lightObject = lightObject
+      lightObject
+    )
 
     return chainable
   }
@@ -96,7 +114,7 @@ export class ChainableObject<
       lightObject
     )
 
-    return lt.object(extendedLightObject)
+    return ChainableObject.create(extendedLightObject)
   }
 
   /**
@@ -120,7 +138,7 @@ export class ChainableObject<
       extendLightObject
     )
 
-    return lt.object(extendedLightObject)
+    return ChainableObject.create(extendedLightObject)
   }
 
   /**
@@ -155,7 +173,7 @@ export class ChainableObject<
       }
     }
 
-    return lt.object(omittedLightObject)
+    return ChainableObject.create(omittedLightObject)
   }
 
   /**
@@ -193,6 +211,46 @@ export class ChainableObject<
       }
     }
 
-    return lt.object(pickedLightObject)
+    return ChainableObject.create(pickedLightObject)
+  }
+
+  optional = () => {
+    const t = this.t
+
+    return this.wrap<TInput | undefined, TOutput | undefined>({
+      parse(input) {
+        return UndefinedOrParse(input, t)
+      },
+    })
+  }
+
+  nullable = () => {
+    const t = this.t
+
+    return this.wrap<TInput | null, TOutput | null>({
+      parse(input) {
+        return NullOrParse(input, t)
+      },
+    })
+  }
+
+  default = (defaultValue: TOutput) => {
+    const t = this.t
+
+    return this.wrap<TInput | undefined, TOutput>({
+      parse(input) {
+        return DefaultUndefinedOrParse(input, defaultValue, t)
+      },
+    })
+  }
+
+  defaultNull = (defaultValue: TOutput) => {
+    const t = this.t
+
+    return this.wrap<TInput | null, TOutput>({
+      parse(input) {
+        return DefaultNullOrParse(input, defaultValue, t)
+      },
+    })
   }
 }

@@ -1,142 +1,71 @@
-import { LightType } from '../types/LightType'
 import { TypeInner } from '../types/TypeInner'
 import { createPipeFunction } from '../types/pipes'
+import {
+  DefaultNullOrParse,
+  DefaultUndefinedOrParse,
+  NullOrParse,
+  UndefinedOrParse,
+} from './mixins'
+import { ChainableBase } from './ChainableBase'
 
-export class ChainableType<TInput, TOutput = TInput>
-  implements LightType<TInput, TOutput>
-{
-  readonly _input!: TInput
-  readonly _output!: TOutput
-
-  constructor(protected readonly t: TypeInner<TInput, TOutput>) {}
-
-  /**
-   * Check an unknown input for validatity.
-   *
-   * Throws if there is any validation error
-   */
-  parse = (input: unknown): TOutput => {
-    return this.t.parse(input)
+export class ChainableType<TInput, TOutput = TInput> extends ChainableBase<
+  TInput,
+  TOutput
+> {
+  constructor(t: TypeInner<TInput, TOutput>) {
+    super(t)
   }
 
-  /**
-   * Check a strictly typed input for validatity.
-   *
-   * Throws if there is any validation error
-   */
-  check = (input: TInput): TOutput => {
-    return this.t.parse(input)
-  }
+  private as = <TNextInput, TNextOutput>(
+    wrap: (input: TNextInput, t: TypeInner<TInput, TOutput>) => TNextOutput
+  ) => {
+    const t = this.t
 
-  /**
-   * Seals to type to prevent changes, and simplifies the type definition
-   */
-  seal = (): LightType<TInput, TOutput> => {
-    return this
+    return new ChainableType({
+      parse: (input) => wrap(input as TNextInput, t),
+    })
   }
 
   //
   // Null / Undefined Typing
   //
 
-  /**
-   * Allow undefined. For types on objects this will also make the key optional.
-   *
-   * ```ts
-   * const optionalNumber = lt.number().optional()
-   * // `number | undefined`
-   *
-   * const obj = lt.object({
-   *   value: optionalNumber
-   * })
-   * // `{ value?: number | undefined }`
-   * ```
-   */
-  optional = (): ChainableType<TInput | undefined, TOutput | undefined> => {
+  optional = () => {
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput | undefined>({
       parse(input) {
-        if (input === undefined) {
-          return undefined
-        }
-        return t.parse(input)
+        return UndefinedOrParse(input, t)
       },
     })
   }
 
-  /**
-   * Allow null
-   *
-   * ```ts
-   * const nullableNumber = lt.number().nullable()
-   * // `number | null`
-   * ```
-   */
-  nullable = (): ChainableType<TInput | null, TOutput | null> => {
+  nullable = () => {
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput | null>({
       parse(input) {
-        if (input === null) {
-          return null
-        }
-        return t.parse(input)
+        return NullOrParse(input, t)
       },
     })
   }
 
-  /**
-   * Allow undefined, and set a default value if undefined is seen.
-   * For types on objects this will also make the key optional.
-   *
-   * ```ts
-   * const optionalNumber = lt.number().default(0)
-   * // Input:  `number | undefined`
-   * // Output: `number`
-   *
-   * const obj = lt.object({
-   *   value: optionalNumber
-   * })
-   * // Input:  `{ value?: number | undefined }`
-   * // Output: `{ value: number }`
-   * ```
-   */
-  default = (
-    defaultValue: TOutput
-  ): ChainableType<TInput | undefined, TOutput> => {
+  default = (defaultValue: TOutput) => {
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput>({
       parse(input) {
-        if (input === undefined) {
-          return defaultValue
-        }
-        return t.parse(input)
+        return DefaultUndefinedOrParse(input, defaultValue, t)
       },
     })
   }
 
-  /**
-   * Allow null, and set a defaullt value if null is seen
-   *
-   * ```ts
-   * const nullableNumber = lt.number().defaultNull(0)
-   * // Input:  `number | null`
-   * // Output: `number`
-   * ```
-   */
-  defaultNull = (
-    defaultValue: TOutput
-  ): ChainableType<TInput | null, TOutput> => {
+  defaultNull = (defaultValue: TOutput) => {
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput>({
       parse(input) {
-        if (input === null) {
-          return defaultValue
-        }
-        return t.parse(input)
+        return DefaultNullOrParse(input, defaultValue, t)
       },
     })
   }
