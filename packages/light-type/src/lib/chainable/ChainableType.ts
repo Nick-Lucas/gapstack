@@ -8,7 +8,9 @@ export class ChainableType<TInput, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  constructor(protected readonly t: TypeInner<TInput, TOutput>) {}
+  constructor(protected readonly t: TypeInner<TInput, TOutput>) {
+    this.satisfiesInput = this.satisfiesInput.bind(this)
+  }
 
   /**
    * Check an unknown input for validatity.
@@ -142,4 +144,16 @@ export class ChainableType<TInput, TOutput = TInput>
   }
 
   pipe = createPipeFunction(this.t)
+
+  /**
+   * **Only generates compile-time errors**
+   *
+   * Ensure that the input of this Light Type is statically compatible with a given type.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  satisfiesInput<TKnownInput extends TInput>(): this
+  satisfiesInput<TKnownInput extends TInput>(value: TKnownInput): this
+  satisfiesInput() {
+    return this
+  }
 }
