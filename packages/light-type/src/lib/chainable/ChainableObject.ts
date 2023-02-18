@@ -22,19 +22,25 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof C, string>
 
 export class ChainableObject<
-  TLightObject extends AnyLightObject,
-  TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
-  TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
-  TKey extends GetTKey<TLightObject, TInput, TOutput> = GetTKey<
-    TLightObject,
-    TInput,
-    TOutput
-  >
+  TInput,
+  TOutput,
+  TLightObject extends AnyLightObject
 > extends ChainableType<TInput, TOutput> {
-  constructor(protected readonly lightObject: TLightObject) {
+  protected lightObject!: TLightObject
+
+  static create<
+    TLightObject extends AnyLightObject,
+    TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
+    TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
+    TKey extends GetTKey<TLightObject, TInput, TOutput> = GetTKey<
+      TLightObject,
+      TInput,
+      TOutput
+    >
+  >(lightObject: TLightObject) {
     const keys = Object.keys(lightObject) as TKey[]
 
-    super({
+    const chainable = new ChainableObject<TInput, TOutput, TLightObject>({
       parse(input) {
         const errors = new LightTypeErrorAggregator()
 
@@ -63,6 +69,10 @@ export class ChainableObject<
         })
       },
     })
+
+    chainable.lightObject = lightObject
+
+    return chainable
   }
 
   /**
@@ -165,6 +175,7 @@ export class ChainableObject<
   pick = <TPick extends KeysParam<TLightObject>>(pick: TPick) => {
     const lightObject = this.lightObject
 
+    type TKey = keyof TLightObject
     type TPickKeys = keyof {
       [key in keyof TPick]: TPick[key] extends true ? key : never
     }

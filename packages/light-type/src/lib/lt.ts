@@ -29,7 +29,7 @@ import { createPipeFunction } from './types/pipes'
 export function object<TLightObject extends AnyLightObject>(
   lightObject: TLightObject
 ) {
-  return new ChainableObject<TLightObject>(lightObject)
+  return ChainableObject.create<TLightObject>(lightObject)
 }
 
 /**
