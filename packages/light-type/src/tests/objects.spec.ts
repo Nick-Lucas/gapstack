@@ -6,17 +6,17 @@ import { aggregated, throws } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function checkTypes() {
-  const El = lt.object({ name: lt.string() })
+  const El = lt.object({ name: lt.string().optional() })
   const Obj = lt.object({
     id: lt.number(),
     items: lt.array(El),
   })
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const a1: { id: number; items: { name: string }[] } = Obj._input
+  const a1: { id: number; items: { name?: string }[] } = Obj._input
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const a2: { id: number; items: { name: string }[] } = Obj._output
+  const a2: { id: number; items: { name?: string }[] } = Obj._output
 }
 
 describe('object', () => {

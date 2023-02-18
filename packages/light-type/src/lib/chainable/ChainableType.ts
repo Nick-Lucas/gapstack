@@ -8,7 +8,9 @@ export class ChainableType<TInput, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  constructor(protected readonly t: TypeInner<TInput, TOutput>) {}
+  constructor(protected readonly t: TypeInner<TInput, TOutput>) {
+    this.satisfiesInput = this.satisfiesInput.bind(this)
+  }
 
   /**
    * Check an unknown input for validatity.
@@ -142,4 +144,25 @@ export class ChainableType<TInput, TOutput = TInput>
   }
 
   pipe = createPipeFunction(this.t)
+
+  /**
+   * **Only generates compile-time errors**
+   *
+   * Ensure that the given type is assignable to this type.
+   * Will not detect extraneous input fields, only those that the Light Type will parse.
+   *
+   * ```ts
+   * const MyDto = lt.object(/ etc /).satisfiesInput<KnownInputType>()
+   * // or
+   * const MyDto = lt.object(/ etc /).satisfiesInput(knownValue)
+   * // then
+   * const myDto = MyDto.parse(knownValue)
+   * ```
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  satisfiesInput<T extends TInput>(): this
+  satisfiesInput<T extends TInput>(value: T): this
+  satisfiesInput() {
+    return this
+  }
 }

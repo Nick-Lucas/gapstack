@@ -11,7 +11,6 @@ Experimental runtime type safety solution with the following goals:
 
 New feature goals:
 
-* Be able to "implement" a type from an un-controlled library or codegen types, in a type-safe way
 * Be able to map in reverse
 
 TODO list:
