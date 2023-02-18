@@ -2,18 +2,75 @@
 
 Experimental runtime type safety solution with the following goals:
 
-* Typescript first, performant for both code-intelligence and at runtime. No compromises just for more flexibility
-* Be 1-1 compatible with typescript types
-* Typescript types should be inferable and have both inputs and outputs
-* Integrate with tools like tRPC
+* Typescript first, performant for both code-intelligence and at runtime. If Typescript can do something natively, prefer utilising that.
+* Be 1-1 compatible with typescript type system
+* Types should be inferable and have both inputs and outputs
+* Integrate well with tools like tRPC
 * Be comfortable for a Zod user to move over from, most features should be a drop-in replacement
-* Don't do anything which JS/TS can do natively, like literal unions from `["foo", "bar"] as const`
 
-New feature goals:
+This project is very much a work in progress, the TODOs are even on this readme to prove it!
 
-* Be able to map in reverse
+```sh
+# Choose your package manager
+npm install @gapstack/light-type
+yarn add @gapstack/light-type
+pnpm add @gapstack/light-type
+```
 
-TODO list:
+### Usage:
+
+```ts
+// Most APIs are the same as zod
+import { lt } from '@gapstack/light-type'
+
+// Basic types are essentially identical
+const obj = lt.object({
+  num: lt.number().default(0),
+  str: lt.string().optional(),
+  bool: lt.boolean(),
+  literal: lt.literal('foo')
+})
+
+// These are all essentially the same but with much better editor performance
+const maskedObject = obj.merge().extend().omit().pick()
+
+//
+// Others have been consolidated or changed
+
+// lt.pipe replaces `.preprocess` and accepts an arbitrary chain of functors/types
+lt.pipe(unknownValue => String(unknownValue), lt.string())
+
+// pipe also replaces .transform and the .refine family. it's the same as lt.pipe for usage
+lt.string().pipe()
+
+// Pipe can also raise validation errors, which will get aggregated up and throw by .parse
+lt.string().pipe((numStr) => {
+  const num = parseInt(numStr)
+  if (!isNaN(num)) {
+    return num
+  }
+
+  throw new LightTypeError({
+    message: 'Custom NaN Error',
+    value: numStr
+  })
+})
+
+// .parse is the same
+lt.string().parse("Hello world")
+
+// But .check is new and works the same, except it's statically typed with the input
+lt.string().check("Check knows this is a string")
+
+// Also .satisfiesInput is new for when you're building for compatibility with types you don't control
+lt.string().satisfiesInput<number>() // compile-error
+```
+
+There are some features missing still which are important. See the todo list below for information.
+
+
+
+# TODO list:
 
 <!-- Now -->
 * Documentation
