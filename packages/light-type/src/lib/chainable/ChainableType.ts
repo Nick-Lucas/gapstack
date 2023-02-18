@@ -10,14 +10,27 @@ export class ChainableType<TInput, TOutput = TInput>
 
   constructor(protected readonly t: TypeInner<TInput, TOutput>) {}
 
+  /**
+   * Check an unknown input for validatity.
+   *
+   * Throws if there is any validation error
+   */
   parse = (input: unknown): TOutput => {
     return this.t.parse(input)
   }
 
-  check(input: TInput): TOutput {
+  /**
+   * Check a strictly typed input for validatity.
+   *
+   * Throws if there is any validation error
+   */
+  check = (input: TInput): TOutput => {
     return this.t.parse(input)
   }
 
+  /**
+   * Seals to type to prevent changes, and simplifies the type definition
+   */
   seal = (): LightType<TInput, TOutput> => {
     return this
   }
@@ -26,6 +39,19 @@ export class ChainableType<TInput, TOutput = TInput>
   // Null / Undefined Typing
   //
 
+  /**
+   * Allow undefined. For types on objects this will also make the key optional.
+   *
+   * ```ts
+   * const optionalNumber = lt.number().optional()
+   * // `number | undefined`
+   *
+   * const obj = lt.object({
+   *   value: optionalNumber
+   * })
+   * // `{ value?: number | undefined }`
+   * ```
+   */
   optional = (): ChainableType<TInput | undefined, TOutput | undefined> => {
     const t = this.t
 
@@ -39,6 +65,14 @@ export class ChainableType<TInput, TOutput = TInput>
     })
   }
 
+  /**
+   * Allow null
+   *
+   * ```ts
+   * const nullableNumber = lt.number().nullable()
+   * // `number | null`
+   * ```
+   */
   nullable = (): ChainableType<TInput | null, TOutput | null> => {
     const t = this.t
 
@@ -52,6 +86,22 @@ export class ChainableType<TInput, TOutput = TInput>
     })
   }
 
+  /**
+   * Allow undefined, and set a default value if undefined is seen.
+   * For types on objects this will also make the key optional.
+   *
+   * ```ts
+   * const optionalNumber = lt.number().default(0)
+   * // Input:  `number | undefined`
+   * // Output: `number`
+   *
+   * const obj = lt.object({
+   *   value: optionalNumber
+   * })
+   * // Input:  `{ value?: number | undefined }`
+   * // Output: `{ value: number }`
+   * ```
+   */
   default = (
     defaultValue: TOutput
   ): ChainableType<TInput | undefined, TOutput> => {
@@ -67,6 +117,15 @@ export class ChainableType<TInput, TOutput = TInput>
     })
   }
 
+  /**
+   * Allow null, and set a defaullt value if null is seen
+   *
+   * ```ts
+   * const nullableNumber = lt.number().defaultNull(0)
+   * // Input:  `number | null`
+   * // Output: `number`
+   * ```
+   */
   defaultNull = (
     defaultValue: TOutput
   ): ChainableType<TInput | null, TOutput> => {
