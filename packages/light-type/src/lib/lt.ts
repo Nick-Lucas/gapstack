@@ -1,6 +1,11 @@
 import { ChainableType } from './chainable/ChainableType'
-import { InferInput, InferOutput, LightType } from './types/LightType'
-import { AnyLightArrayElement, AnyLightObject } from './types/LightObject'
+import {
+  AnyLightType,
+  InferInput,
+  InferOutput,
+  LightType,
+} from './types/LightType'
+import { AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
 import { LightTypeError } from './errors/LightTypeError'
@@ -41,10 +46,10 @@ export function object<TLightObject extends AnyLightObject>(
  * const arrayOfObjects = lt.array(lt.object({ ...etc... }))
  * ```
  */
-export function array<TLightArrayElement extends AnyLightArrayElement>(
+export function array<TLightArrayElement extends AnyLightType>(
   valueType: TLightArrayElement
 ) {
-  return new ChainableArray<TLightArrayElement>(valueType)
+  return ChainableArray.create(valueType)
 }
 
 /**
