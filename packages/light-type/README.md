@@ -6,7 +6,7 @@ Experimental runtime type safety solution with the following goals:
 * Be 1-1 compatible with typescript types
 * Typescript types should be inferable and have both inputs and outputs
 * Integrate with tools like tRPC
-* Be comfortable for a Zod user to move over from
+* Be comfortable for a Zod user to move over from, most features should be a drop-in replacement
 * Don't do anything which JS/TS can do natively, like literal unions from `["foo", "bar"] as const`
 
 New feature goals:
@@ -15,10 +15,12 @@ New feature goals:
 
 TODO list:
 
-* probably more focus on being a drop-in Zod replacement as this is painful
-
 <!-- Now -->
+* Documentation
 * Custom error messages for validation errors
+* Chainable validators 
+* More validators (.assert(boolean, "message") string.regex|startsWith|endsWith|contains, arrays, sets, )
+
 
 <!-- Next -->
 * Structure of classes, options:
@@ -27,7 +29,6 @@ TODO list:
   * Support object-based validator chaining if it doesn't compromise performance - dedicated classes for each supported type with specially implemented versions of each method
 * Look at alternative merge/extends patterns, given benchmark differences with "spread" on merge/extend
 * Object Discriminated Unions - later, they auto-discriminate just not at great runtime performance
-* More validators (.assert(boolean, "message") string.regex|startsWith|endsWith|contains, arrays, sets, )
 
 <!-- After Next -->
 * .extend should accept a record type (implement .and if necessary)
