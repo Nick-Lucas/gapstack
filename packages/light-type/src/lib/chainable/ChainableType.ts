@@ -148,12 +148,34 @@ export class ChainableType<TInput, TOutput = TInput>
   /**
    * **Only generates compile-time errors**
    *
-   * Ensure that the input of this Light Type is statically compatible with a given type.
+   * Ensure that the given type is assignable to this type.
+   * Will not detect extraneous input fields, only those that the Light Type will parse.
+   *
+   * ```ts
+   * const MyDto = lt.object(/ etc /).satisfiesInput<KnownInputType>()
+   * // or
+   * const MyDto = lt.object(/ etc /).satisfiesInput(knownValue)
+   * // then
+   * const myDto = MyDto.parse(knownValue)
+   * ```
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  satisfiesInput<TKnownInput extends TInput>(): this
-  satisfiesInput<TKnownInput extends TInput>(value: TKnownInput): this
+  satisfiesInput<T extends TInput>(): this
+  satisfiesInput<T extends TInput>(value: T): this
   satisfiesInput() {
+    return this
+  }
+
+  /**
+   * **Only generates compile-time errors**
+   *
+   * Ensure that the output of this Light Type is assignable to a given type.
+   * Will not detect extraneous output fields, only that are on the destination type.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  satisfiesOutput<T extends TOutput>(): this
+  satisfiesOutput<T extends TOutput>(value: T): this
+  satisfiesOutput() {
     return this
   }
 }
