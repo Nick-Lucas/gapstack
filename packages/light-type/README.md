@@ -21,7 +21,7 @@ TODO list:
 <!-- Now -->
 * Doc comments on everything
 * Custom error messages for validation errors
-* Allow before to be chained the same as pipe - maybe just rename to pipe?
+* Make pipe return the last input type's class as the new chain value if it's a known class?
 
 <!-- Next -->
 * Structure of classes, options:

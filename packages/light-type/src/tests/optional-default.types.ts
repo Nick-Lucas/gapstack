@@ -25,6 +25,7 @@ function checkTypes() {
   const defaultVal = lt.object({
     val: lt.number().default(0),
   })
+
   type DefaultVal = InferInput<typeof defaultVal>
 
   // val should be totally optional, not just undefined
