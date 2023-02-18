@@ -65,6 +65,17 @@ export class ChainableObject<
     })
   }
 
+  /**
+   * Combines the existing object with a new object, discarding any duplicate keys
+   *
+   * ```ts
+   * const Entity = lt.object({ id: lt.number(), name: lt.string() })
+   * const CarEntity = Entity.extend({ id: lt.string(), brand: lt.string() })
+   *
+   * // The resulting type discards the duplicate `id` key
+   * // `{ id: number; name: string; brand: string }`
+   * ```
+   */
   extend = <TExtendLightObject extends AnyLightObject>(
     extendLightObject: TExtendLightObject
   ) => {
@@ -78,6 +89,17 @@ export class ChainableObject<
     return lt.object(extendedLightObject)
   }
 
+  /**
+   * Combines the existing object with a new object, overwriting any duplicate keys
+   *
+   * ```ts
+   * const Entity = lt.object({ id: lt.number(), name: lt.string() })
+   * const CarEntity = Entity.merge({ id: lt.string(), brand: lt.string() })
+   *
+   * // The resulting type replaces the duplicate `id` key
+   * // `{ id: string; name: string; brand: string }`
+   * ```
+   */
   merge = <TExtendLightObject extends AnyLightObject>(
     extendLightObject: TExtendLightObject
   ) => {
@@ -91,6 +113,20 @@ export class ChainableObject<
     return lt.object(extendedLightObject)
   }
 
+  /**
+   * Removes one or more keys from the object
+   *
+   * ```ts
+   * const CarEntity = lt.object({
+   *   id: lt.string(),
+   *   name: lt.string(),
+   *   brand: lt.string()
+   * })
+   *
+   * const CarName = CarEntity.omit({ id: true, brand: true })
+   * // `{ name: string }`
+   * ```
+   */
   omit = <TOmit extends KeysParam<TLightObject>>(omit: TOmit) => {
     const lightObject = this.lightObject
 
@@ -112,6 +148,20 @@ export class ChainableObject<
     return lt.object(omittedLightObject)
   }
 
+  /**
+   * Selects one or more keys from the object
+   *
+   * ```ts
+   * const CarEntity = lt.object({
+   *   id: lt.string(),
+   *   name: lt.string(),
+   *   brand: lt.string()
+   * })
+   *
+   * const CarName = CarEntity.pick({ name: true })
+   * // `{ name: string }`
+   * ```
+   */
   pick = <TPick extends KeysParam<TLightObject>>(pick: TPick) => {
     const lightObject = this.lightObject
 
