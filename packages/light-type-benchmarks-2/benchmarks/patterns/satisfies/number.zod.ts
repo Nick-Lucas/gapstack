@@ -9,4 +9,3 @@ function testSatisfies<T, U extends T>() {
 
 testSatisfies<typeof num['_input'], number>()
 testSatisfies<typeof num['_input'], undefined>()
-testSatisfies<number, typeof num['_output']>()

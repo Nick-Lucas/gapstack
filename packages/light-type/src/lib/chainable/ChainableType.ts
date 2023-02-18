@@ -165,17 +165,4 @@ export class ChainableType<TInput, TOutput = TInput>
   satisfiesInput() {
     return this
   }
-
-  /**
-   * **Only generates compile-time errors**
-   *
-   * Ensure that the output of this Light Type is assignable to a given type.
-   * Will not detect extraneous output fields, only that are on the destination type.
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  satisfiesOutput<T extends TOutput>(): this
-  satisfiesOutput<T extends TOutput>(value: T): this
-  satisfiesOutput() {
-    return this
-  }
 }

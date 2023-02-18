@@ -7,4 +7,3 @@ function testSatisfies<T, U extends T>() {
 
 testSatisfies<num, number>()
 testSatisfies<num, undefined>()
-testSatisfies<number, number>()
