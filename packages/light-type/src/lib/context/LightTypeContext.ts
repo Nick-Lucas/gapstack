@@ -1,5 +1,6 @@
 import { Issue } from './Issue'
 
 export interface LightTypeContext {
-  addIssue(issue: Issue): void
+  NEVER: never
+  addIssue(issue: Issue): never
 }

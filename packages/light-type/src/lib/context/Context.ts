@@ -7,8 +7,12 @@ export interface InternalContext extends LightTypeContext {
   createChild(pathFragment: string): InternalContext
 }
 
+const INERNAL_NEVER = null as never
+
 class ChildContext implements InternalContext {
-  constructor(private readonly callback: (issue: Issue) => void) {}
+  constructor(private readonly callback: (issue: Issue) => never) {}
+
+  NEVER = INERNAL_NEVER
 
   addIssue = this.callback
 
@@ -20,6 +24,7 @@ class ChildContext implements InternalContext {
         ...issue,
         path: join(pathFragment, issue.path),
       })
+      return this.NEVER
     })
   }
 }
@@ -29,10 +34,35 @@ export class Context implements InternalContext {
 
   constructor(private readonly path?: string) {}
 
+  /**
+   * Useful to satisfy TypeScript where you have called addIssue and just want to return without a valid value
+   *
+   * ```ts
+   * lt.string().pipe((val, ctx) => {
+   *    ctx.addIssue({
+   *      // etc
+   *    })
+   *
+   *    return ctx.NEVER
+   * })
+   * ```
+   */
+  NEVER = INERNAL_NEVER
+
+  /**
+   * Add an issue to the context. Can contain either a custom or predefined 'type'
+   *
+   * lt.string().pipe((val, ctx) => {
+   *    ctx.addIssue({
+   *      type: 'custom_type
+   *      message: 'Custom message'
+   *    })
+   * })
+   * ```
+   */
   addIssue = (issue: Issue) => {
     this.issues.push(issue)
-
-    return this
+    return this.NEVER
   }
 
   createChild = (pathFragment: string): InternalContext => {
@@ -43,10 +73,11 @@ export class Context implements InternalContext {
         ...issue,
         path: join(pathFragment, issue.path),
       })
+      return INERNAL_NEVER
     })
   }
 
-  any = () => this.issues.length > 0
+  anyIssue = () => this.issues.length > 0
 
   throwIfAny = () => {
     if (this.issues.length > 0) {

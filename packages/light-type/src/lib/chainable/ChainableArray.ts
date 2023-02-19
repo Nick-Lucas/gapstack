@@ -29,7 +29,7 @@ export class ChainableArray<
           value: input,
         })
 
-        return input as TOutput[]
+        return ctx.NEVER
       },
     })
   }

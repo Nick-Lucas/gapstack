@@ -55,7 +55,7 @@ export class ChainableObject<
           value: input,
         })
 
-        return input as TOutput
+        return ctx.NEVER
       },
     })
   }

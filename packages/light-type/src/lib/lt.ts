@@ -97,7 +97,7 @@ export function boolean() {
         value: input,
       })
 
-      return input as boolean
+      return ctx.NEVER
     },
   })
 }
@@ -122,7 +122,7 @@ export function number() {
         value: input,
       })
 
-      return input as number
+      return ctx.NEVER
     },
   })
 }
@@ -147,7 +147,7 @@ export function string() {
         value: input,
       })
 
-      return input as string
+      return ctx.NEVER
     },
   })
 }
@@ -172,7 +172,7 @@ export function date() {
         value: input,
       })
 
-      return input as Date
+      return ctx.NEVER
     },
   })
 }
@@ -209,7 +209,7 @@ export function literal<TLiteral extends Primitive>(
         value: input,
       })
 
-      return input as TLiteral
+      return ctx.NEVER
     },
   })
 }
@@ -262,7 +262,7 @@ export function record<
         value: input,
       })
 
-      return input as TOutput
+      return ctx.NEVER
     },
   })
 }
@@ -321,7 +321,7 @@ export function map<
         value: input,
       })
 
-      return input as TOutput
+      return ctx.NEVER
     },
   })
 }
@@ -367,7 +367,7 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
         value: input,
       })
 
-      return input as TOutput
+      return ctx.NEVER
     },
   })
 }
@@ -398,7 +398,7 @@ export function union<T extends AnyUnionInput>(types: T) {
         const specialContext = new Context()
 
         const result = type.t.parse(input, specialContext) as TOutput
-        if (specialContext.any()) {
+        if (specialContext.anyIssue()) {
           // We go until we get one without any validation errors
           continue
         }
@@ -413,7 +413,7 @@ export function union<T extends AnyUnionInput>(types: T) {
         value: input,
       })
 
-      return input as TOutput
+      return ctx.NEVER
     },
   })
 }
@@ -453,7 +453,7 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
         value: input,
       })
 
-      return input as Set<TOutput>
+      return ctx.NEVER
     },
   })
 }
