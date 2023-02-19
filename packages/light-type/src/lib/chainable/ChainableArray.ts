@@ -1,5 +1,6 @@
 import { AnyLightType, InferInput, InferOutput } from '../types/LightType'
 import { ChainableType } from './ChainableType'
+import { arrays } from '../validators'
 
 export class ChainableArray<
   TElement extends AnyLightType,
@@ -35,4 +36,8 @@ export class ChainableArray<
       },
     })
   }
+
+  min = (min: number) => this.pipe(arrays.min(min))
+  max = (max: number) => this.pipe(arrays.max(max))
+  length = (length: number) => this.pipe(arrays.length(length))
 }
