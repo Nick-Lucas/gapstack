@@ -8,7 +8,6 @@ import {
 import { AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
-import { LightTypeError } from './errors/LightTypeError'
 import { ChainableArray } from './chainable/ChainableArray'
 
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
@@ -56,6 +55,7 @@ export function array<TLightArrayElement extends AnyLightType>(
 export function any() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new ChainableType<any, any>({
+    type: 'any',
     parse(input) {
       return input
     },
@@ -71,6 +71,7 @@ export function any() {
  */
 export function unknown() {
   return new ChainableType<unknown, unknown>({
+    type: 'unknown',
     parse(input) {
       return input
     },
@@ -86,6 +87,7 @@ export function unknown() {
  */
 export function boolean() {
   return new ChainableType<boolean, boolean>({
+    type: 'boolean',
     parse(input, ctx) {
       if (typeof input === 'boolean') {
         return input
@@ -111,6 +113,7 @@ export function boolean() {
  */
 export function number() {
   return new ChainableType<number, number>({
+    type: 'number',
     parse(input, ctx) {
       if (typeof input === 'number') {
         return input
@@ -136,6 +139,7 @@ export function number() {
  */
 export function string() {
   return new ChainableType<string, string>({
+    type: 'string',
     parse(input, ctx) {
       if (typeof input === 'string') {
         return input
@@ -161,6 +165,7 @@ export function string() {
  */
 export function date() {
   return new ChainableType<Date, Date>({
+    type: 'date',
     parse(input, ctx) {
       if (input instanceof Date && !isNaN(input.valueOf())) {
         return input
@@ -198,6 +203,7 @@ export function literal<TLiteral extends Primitive>(
   const list = Array.from(values).join(', ')
 
   return new ChainableType<LiteralBase<TLiteral>, TLiteral>({
+    type: 'literal',
     parse(input: unknown, ctx) {
       if (values.has(input as TLiteral)) {
         return input as TLiteral
@@ -235,6 +241,7 @@ export function record<
   type TOutput = Record<KeyOutput, ValueOutput>
 
   return new ChainableType<TInput, TOutput>({
+    type: 'record',
     parse(input, ctx) {
       if (typeof input === 'object' && input !== null) {
         const maybeTInput = input as TInput
@@ -288,6 +295,7 @@ export function map<
   type TOutput = Map<KeyOutput, ValueOutput>
 
   return new ChainableType<TInput, TOutput>({
+    type: 'map',
     parse(_input, ctx) {
       const input =
         _input instanceof Map
@@ -343,6 +351,7 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
   }
 
   return new ChainableType<TInput, TOutput>({
+    type: 'tuple',
     parse(input, ctx) {
       if (Array.isArray(input)) {
         if (input.length !== tuple.length) {
@@ -393,6 +402,7 @@ export function union<T extends AnyUnionInput>(types: T) {
   }[number]
 
   return new ChainableType<TInput, TOutput>({
+    type: 'union',
     parse(input, ctx) {
       for (const type of types) {
         const specialContext = new Context()
@@ -428,6 +438,7 @@ export function union<T extends AnyUnionInput>(types: T) {
  */
 export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
   return new ChainableType<TInput[] | Set<TInput>, Set<TOutput>>({
+    type: 'set',
     parse(_input, ctx) {
       let input = [] as TInput[]
       if (_input instanceof Set) {
@@ -466,4 +477,4 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
  * // `unknown -> Date`
  * ```
  */
-export const pipe = createPipeFunction(unknown())
+export const pipe = createPipeFunction(unknown().t)
