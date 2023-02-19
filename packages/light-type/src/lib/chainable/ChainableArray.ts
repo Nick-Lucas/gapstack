@@ -10,9 +10,11 @@ export class ChainableArray<
 
   constructor(protected readonly elementType: TElement) {
     super({
+      type: 'array',
       parse(input, ctx) {
         if (Array.isArray(input)) {
           const items = new Array<TOutput>(input.length)
+
           for (let i = 0; i < input.length; i++) {
             items[i] = elementType.t.parse(
               input[i],

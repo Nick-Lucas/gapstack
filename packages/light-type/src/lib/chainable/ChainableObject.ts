@@ -33,6 +33,7 @@ export class ChainableObject<
     const keys = Object.keys(lightObject) as TKey[]
 
     super({
+      type: 'object',
       parse(input, ctx) {
         if (typeof input === 'object' && input !== null) {
           const obj = input as TInput
