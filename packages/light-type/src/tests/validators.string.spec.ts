@@ -1,4 +1,5 @@
-import { lt, strings } from '..'
+import { lt } from '..'
+import { strings } from '../lib/validators'
 import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated } from './errors'
 

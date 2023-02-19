@@ -1,6 +1,5 @@
 export * from './types/LightObject'
 export * from './types/LightType'
-export * from './validators'
 export * from './errors/LightTypeAggregatedErrors'
 export * from './errors/LightTypeError'
 
