@@ -1,6 +1,6 @@
-import { Context, Issue } from '../errors/IssueContext'
+import { LightTypeContext, Issue } from '../errors/IssueContext'
 
-export type Assertion<T> = (input: T, ctx: Context) => T
+export type Assertion<T> = (input: T, ctx: LightTypeContext) => T
 
 export function assert<T>(
   condition: (input: T) => boolean,

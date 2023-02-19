@@ -13,7 +13,7 @@ import { ChainableArray } from './chainable/ChainableArray'
 
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 import { createPipeFunction } from './types/pipes'
-import { IssueContext } from './errors/IssueContext'
+import { Context } from './errors/IssueContext'
 
 /**
  * Validate an object type with a given shape:
@@ -386,7 +386,7 @@ export function union<T extends AnyUnionInput>(types: T) {
   return new ChainableType<TInput, TOutput>({
     parse(input, ctx) {
       for (const type of types) {
-        const specialContext = new IssueContext()
+        const specialContext = new Context()
 
         const result = type.t.parse(input, specialContext) as TOutput
         if (specialContext.any()) {

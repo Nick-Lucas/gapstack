@@ -9,17 +9,20 @@ export interface Issue {
   path?: string
 }
 
-export interface Context {
+export interface LightTypeContext {
   issue(issue: Issue): void
-  createChild(pathFragment: string): Context
 }
 
-class ChildContext implements Context {
+export interface InternalContext extends LightTypeContext {
+  createChild(pathFragment: string): InternalContext
+}
+
+class ChildContext implements InternalContext {
   constructor(private readonly callback: (issue: Issue) => void) {}
 
   issue = this.callback
 
-  createChild = (pathFragment: string): Context => {
+  createChild = (pathFragment: string): InternalContext => {
     const add = this.issue
 
     return new ChildContext((issue) => {
@@ -31,7 +34,7 @@ class ChildContext implements Context {
   }
 }
 
-export class IssueContext implements Context {
+export class Context implements InternalContext {
   private issues: Issue[] = []
 
   constructor(private readonly path?: string) {}
@@ -42,7 +45,7 @@ export class IssueContext implements Context {
     return this
   }
 
-  createChild = (pathFragment: string): Context => {
+  createChild = (pathFragment: string): InternalContext => {
     const add = this.issue
 
     return new ChildContext((issue) => {

@@ -1,7 +1,7 @@
 import { LightType } from '../types/LightType'
 import { TypeInner } from '../types/TypeInner'
 import { createPipeFunction } from '../types/pipes'
-import { IssueContext } from '../errors/IssueContext'
+import { Context } from '../errors/IssueContext'
 
 export class ChainableType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>
@@ -19,7 +19,7 @@ export class ChainableType<TInput, TOutput = TInput>
    * Throws if there is any validation error
    */
   parse = (input: unknown): TOutput => {
-    const ctx = new IssueContext()
+    const ctx = new Context()
 
     const result = this.t.parse(input, ctx)
 
