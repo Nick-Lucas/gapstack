@@ -31,10 +31,13 @@ describe('set', () => {
     it('should throw for not being a set', () => {
       throws(
         () => set.parse({} as any),
-        new LightTypeError({
-          message: 'Not a Set or Arraylike',
-          value: {},
-        })
+        aggregated(
+          new LightTypeError({
+            type: 'required',
+            message: 'Not a Set or Arraylike',
+            value: {},
+          })
+        )
       )
     })
 
@@ -43,6 +46,7 @@ describe('set', () => {
         () => set.parse(['Foo', 0 as any]),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Not a String',
             value: 0,
             path: '1',

@@ -1,10 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ChainableType } from '../chainable/ChainableType'
+import { LightTypeContext } from '../context/LightTypeContext'
 import { LightType } from './LightType'
 import { TypeInner } from './TypeInner'
 
-export type PipeFunc<TInput = any, TOutput = any> = (input: TInput) => TOutput
+export type PipeFunc<TInput = any, TOutput = any> = (
+  input: TInput,
+  ctx: LightTypeContext
+) => TOutput
 
 export type PipeType<TInput = any, TOutput = any> = LightType<TInput, TOutput>
 
@@ -58,14 +62,14 @@ export function createPipeFunction<TInput, TOutput>(
 
   function pipe(...funcs: PipeElem[]) {
     return new ChainableType<TInput, any>({
-      parse(input) {
-        const nextInput = t.parse(input)
+      parse(input, ctx) {
+        const nextInput = t.parse(input, ctx)
 
         return funcs.reduce((acc, fn) => {
           if (typeof fn === 'function') {
-            return fn(acc)
+            return fn(acc, ctx)
           } else {
-            return fn.parse(acc)
+            return fn.t.parse(acc, ctx)
           }
         }, nextInput)
       },

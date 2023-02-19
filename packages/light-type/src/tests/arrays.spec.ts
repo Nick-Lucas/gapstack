@@ -47,6 +47,7 @@ describe('arrays', () => {
         () => simpleArray.parse([1, 2, null] as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             path: '2',
             message: 'Not a Number',
             value: null,
@@ -57,13 +58,11 @@ describe('arrays', () => {
   })
 
   describe('array of objects', () => {
-    const simpleObject = lt
-      .object({
-        num: lt.number(),
-        str: lt.string(),
-        bool: lt.boolean(),
-      })
-      .seal()
+    const simpleObject = lt.object({
+      num: lt.number(),
+      str: lt.string(),
+      bool: lt.boolean(),
+    })
 
     it('should parse', () => {
       const input = [
@@ -104,6 +103,7 @@ describe('arrays', () => {
         () => simpleArray.parse([...input] as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             path: '1.bool',
             message: 'Not a Boolean',
             value: null,
@@ -121,16 +121,19 @@ describe('arrays', () => {
           () => simpleArray.parse([input, input, input] as any),
           aggregated(
             new LightTypeError({
+              type: 'required',
               path: '0',
               message: 'Not an Object',
               value: input,
             }),
             new LightTypeError({
+              type: 'required',
               path: '1',
               message: 'Not an Object',
               value: input,
             }),
             new LightTypeError({
+              type: 'required',
               path: '2',
               message: 'Not an Object',
               value: input,
@@ -147,16 +150,19 @@ describe('arrays', () => {
         () => simpleArray.parse(new Array(3) as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             path: '0',
             message: 'Not an Object',
             value: undefined,
           }),
           new LightTypeError({
+            type: 'required',
             path: '1',
             message: 'Not an Object',
             value: undefined,
           }),
           new LightTypeError({
+            type: 'required',
             path: '2',
             message: 'Not an Object',
             value: undefined,

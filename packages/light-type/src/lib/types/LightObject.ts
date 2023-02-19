@@ -2,8 +2,6 @@ import { LightType } from './LightType'
 
 export type AnyLightObject = Record<string, LightType<unknown, unknown>>
 
-export type AnyLightArrayElement = LightType<unknown, unknown>
-
 export type InferLightObjectOutput<TDef extends AnyLightObject> =
   ApplyOptionals<{
     [key in keyof TDef]: TDef[key] extends LightType<unknown, infer T>

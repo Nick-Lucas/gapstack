@@ -1,6 +1,13 @@
+import { TypeInner } from './TypeInner'
+
 export interface LightType<TInput, TOutput = TInput> {
   readonly _input: TInput
   readonly _output: TOutput
+
+  /**
+   * @internal do not use or you will develop a mild cold
+   */
+  readonly t: TypeInner<TInput, TOutput>
 
   parse(input: unknown): TOutput
   check(input: TInput): TOutput

@@ -44,17 +44,23 @@ lt.pipe(unknownValue => String(unknownValue), lt.string())
 lt.string().pipe()
 
 // Pipe can also raise validation errors, which will get aggregated up and throw by .parse
-lt.string().pipe((numStr) => {
+lt.string().pipe((numStr, ctx) => {
   const num = parseInt(numStr)
   if (!isNaN(num)) {
     return num
   }
 
-  throw new LightTypeError({
+  ctx.addIssue({
+    // There are some pre-set type literals but you can pass any string
+    type: 'custom_nan',
     message: 'Custom NaN Error',
     value: numStr
   })
 })
+
+// Some pipe validators are bundled out of the box
+import { assert, strings, numbers } from '@gapstack/light-type/src/lib/validators'
+lt.string().pipe(assert(v => v === "test", "String should have been 'test'"))
 
 // .parse is the same
 lt.string().parse("Hello world")

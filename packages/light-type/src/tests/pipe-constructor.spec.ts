@@ -2,13 +2,14 @@
 
 import { lt } from '..'
 import { LightTypeError } from '../lib/errors/LightTypeError'
+import { aggregated } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function checkTypes() {
   lt.pipe(() => '', lt.string())
   lt.pipe((i) => (i === 1 ? ('' as string) : undefined), lt.string().optional())
-  lt.pipe((i) => (i === 1 ? 'foo' : undefined), lt.literal('foo'))
-  lt.pipe((i) => (i === 1 ? 'foo' : undefined), lt.literal(['foo']))
+  lt.pipe((i) => (i === 1 ? 'foo' : undefined), lt.literal('foo').optional())
+  lt.pipe((i) => (i === 1 ? 'foo' : undefined), lt.literal(['foo']).optional())
   lt.pipe((i) => (i === 1 ? 'foo' : undefined), lt.literal(['foo']).optional())
 
   // @ts-expect-error type value should reject anything not compatible with the function output
@@ -28,7 +29,7 @@ describe('pipe-constructor', () => {
       }
     }
 
-    return null
+    return new Date(NaN)
   }, lt.date())
 
   describe('Before: Parses DateType', () => {
@@ -45,10 +46,13 @@ describe('pipe-constructor', () => {
       'rejects a non-parseable value',
       (value) => {
         expect(() => DateType.parse(value)).toThrow(
-          new LightTypeError({
-            message: 'Not a Date',
-            value: value,
-          })
+          aggregated(
+            new LightTypeError({
+              type: 'required',
+              message: 'Not a Date',
+              value: value,
+            })
+          )
         )
       }
     )

@@ -58,21 +58,25 @@ describe('lightType', () => {
         () => t.parse(input as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             path: 'someNum',
             message: 'Not a Number',
             value: undefined,
           }),
           new LightTypeError({
+            type: 'required',
             path: 'obj.deepString',
             message: 'Not a String',
             value: null,
           }),
           new LightTypeError({
+            type: 'required',
             path: 'arr.1.deepDate',
             message: 'Not a Date',
             value: null,
           }),
           new LightTypeError({
+            type: 'required',
             path: 'arr.1.deepLiteral',
             message: 'Does not match literal, expected one of: 0, bar',
             value: null,

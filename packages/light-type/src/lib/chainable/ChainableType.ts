@@ -1,6 +1,7 @@
 import { LightType } from '../types/LightType'
 import { TypeInner } from '../types/TypeInner'
 import { createPipeFunction } from '../types/pipes'
+import { Context } from '../context/Context'
 
 export class ChainableType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>
@@ -8,17 +9,23 @@ export class ChainableType<TInput, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  constructor(protected readonly t: TypeInner<TInput, TOutput>) {
+  constructor(readonly t: TypeInner<TInput, TOutput>) {
     this.satisfiesInput = this.satisfiesInput.bind(this)
   }
 
   /**
-   * Check an unknown input for validatity.
+   * Check an unknown input for validity.
    *
    * Throws if there is any validation error
    */
   parse = (input: unknown): TOutput => {
-    return this.t.parse(input)
+    const ctx = new Context()
+
+    const result = this.t.parse(input, ctx)
+
+    ctx.throwIfAny()
+
+    return result
   }
 
   /**
@@ -27,7 +34,7 @@ export class ChainableType<TInput, TOutput = TInput>
    * Throws if there is any validation error
    */
   check = (input: TInput): TOutput => {
-    return this.t.parse(input)
+    return this.parse(input)
   }
 
   /**
@@ -58,11 +65,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput | undefined>({
-      parse(input) {
+      parse(input, ctx) {
         if (input === undefined) {
           return undefined
         }
-        return t.parse(input)
+        return t.parse(input, ctx)
       },
     })
   }
@@ -79,11 +86,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput | null>({
-      parse(input) {
+      parse(input, ctx) {
         if (input === null) {
           return null
         }
-        return t.parse(input)
+        return t.parse(input, ctx)
       },
     })
   }
@@ -110,11 +117,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput>({
-      parse(input) {
+      parse(input, ctx) {
         if (input === undefined) {
           return defaultValue
         }
-        return t.parse(input)
+        return t.parse(input, ctx)
       },
     })
   }
@@ -134,11 +141,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput>({
-      parse(input) {
+      parse(input, ctx) {
         if (input === null) {
           return defaultValue
         }
-        return t.parse(input)
+        return t.parse(input, ctx)
       },
     })
   }

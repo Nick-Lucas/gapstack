@@ -1,38 +1,35 @@
-import { LightTypeErrorAggregator } from '../errors/LightTypeAggregatedErrors'
-import { LightTypeError } from '../errors/LightTypeError'
-import { AnyLightArrayElement } from '../types/LightObject'
-import { InferInput, InferOutput } from '../types/LightType'
+import { AnyLightType, InferInput, InferOutput } from '../types/LightType'
 import { ChainableType } from './ChainableType'
 
 export class ChainableArray<
-  TLightArray extends AnyLightArrayElement,
-  TInput extends InferInput<TLightArray> = InferInput<TLightArray>,
-  TOutput extends InferOutput<TLightArray> = InferOutput<TLightArray>
+  TElement extends AnyLightType,
+  TInput extends InferInput<TElement> = InferInput<TElement>,
+  TOutput extends InferOutput<TElement> = InferOutput<TElement>
 > extends ChainableType<TInput[], TOutput[]> {
-  readonly _element!: TLightArray
+  readonly _element!: TElement
 
-  constructor(protected readonly elementType: TLightArray) {
+  constructor(protected readonly elementType: TElement) {
     super({
-      parse(input) {
+      parse(input, ctx) {
         if (Array.isArray(input)) {
-          const errors = new LightTypeErrorAggregator()
-
-          const items = new Array(input.length)
+          const items = new Array<TOutput>(input.length)
           for (let i = 0; i < input.length; i++) {
-            errors.aggregate(String(i), () => {
-              items[i] = elementType.parse(input[i])
-            })
+            items[i] = elementType.t.parse(
+              input[i],
+              ctx.createChild(String(i))
+            ) as TOutput
           }
-
-          errors.throwIfAny()
 
           return items
         }
 
-        throw new LightTypeError({
+        ctx.addIssue({
+          type: 'required',
           message: `Not an Array`,
           value: input,
         })
+
+        return ctx.NEVER
       },
     })
   }
