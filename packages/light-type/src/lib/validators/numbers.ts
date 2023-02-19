@@ -1,10 +1,9 @@
-import { LightTypeError } from '../errors/LightTypeError'
 import { Assertion } from './assert'
 
 export function min(min: number): Assertion<number> {
-  return (input) => {
+  return (input, issueContext) => {
     if (input < min) {
-      throw new LightTypeError({
+      issueContext.issue({
         message: 'Min Value is ' + min,
         value: min,
       })
@@ -15,9 +14,9 @@ export function min(min: number): Assertion<number> {
 }
 
 export function max(max: number): Assertion<number> {
-  return (input) => {
+  return (input, issueContext) => {
     if (input > max) {
-      throw new LightTypeError({
+      issueContext.issue({
         message: 'Max Value is ' + max,
         value: max,
       })

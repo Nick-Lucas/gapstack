@@ -1,10 +1,9 @@
-import { LightTypeError } from '../errors/LightTypeError'
 import { Assertion } from './assert'
 
 export function min(characters: number): Assertion<string> {
-  return (input) => {
+  return (input, issueContext) => {
     if (input.length < characters) {
-      throw new LightTypeError({
+      issueContext.issue({
         message: 'Min Length is ' + characters,
         value: characters,
       })
@@ -15,9 +14,9 @@ export function min(characters: number): Assertion<string> {
 }
 
 export function max(characters: number): Assertion<string> {
-  return (input) => {
+  return (input, issueContext) => {
     if (input.length > characters) {
-      throw new LightTypeError({
+      issueContext.issue({
         message: 'Max Length is ' + characters,
         value: characters,
       })
@@ -28,9 +27,9 @@ export function max(characters: number): Assertion<string> {
 }
 
 export function length(characters: number): Assertion<string> {
-  return (input) => {
+  return (input, issueContext) => {
     if (input.length !== characters) {
-      throw new LightTypeError({
+      issueContext.issue({
         message: 'Expected Length is ' + characters,
         value: input,
       })

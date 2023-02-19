@@ -1,20 +1,19 @@
 import { ChainableType } from './chainable/ChainableType'
-import { InferInput, InferOutput, LightType } from './types/LightType'
-import { AnyLightArrayElement, AnyLightObject } from './types/LightObject'
+import {
+  AnyLightType,
+  InferInput,
+  InferOutput,
+  LightType,
+} from './types/LightType'
+import { AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
 import { LightTypeError } from './errors/LightTypeError'
 import { ChainableArray } from './chainable/ChainableArray'
-import {
-  LightTypeAggregatedErrors,
-  LightTypeErrorAggregator,
-} from './errors/LightTypeAggregatedErrors'
+
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 import { createPipeFunction } from './types/pipes'
-
-// TODO: add .implements method to enforce recreation of deep TS type
-
-// TODO: extend all types with validations
+import { IssueContext } from './errors/IssueContext'
 
 /**
  * Validate an object type with a given shape:
@@ -41,7 +40,7 @@ export function object<TLightObject extends AnyLightObject>(
  * const arrayOfObjects = lt.array(lt.object({ ...etc... }))
  * ```
  */
-export function array<TLightArrayElement extends AnyLightArrayElement>(
+export function array<TLightArrayElement extends AnyLightType>(
   valueType: TLightArrayElement
 ) {
   return new ChainableArray<TLightArrayElement>(valueType)
@@ -87,15 +86,17 @@ export function unknown() {
  */
 export function boolean() {
   return new ChainableType<boolean, boolean>({
-    parse(input) {
+    parse(input, issueContext) {
       if (typeof input === 'boolean') {
         return input
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: `Not a Boolean`,
         value: input,
       })
+
+      return input as boolean
     },
   })
 }
@@ -109,15 +110,17 @@ export function boolean() {
  */
 export function number() {
   return new ChainableType<number, number>({
-    parse(input) {
+    parse(input, issueContext) {
       if (typeof input === 'number') {
         return input
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: `Not a Number`,
         value: input,
       })
+
+      return input as number
     },
   })
 }
@@ -131,15 +134,17 @@ export function number() {
  */
 export function string() {
   return new ChainableType<string, string>({
-    parse(input) {
+    parse(input, issueContext) {
       if (typeof input === 'string') {
         return input
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: `Not a String`,
         value: input,
       })
+
+      return input as string
     },
   })
 }
@@ -153,15 +158,17 @@ export function string() {
  */
 export function date() {
   return new ChainableType<Date, Date>({
-    parse(input) {
-      if (input instanceof Date) {
+    parse(input, issueContext) {
+      if (input instanceof Date && !isNaN(input.valueOf())) {
         return input
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: `Not a Date`,
         value: input,
       })
+
+      return input as Date
     },
   })
 }
@@ -187,15 +194,17 @@ export function literal<TLiteral extends Primitive>(
   const list = Array.from(values).join(', ')
 
   return new ChainableType<LiteralBase<TLiteral>, TLiteral>({
-    parse(input: unknown) {
+    parse(input: unknown, issueContext) {
       if (values.has(input as TLiteral)) {
         return input as TLiteral
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: `Does not match literal, expected one of: ${list}`,
         value: input,
       })
+
+      return input as TLiteral
     },
   })
 }
@@ -221,32 +230,33 @@ export function record<
   type TOutput = Record<KeyOutput, ValueOutput>
 
   return new ChainableType<TInput, TOutput>({
-    parse(input) {
+    parse(input, issueContext) {
       if (typeof input === 'object' && input !== null) {
         const maybeTInput = input as TInput
-        const errors = new LightTypeErrorAggregator()
 
         const inputKeys = Object.keys(maybeTInput) as KeyInput[]
 
         const result = {} as TOutput
         for (let i = 0; i < inputKeys.length; i++) {
-          errors.aggregate(String(inputKeys[i]), () => {
-            const outputKey = key.parse(inputKeys[i]) as KeyOutput
+          const innerCtx = issueContext.createChild(String(inputKeys[i]))
 
-            result[outputKey] = value.parse(
-              maybeTInput[inputKeys[i]]
-            ) as ValueOutput
-          })
+          const outputKey = key.t.parse(inputKeys[i], innerCtx) as KeyOutput
+
+          result[outputKey] = value.t.parse(
+            maybeTInput[inputKeys[i]],
+            innerCtx
+          ) as ValueOutput
         }
-        errors.throwIfAny()
 
         return result
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: 'Not a Record',
         value: input,
       })
+
+      return input as TOutput
     },
   })
 }
@@ -272,7 +282,7 @@ export function map<
   type TOutput = Map<KeyOutput, ValueOutput>
 
   return new ChainableType<TInput, TOutput>({
-    parse(_input) {
+    parse(_input, issueContext) {
       const input =
         _input instanceof Map
           ? (Object.fromEntries(_input) as Record<KeyInput, ValueInput>)
@@ -280,28 +290,31 @@ export function map<
 
       if (typeof input === 'object' && input !== null) {
         const maybeTInput = input as TInput
-        const errors = new LightTypeErrorAggregator()
 
         const inputKeys = Object.keys(maybeTInput) as (keyof TInput)[]
 
         const result = new Map() as TOutput
         for (let i = 0; i < inputKeys.length; i++) {
-          errors.aggregate(String(inputKeys[i]), () => {
-            result.set(
-              key.parse(inputKeys[i]) as KeyOutput,
-              value.parse(maybeTInput[inputKeys[i]]) as ValueOutput
-            )
-          })
+          const innerContext = issueContext.createChild(String(inputKeys[i]))
+
+          result.set(
+            key.t.parse(inputKeys[i], innerContext) as KeyOutput,
+            value.t.parse(
+              maybeTInput[inputKeys[i]],
+              innerContext
+            ) as ValueOutput
+          )
         }
-        errors.throwIfAny()
 
         return result
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: 'Not a Map or Object',
         value: input,
       })
+
+      return input as TOutput
     },
   })
 }
@@ -323,32 +336,29 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
   }
 
   return new ChainableType<TInput, TOutput>({
-    parse(input) {
+    parse(input, issueContext) {
       if (Array.isArray(input)) {
         if (input.length !== tuple.length) {
-          throw new LightTypeError({
+          issueContext.issue({
             message: `Invalid Tuple: ${input.length} elements instead of ${tuple.length}`,
             value: input,
           })
         }
-
-        const errors = new LightTypeErrorAggregator()
         const result = new Array(tuple.length) as TOutput
         for (let i = 0; i < tuple.length; i++) {
-          errors.aggregate(String(i), () => {
-            result[i] = tuple[i].parse(input[i])
-          })
+          const innerContext = issueContext.createChild(String(i))
+          result[i] = tuple[i].t.parse(input[i], innerContext)
         }
-
-        errors.throwIfAny()
 
         return result
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: `Not a Tuple`,
         value: input,
       })
+
+      return input as TOutput
     },
   })
 }
@@ -374,28 +384,26 @@ export function union<T extends AnyUnionInput>(types: T) {
   }[number]
 
   return new ChainableType<TInput, TOutput>({
-    parse(input) {
+    parse(input, issueContext) {
       for (const type of types) {
-        try {
-          return type.parse(input) as TOutput
-        } catch (e) {
-          if (
-            e instanceof LightTypeError ||
-            e instanceof LightTypeAggregatedErrors
-          ) {
-            // We're looking for a successful type
-            continue
-          } else {
-            throw e
-          }
+        const specialContext = new IssueContext()
+
+        const result = type.t.parse(input, specialContext) as TOutput
+        if (specialContext.any()) {
+          // We go until we get one without any validation errors
+          continue
         }
+
+        return result
       }
 
-      throw new LightTypeError({
-        // TODO: include some sort of aggregated errors in this from the various options
+      // TODO: maybe can give more details on why no type was matched?
+      issueContext.issue({
         message: 'No Matching Type in Union',
         value: input,
       })
+
+      return input as TOutput
     },
   })
 }
@@ -410,7 +418,7 @@ export function union<T extends AnyUnionInput>(types: T) {
  */
 export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
   return new ChainableType<TInput[] | Set<TInput>, Set<TOutput>>({
-    parse(_input) {
+    parse(_input, issueContext) {
       let input = [] as TInput[]
       if (_input instanceof Set) {
         input = Array.from(_input)
@@ -419,24 +427,22 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
       }
 
       if (Array.isArray(input)) {
-        const errors = new LightTypeErrorAggregator()
         const result = new Set<TOutput>()
 
         for (let i = 0; i < input.length; i++) {
-          errors.aggregate(String(i), () => {
-            result.add(valueType.parse(input[i]))
-          })
+          const innerContext = issueContext.createChild(String(i))
+          result.add(valueType.t.parse(input[i], innerContext))
         }
-
-        errors.throwIfAny()
 
         return result
       }
 
-      throw new LightTypeError({
+      issueContext.issue({
         message: `Not a Set or Arraylike`,
         value: input,
       })
+
+      return input as Set<TOutput>
     },
   })
 }

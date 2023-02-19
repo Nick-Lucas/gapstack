@@ -1,5 +1,6 @@
 import { lt, numbers } from '..'
 import { LightTypeError } from '../lib/errors/LightTypeError'
+import { aggregated } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function checkTypes() {
@@ -17,10 +18,12 @@ describe('number validators', () => {
 
     it.each([0.99999, 0, -1, -2])('throws', (value) => {
       expect(() => t.parse(value)).toThrow(
-        new LightTypeError({
-          message: 'Min Value is 1',
-          value: value,
-        })
+        aggregated(
+          new LightTypeError({
+            message: 'Min Value is 1',
+            value: value,
+          })
+        )
       )
     })
   })
@@ -34,10 +37,12 @@ describe('number validators', () => {
 
     it.each([11, 10.0001, 50])('throws', (value) => {
       expect(() => t.parse(value)).toThrow(
-        new LightTypeError({
-          message: 'Max Value is 10',
-          value: value,
-        })
+        aggregated(
+          new LightTypeError({
+            message: 'Max Value is 10',
+            value: value,
+          })
+        )
       )
     })
   })
@@ -51,19 +56,23 @@ describe('number validators', () => {
 
     it.each([11])('throws over max', (value) => {
       expect(() => t.parse(value)).toThrow(
-        new LightTypeError({
-          message: 'Max Value is 10',
-          value: value,
-        })
+        aggregated(
+          new LightTypeError({
+            message: 'Max Value is 10',
+            value: value,
+          })
+        )
       )
     })
 
     it.each([0])('throws under min', (value) => {
       expect(() => t.parse(value)).toThrow(
-        new LightTypeError({
-          message: 'Min Value is 1',
-          value: value,
-        })
+        aggregated(
+          new LightTypeError({
+            message: 'Min Value is 1',
+            value: value,
+          })
+        )
       )
     })
   })

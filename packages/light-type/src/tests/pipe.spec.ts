@@ -5,7 +5,11 @@ import { lt } from '..'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function checkTypes() {
   lt.number().pipe((a) => String(a))
-  lt.number().pipe(String, parseInt, (n) => new Date(n))
+  lt.number().pipe(
+    String,
+    (s) => parseInt(s),
+    (n) => new Date(n)
+  )
   lt.number().pipe(
     (a) => String(a),
     (s) => new Date(s)
@@ -17,7 +21,7 @@ function checkTypes() {
     (notNum) => notNum + 1
   )
 
-  lt.string().pipe((s) => (s ? 'bar' : undefined), lt.literal('foo'))
+  lt.string().pipe((s) => (s ? 'bar' : undefined), lt.literal('foo').optional())
 }
 
 describe('pipe', () => {

@@ -57,13 +57,11 @@ describe('arrays', () => {
   })
 
   describe('array of objects', () => {
-    const simpleObject = lt
-      .object({
-        num: lt.number(),
-        str: lt.string(),
-        bool: lt.boolean(),
-      })
-      .seal()
+    const simpleObject = lt.object({
+      num: lt.number(),
+      str: lt.string(),
+      bool: lt.boolean(),
+    })
 
     it('should parse', () => {
       const input = [

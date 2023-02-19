@@ -28,26 +28,30 @@ describe('tuple', () => {
 
       throws(
         () => tuple.parse(input as any),
-        new LightTypeError({
-          message: 'Invalid Tuple: 1 elements instead of 2',
-          value: ['Foo'],
-        })
+        aggregated(
+          new LightTypeError({
+            message: 'Invalid Tuple: 1 elements instead of 2',
+            value: ['Foo'],
+          })
+        )
       )
     })
 
     it('should throw for not being a tuple', () => {
       throws(
         () => tuple.parse({} as any),
-        new LightTypeError({
-          message: 'Not a Tuple',
-          value: {},
-        })
+        aggregated(
+          new LightTypeError({
+            message: 'Not a Tuple',
+            value: {},
+          })
+        )
       )
     })
 
     it('should throw for an element being invalid', () => {
       throws(
-        () => tuple.parse([-1 as any, 0]),
+        () => tuple.parse([-1, 0]),
         aggregated(
           new LightTypeError({
             message: 'Not a String',

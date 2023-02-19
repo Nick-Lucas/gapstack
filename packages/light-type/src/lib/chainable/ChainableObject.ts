@@ -7,8 +7,6 @@ import { ChainableType } from './ChainableType'
 import * as lt from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
-import { LightTypeError } from '../errors/LightTypeError'
-import { LightTypeErrorAggregator } from '../errors/LightTypeAggregatedErrors'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
@@ -35,32 +33,29 @@ export class ChainableObject<
     const keys = Object.keys(lightObject) as TKey[]
 
     super({
-      parse(input) {
-        const errors = new LightTypeErrorAggregator()
-
+      parse(input, issueContext) {
         if (typeof input === 'object' && input !== null) {
           const obj = input as TInput
 
-          const output = keys.reduce((aggr, key) => {
+          return keys.reduce((aggr, key) => {
             const parser = lightObject[key]
 
-            errors.aggregate(key, () => {
-              // TODO: fix any type
-              aggr[key] = parser.parse(obj[key]) as any
-            })
+            aggr[key] = parser.t.parse(
+              obj[key],
+              issueContext.createChild(key)
+            ) as TOutput[TKey]
 
             return aggr
           }, {} as TOutput)
-
-          errors.throwIfAny()
-
-          return output
         }
 
-        throw new LightTypeError({
+        issueContext.issue({
+          type: 'invalid_type',
           message: `Not an Object`,
           value: input,
         })
+
+        return input as TOutput
       },
     })
   }

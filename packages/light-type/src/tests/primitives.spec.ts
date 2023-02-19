@@ -3,6 +3,7 @@
 import { lt } from '..'
 import { ChainableType } from '../lib/chainable/ChainableType'
 import { LightTypeError } from '../lib/errors/LightTypeError'
+import { aggregated } from './errors'
 
 describe('primitives', () => {
   type ProceduralTest = [
@@ -97,10 +98,12 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
             expect(() => type.parse(input)).toThrowError(
-              new LightTypeError({
-                message: error,
-                value: input,
-              })
+              aggregated(
+                new LightTypeError({
+                  message: error,
+                  value: input,
+                })
+              )
             )
           })
       })
@@ -115,10 +118,12 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              new LightTypeError({
-                message: error,
-                value: input,
-              })
+              aggregated(
+                new LightTypeError({
+                  message: error,
+                  value: input,
+                })
+              )
             )
           })
       })
@@ -133,10 +138,12 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              new LightTypeError({
-                message: error,
-                value: input,
-              })
+              aggregated(
+                new LightTypeError({
+                  message: error,
+                  value: input,
+                })
+              )
             )
           })
       })
@@ -154,10 +161,12 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              new LightTypeError({
-                message: error,
-                value: input,
-              })
+              aggregated(
+                new LightTypeError({
+                  message: error,
+                  value: input,
+                })
+              )
             )
           })
       })
@@ -175,10 +184,12 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              new LightTypeError({
-                message: error,
-                value: input,
-              })
+              aggregated(
+                new LightTypeError({
+                  message: error,
+                  value: input,
+                })
+              )
             )
           })
       })

@@ -1,8 +1,6 @@
-interface LightTypeErrorOpts {
-  path?: string
-  value: unknown
-  message: string
-}
+import { Issue } from './IssueContext'
+
+type LightTypeErrorOpts = Issue
 
 export class LightTypeError extends Error {
   readonly path?: string

@@ -47,10 +47,12 @@ describe('union', () => {
 
       throws(
         () => union.parse(input as any),
-        new LightTypeError({
-          message: 'No Matching Type in Union',
-          value: input,
-        })
+        aggregated(
+          new LightTypeError({
+            message: 'No Matching Type in Union',
+            value: input,
+          })
+        )
       )
     })
 
