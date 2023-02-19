@@ -1,9 +1,9 @@
 import { Assertion } from './assert'
 
 export function min(min: number): Assertion<number> {
-  return (input, issueContext) => {
+  return (input, ctx) => {
     if (input < min) {
-      issueContext.issue({
+      ctx.issue({
         message: 'Min Value is ' + min,
         value: min,
       })
@@ -14,9 +14,9 @@ export function min(min: number): Assertion<number> {
 }
 
 export function max(max: number): Assertion<number> {
-  return (input, issueContext) => {
+  return (input, ctx) => {
     if (input > max) {
-      issueContext.issue({
+      ctx.issue({
         message: 'Max Value is ' + max,
         value: max,
       })

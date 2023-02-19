@@ -86,12 +86,12 @@ export function unknown() {
  */
 export function boolean() {
   return new ChainableType<boolean, boolean>({
-    parse(input, issueContext) {
+    parse(input, ctx) {
       if (typeof input === 'boolean') {
         return input
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: `Not a Boolean`,
         value: input,
       })
@@ -110,12 +110,12 @@ export function boolean() {
  */
 export function number() {
   return new ChainableType<number, number>({
-    parse(input, issueContext) {
+    parse(input, ctx) {
       if (typeof input === 'number') {
         return input
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: `Not a Number`,
         value: input,
       })
@@ -134,12 +134,12 @@ export function number() {
  */
 export function string() {
   return new ChainableType<string, string>({
-    parse(input, issueContext) {
+    parse(input, ctx) {
       if (typeof input === 'string') {
         return input
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: `Not a String`,
         value: input,
       })
@@ -158,12 +158,12 @@ export function string() {
  */
 export function date() {
   return new ChainableType<Date, Date>({
-    parse(input, issueContext) {
+    parse(input, ctx) {
       if (input instanceof Date && !isNaN(input.valueOf())) {
         return input
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: `Not a Date`,
         value: input,
       })
@@ -194,12 +194,12 @@ export function literal<TLiteral extends Primitive>(
   const list = Array.from(values).join(', ')
 
   return new ChainableType<LiteralBase<TLiteral>, TLiteral>({
-    parse(input: unknown, issueContext) {
+    parse(input: unknown, ctx) {
       if (values.has(input as TLiteral)) {
         return input as TLiteral
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: `Does not match literal, expected one of: ${list}`,
         value: input,
       })
@@ -230,7 +230,7 @@ export function record<
   type TOutput = Record<KeyOutput, ValueOutput>
 
   return new ChainableType<TInput, TOutput>({
-    parse(input, issueContext) {
+    parse(input, ctx) {
       if (typeof input === 'object' && input !== null) {
         const maybeTInput = input as TInput
 
@@ -238,7 +238,7 @@ export function record<
 
         const result = {} as TOutput
         for (let i = 0; i < inputKeys.length; i++) {
-          const innerCtx = issueContext.createChild(String(inputKeys[i]))
+          const innerCtx = ctx.createChild(String(inputKeys[i]))
 
           const outputKey = key.t.parse(inputKeys[i], innerCtx) as KeyOutput
 
@@ -251,7 +251,7 @@ export function record<
         return result
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: 'Not a Record',
         value: input,
       })
@@ -282,7 +282,7 @@ export function map<
   type TOutput = Map<KeyOutput, ValueOutput>
 
   return new ChainableType<TInput, TOutput>({
-    parse(_input, issueContext) {
+    parse(_input, ctx) {
       const input =
         _input instanceof Map
           ? (Object.fromEntries(_input) as Record<KeyInput, ValueInput>)
@@ -295,7 +295,7 @@ export function map<
 
         const result = new Map() as TOutput
         for (let i = 0; i < inputKeys.length; i++) {
-          const innerContext = issueContext.createChild(String(inputKeys[i]))
+          const innerContext = ctx.createChild(String(inputKeys[i]))
 
           result.set(
             key.t.parse(inputKeys[i], innerContext) as KeyOutput,
@@ -309,7 +309,7 @@ export function map<
         return result
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: 'Not a Map or Object',
         value: input,
       })
@@ -336,24 +336,24 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
   }
 
   return new ChainableType<TInput, TOutput>({
-    parse(input, issueContext) {
+    parse(input, ctx) {
       if (Array.isArray(input)) {
         if (input.length !== tuple.length) {
-          issueContext.issue({
+          ctx.issue({
             message: `Invalid Tuple: ${input.length} elements instead of ${tuple.length}`,
             value: input,
           })
         }
         const result = new Array(tuple.length) as TOutput
         for (let i = 0; i < tuple.length; i++) {
-          const innerContext = issueContext.createChild(String(i))
+          const innerContext = ctx.createChild(String(i))
           result[i] = tuple[i].t.parse(input[i], innerContext)
         }
 
         return result
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: `Not a Tuple`,
         value: input,
       })
@@ -384,7 +384,7 @@ export function union<T extends AnyUnionInput>(types: T) {
   }[number]
 
   return new ChainableType<TInput, TOutput>({
-    parse(input, issueContext) {
+    parse(input, ctx) {
       for (const type of types) {
         const specialContext = new IssueContext()
 
@@ -398,7 +398,7 @@ export function union<T extends AnyUnionInput>(types: T) {
       }
 
       // TODO: maybe can give more details on why no type was matched?
-      issueContext.issue({
+      ctx.issue({
         message: 'No Matching Type in Union',
         value: input,
       })
@@ -418,7 +418,7 @@ export function union<T extends AnyUnionInput>(types: T) {
  */
 export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
   return new ChainableType<TInput[] | Set<TInput>, Set<TOutput>>({
-    parse(_input, issueContext) {
+    parse(_input, ctx) {
       let input = [] as TInput[]
       if (_input instanceof Set) {
         input = Array.from(_input)
@@ -430,14 +430,14 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
         const result = new Set<TOutput>()
 
         for (let i = 0; i < input.length; i++) {
-          const innerContext = issueContext.createChild(String(i))
+          const innerContext = ctx.createChild(String(i))
           result.add(valueType.t.parse(input[i], innerContext))
         }
 
         return result
       }
 
-      issueContext.issue({
+      ctx.issue({
         message: `Not a Set or Arraylike`,
         value: input,
       })

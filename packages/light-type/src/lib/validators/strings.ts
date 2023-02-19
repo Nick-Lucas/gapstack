@@ -1,9 +1,9 @@
 import { Assertion } from './assert'
 
 export function min(characters: number): Assertion<string> {
-  return (input, issueContext) => {
+  return (input, ctx) => {
     if (input.length < characters) {
-      issueContext.issue({
+      ctx.issue({
         message: 'Min Length is ' + characters,
         value: characters,
       })
@@ -14,9 +14,9 @@ export function min(characters: number): Assertion<string> {
 }
 
 export function max(characters: number): Assertion<string> {
-  return (input, issueContext) => {
+  return (input, ctx) => {
     if (input.length > characters) {
-      issueContext.issue({
+      ctx.issue({
         message: 'Max Length is ' + characters,
         value: characters,
       })
@@ -27,9 +27,9 @@ export function max(characters: number): Assertion<string> {
 }
 
 export function length(characters: number): Assertion<string> {
-  return (input, issueContext) => {
+  return (input, ctx) => {
     if (input.length !== characters) {
-      issueContext.issue({
+      ctx.issue({
         message: 'Expected Length is ' + characters,
         value: input,
       })

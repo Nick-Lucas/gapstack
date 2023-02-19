@@ -6,7 +6,7 @@ import { TypeInner } from './TypeInner'
 
 export type PipeFunc<TInput = any, TOutput = any> = (
   input: TInput,
-  issueContext: Context
+  ctx: Context
 ) => TOutput
 
 export type PipeType<TInput = any, TOutput = any> = ChainableType<
@@ -64,14 +64,14 @@ export function createPipeFunction<TInput, TOutput>(
 
   function pipe(...funcs: PipeElem[]) {
     return new ChainableType<TInput, any>({
-      parse(input, issueContext) {
-        const nextInput = t.parse(input, issueContext)
+      parse(input, ctx) {
+        const nextInput = t.parse(input, ctx)
 
         return funcs.reduce((acc, fn) => {
           if (typeof fn === 'function') {
-            return fn(acc, issueContext)
+            return fn(acc, ctx)
           } else {
-            return fn.t.parse(acc, issueContext)
+            return fn.t.parse(acc, ctx)
           }
         }, nextInput)
       },

@@ -33,7 +33,7 @@ export class ChainableObject<
     const keys = Object.keys(lightObject) as TKey[]
 
     super({
-      parse(input, issueContext) {
+      parse(input, ctx) {
         if (typeof input === 'object' && input !== null) {
           const obj = input as TInput
 
@@ -42,14 +42,14 @@ export class ChainableObject<
 
             aggr[key] = parser.t.parse(
               obj[key],
-              issueContext.createChild(key)
+              ctx.createChild(key)
             ) as TOutput[TKey]
 
             return aggr
           }, {} as TOutput)
         }
 
-        issueContext.issue({
+        ctx.issue({
           type: 'invalid_type',
           message: `Not an Object`,
           value: input,

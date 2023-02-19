@@ -44,13 +44,13 @@ lt.pipe(unknownValue => String(unknownValue), lt.string())
 lt.string().pipe()
 
 // Pipe can also raise validation errors, which will get aggregated up and throw by .parse
-lt.string().pipe((numStr, issueContext) => {
+lt.string().pipe((numStr, ctx) => {
   const num = parseInt(numStr)
   if (!isNaN(num)) {
     return num
   }
 
-  issueContext.issue({
+  ctx.issue({
     message: 'Custom NaN Error',
     value: numStr
   })

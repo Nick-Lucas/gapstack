@@ -19,11 +19,11 @@ export class ChainableType<TInput, TOutput = TInput>
    * Throws if there is any validation error
    */
   parse = (input: unknown): TOutput => {
-    const issueContext = new IssueContext()
+    const ctx = new IssueContext()
 
-    const result = this.t.parse(input, issueContext)
+    const result = this.t.parse(input, ctx)
 
-    issueContext.throwIfAny()
+    ctx.throwIfAny()
 
     return result
   }
@@ -65,11 +65,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput | undefined>({
-      parse(input, issueContext) {
+      parse(input, ctx) {
         if (input === undefined) {
           return undefined
         }
-        return t.parse(input, issueContext)
+        return t.parse(input, ctx)
       },
     })
   }
@@ -86,11 +86,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput | null>({
-      parse(input, issueContext) {
+      parse(input, ctx) {
         if (input === null) {
           return null
         }
-        return t.parse(input, issueContext)
+        return t.parse(input, ctx)
       },
     })
   }
@@ -117,11 +117,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput>({
-      parse(input, issueContext) {
+      parse(input, ctx) {
         if (input === undefined) {
           return defaultValue
         }
-        return t.parse(input, issueContext)
+        return t.parse(input, ctx)
       },
     })
   }
@@ -141,11 +141,11 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput>({
-      parse(input, issueContext) {
+      parse(input, ctx) {
         if (input === null) {
           return defaultValue
         }
-        return t.parse(input, issueContext)
+        return t.parse(input, ctx)
       },
     })
   }
