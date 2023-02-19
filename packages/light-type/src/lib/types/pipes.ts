@@ -2,6 +2,7 @@
 
 import { ChainableType } from '../chainable/ChainableType'
 import { LightTypeContext } from '../context/LightTypeContext'
+import { LightType } from './LightType'
 import { TypeInner } from './TypeInner'
 
 export type PipeFunc<TInput = any, TOutput = any> = (
@@ -9,10 +10,7 @@ export type PipeFunc<TInput = any, TOutput = any> = (
   ctx: LightTypeContext
 ) => TOutput
 
-export type PipeType<TInput = any, TOutput = any> = ChainableType<
-  TInput,
-  TOutput
->
+export type PipeType<TInput = any, TOutput = any> = LightType<TInput, TOutput>
 
 export type PipeElem<TInput = any, TOutput = any> =
   | PipeFunc<TInput, TOutput>
