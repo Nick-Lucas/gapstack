@@ -49,8 +49,8 @@ export class ChainableObject<
           }, {} as TOutput)
         }
 
-        ctx.issue({
-          type: 'invalid_type',
+        ctx.addIssue({
+          type: 'required',
           message: `Not an Object`,
           value: input,
         })

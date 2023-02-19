@@ -21,6 +21,7 @@ describe('string validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'min',
             message: 'Min Length is 1',
             value: value,
           })
@@ -40,6 +41,7 @@ describe('string validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'max',
             message: 'Max Length is 10',
             value: value,
           })
@@ -59,6 +61,7 @@ describe('string validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'length',
             message: 'Expected Length is 10',
             value: value,
           })
@@ -78,6 +81,7 @@ describe('string validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'max',
             message: 'Max Length is 10',
             value: value,
           })
@@ -89,6 +93,7 @@ describe('string validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'min',
             message: 'Min Length is 1',
             value: value,
           })

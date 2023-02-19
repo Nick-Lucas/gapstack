@@ -10,10 +10,10 @@ export interface InternalContext extends LightTypeContext {
 class ChildContext implements InternalContext {
   constructor(private readonly callback: (issue: Issue) => void) {}
 
-  issue = this.callback
+  addIssue = this.callback
 
   createChild = (pathFragment: string): InternalContext => {
-    const add = this.issue
+    const add = this.addIssue
 
     return new ChildContext((issue) => {
       add({
@@ -29,14 +29,14 @@ export class Context implements InternalContext {
 
   constructor(private readonly path?: string) {}
 
-  issue = (issue: Issue) => {
+  addIssue = (issue: Issue) => {
     this.issues.push(issue)
 
     return this
   }
 
   createChild = (pathFragment: string): InternalContext => {
-    const add = this.issue
+    const add = this.addIssue
 
     return new ChildContext((issue) => {
       add({

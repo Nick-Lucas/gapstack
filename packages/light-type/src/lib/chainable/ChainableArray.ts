@@ -23,8 +23,8 @@ export class ChainableArray<
           return items
         }
 
-        ctx.issue({
-          type: 'invalid_type',
+        ctx.addIssue({
+          type: 'required',
           message: `Not an Array`,
           value: input,
         })

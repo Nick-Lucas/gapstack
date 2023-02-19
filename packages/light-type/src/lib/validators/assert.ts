@@ -9,7 +9,7 @@ export function assert<T>(
 ): Assertion<T> {
   return (input, ctx) => {
     if (condition(input) === false) {
-      ctx.issue({
+      ctx.addIssue({
         ...issue,
         value: input,
       })

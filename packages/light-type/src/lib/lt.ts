@@ -91,7 +91,8 @@ export function boolean() {
         return input
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: `Not a Boolean`,
         value: input,
       })
@@ -115,7 +116,8 @@ export function number() {
         return input
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: `Not a Number`,
         value: input,
       })
@@ -139,7 +141,8 @@ export function string() {
         return input
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: `Not a String`,
         value: input,
       })
@@ -163,7 +166,8 @@ export function date() {
         return input
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: `Not a Date`,
         value: input,
       })
@@ -199,7 +203,8 @@ export function literal<TLiteral extends Primitive>(
         return input as TLiteral
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: `Does not match literal, expected one of: ${list}`,
         value: input,
       })
@@ -251,7 +256,8 @@ export function record<
         return result
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: 'Not a Record',
         value: input,
       })
@@ -309,7 +315,8 @@ export function map<
         return result
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: 'Not a Map or Object',
         value: input,
       })
@@ -339,7 +346,8 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
     parse(input, ctx) {
       if (Array.isArray(input)) {
         if (input.length !== tuple.length) {
-          ctx.issue({
+          ctx.addIssue({
+            type: 'length',
             message: `Invalid Tuple: ${input.length} elements instead of ${tuple.length}`,
             value: input,
           })
@@ -353,7 +361,8 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
         return result
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: `Not a Tuple`,
         value: input,
       })
@@ -398,7 +407,8 @@ export function union<T extends AnyUnionInput>(types: T) {
       }
 
       // TODO: maybe can give more details on why no type was matched?
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: 'No Matching Type in Union',
         value: input,
       })
@@ -437,7 +447,8 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
         return result
       }
 
-      ctx.issue({
+      ctx.addIssue({
+        type: 'required',
         message: `Not a Set or Arraylike`,
         value: input,
       })

@@ -1,5 +1,7 @@
 export type ErrorType =
   | 'required'
-  | 'invalid_type'
+  | 'min'
+  | 'max'
+  | 'length'
   | '${any-string}'
   | (string & Record<never, never>)
