@@ -50,11 +50,17 @@ lt.string().pipe((numStr, ctx) => {
     return num
   }
 
-  ctx.issue({
+  ctx.addIssue({
+    // There are some pre-set type literals but you can pass any string
+    type: 'custom_nan',
     message: 'Custom NaN Error',
     value: numStr
   })
 })
+
+// Some pipe validators are bundled out of the box
+import { assert, strings, numbers } from '@gapstack/light-type/src/lib/validators'
+lt.string().pipe(assert(v => v === "test", "String should have been 'test'"))
 
 // .parse is the same
 lt.string().parse("Hello world")

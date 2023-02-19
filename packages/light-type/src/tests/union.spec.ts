@@ -49,6 +49,7 @@ describe('union', () => {
         () => union.parse(input as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'No Matching Type in Union',
             value: input,
           })

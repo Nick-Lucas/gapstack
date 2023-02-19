@@ -33,6 +33,7 @@ describe('set', () => {
         () => set.parse({} as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Not a Set or Arraylike',
             value: {},
           })
@@ -45,6 +46,7 @@ describe('set', () => {
         () => set.parse(['Foo', 0 as any]),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Not a String',
             value: 0,
             path: '1',

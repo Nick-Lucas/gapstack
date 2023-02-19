@@ -3,14 +3,22 @@ import { Issue } from '../context/Issue'
 
 export type Assertion<T> = (input: T, ctx: LightTypeContext) => T
 
+// TODO: tidy this up a bit
+type AssertIssue = Pick<Issue, 'message' | 'type'>
+type IssueMessage = Pick<Issue, 'message'>
+
 export function assert<T>(
   condition: (input: T) => boolean,
-  issue: Pick<Issue, 'message' | 'type'>
+  issue: string | AssertIssue
 ): Assertion<T> {
   return (input, ctx) => {
     if (condition(input) === false) {
+      const _issue: Partial<AssertIssue> & IssueMessage =
+        typeof issue === 'string' ? { message: issue } : issue
+
       ctx.addIssue({
-        ...issue,
+        type: 'assertion',
+        ..._issue,
         value: input,
       })
     }

@@ -30,6 +30,7 @@ describe('tuple', () => {
         () => tuple.parse(input as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Invalid Tuple: 1 elements instead of 2',
             value: ['Foo'],
           })
@@ -42,6 +43,7 @@ describe('tuple', () => {
         () => tuple.parse({} as any),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Not a Tuple',
             value: {},
           })
@@ -54,6 +56,7 @@ describe('tuple', () => {
         () => tuple.parse([-1, 0]),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Not a String',
             value: -1,
             path: '0',

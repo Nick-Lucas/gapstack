@@ -48,6 +48,7 @@ describe('pipe-constructor', () => {
         expect(() => DateType.parse(value)).toThrow(
           aggregated(
             new LightTypeError({
+              type: 'required',
               message: 'Not a Date',
               value: value,
             })

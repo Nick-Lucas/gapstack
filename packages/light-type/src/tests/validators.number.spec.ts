@@ -21,6 +21,7 @@ describe('number validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Min Value is 1',
             value: value,
           })
@@ -40,6 +41,7 @@ describe('number validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Max Value is 10',
             value: value,
           })
@@ -59,6 +61,7 @@ describe('number validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Max Value is 10',
             value: value,
           })
@@ -70,6 +73,7 @@ describe('number validators', () => {
       expect(() => t.parse(value)).toThrow(
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Min Value is 1',
             value: value,
           })

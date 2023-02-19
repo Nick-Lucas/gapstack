@@ -100,6 +100,7 @@ describe('primitives', () => {
             expect(() => type.parse(input)).toThrowError(
               aggregated(
                 new LightTypeError({
+                  type: 'required',
                   message: error,
                   value: input,
                 })
@@ -120,6 +121,7 @@ describe('primitives', () => {
             expect(() => t.parse(input)).toThrowError(
               aggregated(
                 new LightTypeError({
+                  type: 'required',
                   message: error,
                   value: input,
                 })
@@ -140,6 +142,7 @@ describe('primitives', () => {
             expect(() => t.parse(input)).toThrowError(
               aggregated(
                 new LightTypeError({
+                  type: 'required',
                   message: error,
                   value: input,
                 })
@@ -163,6 +166,7 @@ describe('primitives', () => {
             expect(() => t.parse(input)).toThrowError(
               aggregated(
                 new LightTypeError({
+                  type: 'required',
                   message: error,
                   value: input,
                 })
@@ -186,6 +190,7 @@ describe('primitives', () => {
             expect(() => t.parse(input)).toThrowError(
               aggregated(
                 new LightTypeError({
+                  type: 'required',
                   message: error,
                   value: input,
                 })

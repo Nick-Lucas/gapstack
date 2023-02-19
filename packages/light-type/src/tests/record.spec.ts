@@ -47,6 +47,7 @@ describe('record', () => {
         () => simpleObject.parse(input),
         aggregated(
           new LightTypeError({
+            type: 'required',
             message: 'Not a Boolean',
             value: undefined,
             path: 'bar',
