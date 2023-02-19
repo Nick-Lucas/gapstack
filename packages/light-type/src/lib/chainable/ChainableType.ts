@@ -65,6 +65,7 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput | undefined>({
+      type: t.type,
       parse(input, ctx) {
         if (input === undefined) {
           return undefined
@@ -86,6 +87,7 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput | null>({
+      type: t.type,
       parse(input, ctx) {
         if (input === null) {
           return null
@@ -117,6 +119,7 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | undefined, TOutput>({
+      type: t.type,
       parse(input, ctx) {
         if (input === undefined) {
           return defaultValue
@@ -141,6 +144,7 @@ export class ChainableType<TInput, TOutput = TInput>
     const t = this.t
 
     return new ChainableType<TInput | null, TOutput>({
+      type: t.type,
       parse(input, ctx) {
         if (input === null) {
           return defaultValue

@@ -62,7 +62,7 @@ export function createPipeFunction<TInput, TOutput>(
 
   function pipe(...funcs: PipeElem[]) {
     return new ChainableType<TInput, any>({
-      type: 'none',
+      type: t.type,
       parse(input, ctx) {
         const nextInput = t.parse(input, ctx)
 
