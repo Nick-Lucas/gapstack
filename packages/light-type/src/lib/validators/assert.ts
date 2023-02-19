@@ -1,4 +1,5 @@
-import { LightTypeContext, Issue } from '../errors/IssueContext'
+import { LightTypeContext } from '../context/LightTypeContext'
+import { Issue } from '../context/Issue'
 
 export type Assertion<T> = (input: T, ctx: LightTypeContext) => T
 

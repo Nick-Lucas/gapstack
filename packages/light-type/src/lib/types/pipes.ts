@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ChainableType } from '../chainable/ChainableType'
-import { LightTypeContext } from '../errors/IssueContext'
+import { LightTypeContext } from '../context/LightTypeContext'
 import { TypeInner } from './TypeInner'
 
 export type PipeFunc<TInput = any, TOutput = any> = (

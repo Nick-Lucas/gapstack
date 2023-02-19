@@ -1,5 +1,6 @@
 export * from './types/LightObject'
 export * from './types/LightType'
+export * from './context'
 export * from './errors'
 
 import * as lt from './lt'

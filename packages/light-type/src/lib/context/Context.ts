@@ -1,17 +1,7 @@
-import { ErrorType } from './ErrorType'
-import { LightTypeAggregatedErrors } from './LightTypeAggregatedErrors'
-import { LightTypeError } from './LightTypeError'
-
-export interface Issue {
-  type?: ErrorType
-  message: string
-  value: unknown
-  path?: string
-}
-
-export interface LightTypeContext {
-  issue(issue: Issue): void
-}
+import { LightTypeAggregatedErrors } from '../errors/LightTypeAggregatedErrors'
+import { LightTypeError } from '../errors/LightTypeError'
+import { Issue } from './Issue'
+import { LightTypeContext } from './LightTypeContext'
 
 export interface InternalContext extends LightTypeContext {
   createChild(pathFragment: string): InternalContext

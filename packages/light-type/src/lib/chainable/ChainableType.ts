@@ -1,7 +1,7 @@
 import { LightType } from '../types/LightType'
 import { TypeInner } from '../types/TypeInner'
 import { createPipeFunction } from '../types/pipes'
-import { Context } from '../errors/IssueContext'
+import { Context } from '../context/Context'
 
 export class ChainableType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>

@@ -1,4 +1,4 @@
-import { Issue } from './IssueContext'
+import { Issue } from '../context/Issue'
 
 type LightTypeErrorOpts = Issue
 
@@ -13,18 +13,5 @@ export class LightTypeError extends Error {
     this.value = value
 
     Object.setPrototypeOf(this, LightTypeError.prototype)
-  }
-
-  withParent = (pathFragment: string) => {
-    const path =
-      typeof this.path === 'string' && this.path.length > 0
-        ? `${pathFragment}.${this.path}`
-        : pathFragment
-
-    return new LightTypeError({
-      message: this.message,
-      value: this.value,
-      path: path,
-    })
   }
 }

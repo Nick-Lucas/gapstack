@@ -13,7 +13,7 @@ import { ChainableArray } from './chainable/ChainableArray'
 
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 import { createPipeFunction } from './types/pipes'
-import { Context } from './errors/IssueContext'
+import { Context } from './context/Context'
 
 /**
  * Validate an object type with a given shape:
