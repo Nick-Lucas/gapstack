@@ -30,6 +30,8 @@ function checkTypes() {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const o2: { id: number; name: string }[] = objectArray._output
+
+  objectArray.min(0).optional()._t
 }
 
 describe('arrays', () => {

@@ -3,7 +3,7 @@ import { ChainableType } from './ChainableType'
 
 export class ChainableNumber extends ChainableType<number, number> {
   private validator = (check: Assertion<number>) => {
-    const t = this.t
+    const t = this._t
 
     return new ChainableNumber({
       parse(input, ctx) {

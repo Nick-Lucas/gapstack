@@ -16,7 +16,7 @@ export class ChainableArray<TInput, TOutput> extends ChainableType<
         if (Array.isArray(input)) {
           const items = new Array<TOutput>(input.length)
           for (let i = 0; i < input.length; i++) {
-            items[i] = elementType.t.parse(
+            items[i] = elementType._t.parse(
               input[i],
               ctx.createChild(String(i))
             ) as TOutput
@@ -41,7 +41,7 @@ export class ChainableArray<TInput, TOutput> extends ChainableType<
   //
 
   private validator = (check: Assertion<TOutput[]>) => {
-    const t = this.t
+    const t = this._t
 
     return new ChainableArray<TInput, TOutput>({
       parse(input, ctx) {
