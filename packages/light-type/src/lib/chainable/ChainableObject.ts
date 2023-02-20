@@ -40,7 +40,7 @@ export class ChainableObject<
           return keys.reduce((aggr, key) => {
             const parser = lightObject[key]
 
-            aggr[key] = parser.t.parse(
+            aggr[key] = parser._t.parse(
               obj[key],
               ctx.createChild(key)
             ) as TOutput[TKey]

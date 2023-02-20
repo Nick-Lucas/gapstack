@@ -8,12 +8,13 @@ import {
 import { AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
-import { LightTypeError } from './errors/LightTypeError'
 import { ChainableArray } from './chainable/ChainableArray'
 
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 import { createPipeFunction } from './types/pipes'
 import { Context } from './context/Context'
+import { ChainableString } from './chainable/ChainableString'
+import { ChainableNumber } from './chainable/ChainableNumber'
 
 /**
  * Validate an object type with a given shape:
@@ -41,9 +42,9 @@ export function object<TLightObject extends AnyLightObject>(
  * ```
  */
 export function array<TLightArrayElement extends AnyLightType>(
-  valueType: TLightArrayElement
+  elementType: TLightArrayElement
 ) {
-  return new ChainableArray<TLightArrayElement>(valueType)
+  return ChainableArray.create(elementType)
 }
 
 /**
@@ -110,7 +111,7 @@ export function boolean() {
  * ```
  */
 export function number() {
-  return new ChainableType<number, number>({
+  return new ChainableNumber({
     parse(input, ctx) {
       if (typeof input === 'number') {
         return input
@@ -135,7 +136,7 @@ export function number() {
  * ```
  */
 export function string() {
-  return new ChainableType<string, string>({
+  return new ChainableString({
     parse(input, ctx) {
       if (typeof input === 'string') {
         return input
@@ -245,9 +246,9 @@ export function record<
         for (let i = 0; i < inputKeys.length; i++) {
           const innerCtx = ctx.createChild(String(inputKeys[i]))
 
-          const outputKey = key.t.parse(inputKeys[i], innerCtx) as KeyOutput
+          const outputKey = key._t.parse(inputKeys[i], innerCtx) as KeyOutput
 
-          result[outputKey] = value.t.parse(
+          result[outputKey] = value._t.parse(
             maybeTInput[inputKeys[i]],
             innerCtx
           ) as ValueOutput
@@ -304,8 +305,8 @@ export function map<
           const innerContext = ctx.createChild(String(inputKeys[i]))
 
           result.set(
-            key.t.parse(inputKeys[i], innerContext) as KeyOutput,
-            value.t.parse(
+            key._t.parse(inputKeys[i], innerContext) as KeyOutput,
+            value._t.parse(
               maybeTInput[inputKeys[i]],
               innerContext
             ) as ValueOutput
@@ -355,7 +356,7 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
         const result = new Array(tuple.length) as TOutput
         for (let i = 0; i < tuple.length; i++) {
           const innerContext = ctx.createChild(String(i))
-          result[i] = tuple[i].t.parse(input[i], innerContext)
+          result[i] = tuple[i]._t.parse(input[i], innerContext)
         }
 
         return result
@@ -397,7 +398,7 @@ export function union<T extends AnyUnionInput>(types: T) {
       for (const type of types) {
         const specialContext = new Context()
 
-        const result = type.t.parse(input, specialContext) as TOutput
+        const result = type._t.parse(input, specialContext) as TOutput
         if (specialContext.anyIssue()) {
           // We go until we get one without any validation errors
           continue
@@ -441,7 +442,7 @@ export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
 
         for (let i = 0; i < input.length; i++) {
           const innerContext = ctx.createChild(String(i))
-          result.add(valueType.t.parse(input[i], innerContext))
+          result.add(valueType._t.parse(input[i], innerContext))
         }
 
         return result

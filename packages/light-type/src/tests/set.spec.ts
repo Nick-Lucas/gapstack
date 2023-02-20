@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { InferInput, lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
 describe('set', () => {
@@ -31,27 +30,23 @@ describe('set', () => {
     it('should throw for not being a set', () => {
       throws(
         () => set.parse({} as any),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'Not a Set or Arraylike',
-            value: {},
-          })
-        )
+        aggregated({
+          type: 'required',
+          message: 'Not a Set or Arraylike',
+          value: {},
+        })
       )
     })
 
     it('should throw for an element being invalid', () => {
       throws(
         () => set.parse(['Foo', 0 as any]),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'Not a String',
-            value: 0,
-            path: '1',
-          })
-        )
+        aggregated({
+          type: 'required',
+          message: 'Not a String',
+          value: 0,
+          path: '1',
+        })
       )
     })
 

@@ -9,7 +9,12 @@ export class ChainableType<TInput, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  constructor(readonly t: TypeInner<TInput, TOutput>) {
+  constructor(
+    /** @internal this API may change without notice */ readonly _t: TypeInner<
+      TInput,
+      TOutput
+    >
+  ) {
     this.satisfiesInput = this.satisfiesInput.bind(this)
   }
 
@@ -21,7 +26,7 @@ export class ChainableType<TInput, TOutput = TInput>
   parse = (input: unknown): TOutput => {
     const ctx = new Context()
 
-    const result = this.t.parse(input, ctx)
+    const result = this._t.parse(input, ctx)
 
     ctx.throwIfAny()
 
@@ -62,7 +67,7 @@ export class ChainableType<TInput, TOutput = TInput>
    * ```
    */
   optional = (): ChainableType<TInput | undefined, TOutput | undefined> => {
-    const t = this.t
+    const t = this._t
 
     return new ChainableType<TInput | undefined, TOutput | undefined>({
       parse(input, ctx) {
@@ -83,7 +88,7 @@ export class ChainableType<TInput, TOutput = TInput>
    * ```
    */
   nullable = (): ChainableType<TInput | null, TOutput | null> => {
-    const t = this.t
+    const t = this._t
 
     return new ChainableType<TInput | null, TOutput | null>({
       parse(input, ctx) {
@@ -114,7 +119,7 @@ export class ChainableType<TInput, TOutput = TInput>
   default = (
     defaultValue: TOutput
   ): ChainableType<TInput | undefined, TOutput> => {
-    const t = this.t
+    const t = this._t
 
     return new ChainableType<TInput | undefined, TOutput>({
       parse(input, ctx) {
@@ -138,7 +143,7 @@ export class ChainableType<TInput, TOutput = TInput>
   defaultNull = (
     defaultValue: TOutput
   ): ChainableType<TInput | null, TOutput> => {
-    const t = this.t
+    const t = this._t
 
     return new ChainableType<TInput | null, TOutput>({
       parse(input, ctx) {
@@ -150,7 +155,7 @@ export class ChainableType<TInput, TOutput = TInput>
     })
   }
 
-  pipe = createPipeFunction(this.t)
+  pipe = createPipeFunction(this._t)
 
   /**
    * **Only generates compile-time errors**

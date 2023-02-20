@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { InferInput, InferOutput, lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
+import { InferOutput, lt } from '..'
+
 import { aggregated, throws } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -47,13 +47,11 @@ describe('union', () => {
 
       throws(
         () => union.parse(input as any),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'No Matching Type in Union',
-            value: input,
-          })
-        )
+        aggregated({
+          type: 'required',
+          message: 'No Matching Type in Union',
+          value: input,
+        })
       )
     })
 

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { InferInput, lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
 describe('record', () => {
@@ -45,14 +44,12 @@ describe('record', () => {
 
       throws(
         () => simpleObject.parse(input),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'Not a Boolean',
-            value: undefined,
-            path: 'bar',
-          })
-        )
+        aggregated({
+          type: 'required',
+          message: 'Not a Boolean',
+          value: undefined,
+          path: 'bar',
+        })
       )
     })
 

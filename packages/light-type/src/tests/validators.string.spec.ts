@@ -1,13 +1,92 @@
 import { lt } from '..'
 import { strings } from '../lib/validators'
-import { LightTypeError } from '../lib/errors/LightTypeError'
-import { aggregated } from './errors'
+
+import { aggregated, throws } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function checkTypes() {
   lt.string().pipe(strings.max(1))
   lt.string().pipe(strings.max(10), strings.min(1))
 }
+
+describe('chainable validators', () => {
+  const Str = lt.string()
+
+  it.each(['1', '22'])('checks min %p', (val) => {
+    expect(Str.min(1).check(val)).toEqual(val)
+  })
+
+  it.each([''])('checks min rejects %p', (val) => {
+    throws(
+      () => Str.min(1).check(val),
+      aggregated({
+        message: 'Min Length is 1',
+        type: 'min',
+        value: val,
+      })
+    )
+  })
+
+  it.each(['1', '22'])('checks max %p', (val) => {
+    expect(Str.max(2).check(val)).toEqual(val)
+  })
+
+  it.each(['22'])('checks max rejects %p', (val) => {
+    throws(
+      () => Str.max(1).check(val),
+      aggregated({
+        message: 'Max Length is 1',
+        type: 'max',
+        value: val,
+      })
+    )
+  })
+
+  it.each(['22'])('checks length %p', (val) => {
+    expect(Str.length(2).check(val)).toEqual(val)
+  })
+
+  it.each(['22'])('checks length rejects %p', (val) => {
+    throws(
+      () => Str.length(1).check(val),
+      aggregated({
+        message: 'Expected Length is 1',
+        type: 'length',
+        value: val,
+      })
+    )
+  })
+
+  it.each(['bar', 'foo'])('checks includes %p', (val) => {
+    expect(Str.includes(val).check('foo bar baz')).toEqual('foo bar baz')
+  })
+
+  it.each(['22'])('checks includes rejects %p', (val) => {
+    throws(
+      () => Str.includes(val).check('foo bar baz'),
+      aggregated({
+        message: 'Expected string to include: 22',
+        type: 'includes',
+        value: 'foo bar baz',
+      })
+    )
+  })
+
+  it.each([/bar/, /foo/])('checks regex %p', (val) => {
+    expect(Str.regex(val).check('foo bar baz')).toEqual('foo bar baz')
+  })
+
+  it.each([/22/])('checks includes rejects %p', (val) => {
+    throws(
+      () => Str.regex(val).check('foo bar baz'),
+      aggregated({
+        message: 'Expected string to match: ' + String(val),
+        type: 'regex',
+        value: 'foo bar baz',
+      })
+    )
+  })
+})
 
 describe('string validators', () => {
   describe('min', () => {
@@ -19,13 +98,11 @@ describe('string validators', () => {
 
     it.each([''])('throws', (value) => {
       expect(() => t.parse(value)).toThrow(
-        aggregated(
-          new LightTypeError({
-            type: 'min',
-            message: 'Min Length is 1',
-            value: value,
-          })
-        )
+        aggregated({
+          type: 'min',
+          message: 'Min Length is 1',
+          value: value,
+        })
       )
     })
   })
@@ -39,13 +116,11 @@ describe('string validators', () => {
 
     it.each(['FooBarBaz21'])('throws', (value) => {
       expect(() => t.parse(value)).toThrow(
-        aggregated(
-          new LightTypeError({
-            type: 'max',
-            message: 'Max Length is 10',
-            value: value,
-          })
-        )
+        aggregated({
+          type: 'max',
+          message: 'Max Length is 10',
+          value: value,
+        })
       )
     })
   })
@@ -59,13 +134,11 @@ describe('string validators', () => {
 
     it.each(['', 'FooBarBaz', 'FooBarBaz21'])('throws', (value) => {
       expect(() => t.parse(value)).toThrow(
-        aggregated(
-          new LightTypeError({
-            type: 'length',
-            message: 'Expected Length is 10',
-            value: value,
-          })
-        )
+        aggregated({
+          type: 'length',
+          message: 'Expected Length is 10',
+          value: value,
+        })
       )
     })
   })
@@ -79,25 +152,21 @@ describe('string validators', () => {
 
     it.each(['FooBarBaz21'])('throws over max', (value) => {
       expect(() => t.parse(value)).toThrow(
-        aggregated(
-          new LightTypeError({
-            type: 'max',
-            message: 'Max Length is 10',
-            value: value,
-          })
-        )
+        aggregated({
+          type: 'max',
+          message: 'Max Length is 10',
+          value: value,
+        })
       )
     })
 
     it.each([''])('throws under min', (value) => {
       expect(() => t.parse(value)).toThrow(
-        aggregated(
-          new LightTypeError({
-            type: 'min',
-            message: 'Min Length is 1',
-            value: value,
-          })
-        )
+        aggregated({
+          type: 'min',
+          message: 'Min Length is 1',
+          value: value,
+        })
       )
     })
   })

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { InferInput, lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,40 +27,34 @@ describe('tuple', () => {
 
       throws(
         () => tuple.parse(input as any),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'Invalid Tuple: 1 elements instead of 2',
-            value: ['Foo'],
-          })
-        )
+        aggregated({
+          type: 'length',
+          message: 'Invalid Tuple: 1 elements instead of 2',
+          value: ['Foo'],
+        })
       )
     })
 
     it('should throw for not being a tuple', () => {
       throws(
         () => tuple.parse({} as any),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'Not a Tuple',
-            value: {},
-          })
-        )
+        aggregated({
+          type: 'required',
+          message: 'Not a Tuple',
+          value: {},
+        })
       )
     })
 
     it('should throw for an element being invalid', () => {
       throws(
         () => tuple.parse([-1, 0]),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'Not a String',
-            value: -1,
-            path: '0',
-          })
-        )
+        aggregated({
+          type: 'required',
+          message: 'Not a String',
+          value: -1,
+          path: '0',
+        })
       )
     })
 

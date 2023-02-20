@@ -69,7 +69,7 @@ export function createPipeFunction<TInput, TOutput>(
           if (typeof fn === 'function') {
             return fn(acc, ctx)
           } else {
-            return fn.t.parse(acc, ctx)
+            return fn._t.parse(acc, ctx)
           }
         }, nextInput)
       },

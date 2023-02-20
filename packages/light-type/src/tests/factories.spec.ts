@@ -67,10 +67,10 @@ describe('factories', () => {
       const NumberArray = ArrayDto(lt.number())
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const numArrayIn: number = NumberArray['_element']['_input']
+      const numArrayIn: number = NumberArray['_input'][0]
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const numArrayOut: number = NumberArray['_element']['_output']
+      const numArrayOut: number = NumberArray['_output'][0]
 
       //
       // Also check straight object factory
