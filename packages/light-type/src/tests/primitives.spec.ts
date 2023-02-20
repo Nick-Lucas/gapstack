@@ -2,7 +2,6 @@
 
 import { lt } from '..'
 import { ChainableType } from '../lib/chainable/ChainableType'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated } from './errors'
 
 describe('primitives', () => {
@@ -98,13 +97,11 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
             expect(() => type.parse(input)).toThrowError(
-              aggregated(
-                new LightTypeError({
-                  type: 'required',
-                  message: error,
-                  value: input,
-                })
-              )
+              aggregated({
+                type: 'required',
+                message: error,
+                value: input,
+              })
             )
           })
       })
@@ -119,13 +116,11 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              aggregated(
-                new LightTypeError({
-                  type: 'required',
-                  message: error,
-                  value: input,
-                })
-              )
+              aggregated({
+                type: 'required',
+                message: error,
+                value: input,
+              })
             )
           })
       })
@@ -140,13 +135,11 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              aggregated(
-                new LightTypeError({
-                  type: 'required',
-                  message: error,
-                  value: input,
-                })
-              )
+              aggregated({
+                type: 'required',
+                message: error,
+                value: input,
+              })
             )
           })
       })
@@ -164,13 +157,11 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              aggregated(
-                new LightTypeError({
-                  type: 'required',
-                  message: error,
-                  value: input,
-                })
-              )
+              aggregated({
+                type: 'required',
+                message: error,
+                value: input,
+              })
             )
           })
       })
@@ -188,13 +179,11 @@ describe('primitives', () => {
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
             expect(() => t.parse(input)).toThrowError(
-              aggregated(
-                new LightTypeError({
-                  type: 'required',
-                  message: error,
-                  value: input,
-                })
-              )
+              aggregated({
+                type: 'required',
+                message: error,
+                value: input,
+              })
             )
           })
       })

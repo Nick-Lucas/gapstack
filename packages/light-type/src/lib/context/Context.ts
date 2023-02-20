@@ -1,5 +1,4 @@
 import { LightTypeAggregatedErrors } from '../errors/LightTypeAggregatedErrors'
-import { LightTypeError } from '../errors/LightTypeError'
 import { Issue } from './Issue'
 import { LightTypeContext } from './LightTypeContext'
 
@@ -66,11 +65,7 @@ export class Context implements InternalContext {
 
   throwIfAny = () => {
     if (this.issues.length > 0) {
-      throw new LightTypeAggregatedErrors(
-        this.issues.map((issue) => {
-          return new LightTypeError(issue)
-        })
-      )
+      throw new LightTypeAggregatedErrors(this.issues)
     }
   }
 }

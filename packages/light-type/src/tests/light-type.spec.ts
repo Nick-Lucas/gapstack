@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
 describe('lightType', () => {
@@ -57,30 +56,30 @@ describe('lightType', () => {
       throws(
         () => t.parse(input as any),
         aggregated(
-          new LightTypeError({
+          {
             type: 'required',
             path: 'someNum',
             message: 'Not a Number',
             value: undefined,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'obj.deepString',
             message: 'Not a String',
             value: null,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'arr.1.deepDate',
             message: 'Not a Date',
             value: null,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'arr.1.deepLiteral',
             message: 'Does not match literal, expected one of: 0, bar',
             value: null,
-          })
+          }
         )
       )
     })

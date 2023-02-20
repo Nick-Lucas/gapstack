@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -46,13 +45,11 @@ describe('pipe-constructor', () => {
       'rejects a non-parseable value',
       (value) => {
         expect(() => DateType.parse(value)).toThrow(
-          aggregated(
-            new LightTypeError({
-              type: 'required',
-              message: 'Not a Date',
-              value: value,
-            })
-          )
+          aggregated({
+            type: 'required',
+            message: 'Not a Date',
+            value: value,
+          })
         )
       }
     )

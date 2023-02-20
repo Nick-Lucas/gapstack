@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { InferInput, lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -59,24 +58,24 @@ describe('object', () => {
       throws(
         () => simpleObject.parse({ ...input }),
         aggregated(
-          new LightTypeError({
+          {
             type: 'required',
             path: 'num',
             message: 'Not a Number',
             value: undefined,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'str',
             message: 'Not a String',
             value: undefined,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'bool',
             message: 'Not a Boolean',
             value: undefined,
-          })
+          }
         )
       )
     })
@@ -135,24 +134,24 @@ describe('object methods', () => {
       throws(
         () => mergedObject.parse({ ...input }),
         aggregated(
-          new LightTypeError({
+          {
             type: 'required',
             path: 'id',
             message: 'Not a Number',
             value: undefined,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'num',
             message: 'Not a Boolean',
             value: 1,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'createdAt',
             message: 'Not a Date',
             value: undefined,
-          })
+          }
         )
       )
     })
@@ -209,24 +208,24 @@ describe('object methods', () => {
       throws(
         () => extendedObject.parse({ ...input }),
         aggregated(
-          new LightTypeError({
+          {
             type: 'required',
             path: 'id',
             message: 'Not a Number',
             value: undefined,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'num',
             message: 'Not a Number',
             value: true,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: 'createdAt',
             message: 'Not a Date',
             value: undefined,
-          })
+          }
         )
       )
     })
@@ -269,14 +268,12 @@ describe('object methods', () => {
 
       throws(
         () => omittedObject.parse({ ...input }),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            path: 'bool',
-            message: 'Not a Boolean',
-            value: null,
-          })
-        )
+        aggregated({
+          type: 'required',
+          path: 'bool',
+          message: 'Not a Boolean',
+          value: null,
+        })
       )
     })
   })
@@ -325,14 +322,12 @@ describe('object methods', () => {
 
       throws(
         () => pickedObject.parse(input),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            message: 'Not a Number',
-            path: 'id',
-            value: undefined,
-          })
-        )
+        aggregated({
+          type: 'required',
+          message: 'Not a Number',
+          path: 'id',
+          value: undefined,
+        })
       )
     })
   })

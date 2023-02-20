@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { lt } from '..'
-import { LightTypeError } from '../lib/errors/LightTypeError'
 import { aggregated, throws } from './errors'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -31,7 +30,10 @@ function checkTypes() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const o2: { id: number; name: string }[] = objectArray._output
 
-  objectArray.min(0).optional()._t
+  // Can chain
+  objectArray.min(0).optional()
+  // @ts-expect-error Should narrow when a base-type method is used
+  objectArray.optional().min(0)
 }
 
 describe('arrays', () => {
@@ -47,14 +49,12 @@ describe('arrays', () => {
 
       throws(
         () => simpleArray.parse([1, 2, null] as any),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            path: '2',
-            message: 'Not a Number',
-            value: null,
-          })
-        )
+        aggregated({
+          type: 'required',
+          path: '2',
+          message: 'Not a Number',
+          value: null,
+        })
       )
     })
   })
@@ -103,14 +103,12 @@ describe('arrays', () => {
 
       throws(
         () => simpleArray.parse([...input] as any),
-        aggregated(
-          new LightTypeError({
-            type: 'required',
-            path: '1.bool',
-            message: 'Not a Boolean',
-            value: null,
-          })
-        )
+        aggregated({
+          type: 'required',
+          path: '1.bool',
+          message: 'Not a Boolean',
+          value: null,
+        })
       )
     })
 
@@ -122,24 +120,24 @@ describe('arrays', () => {
         throws(
           () => simpleArray.parse([input, input, input] as any),
           aggregated(
-            new LightTypeError({
+            {
               type: 'required',
               path: '0',
               message: 'Not an Object',
               value: input,
-            }),
-            new LightTypeError({
+            },
+            {
               type: 'required',
               path: '1',
               message: 'Not an Object',
               value: input,
-            }),
-            new LightTypeError({
+            },
+            {
               type: 'required',
               path: '2',
               message: 'Not an Object',
               value: input,
-            })
+            }
           )
         )
       }
@@ -151,26 +149,42 @@ describe('arrays', () => {
       throws(
         () => simpleArray.parse(new Array(3) as any),
         aggregated(
-          new LightTypeError({
+          {
             type: 'required',
             path: '0',
             message: 'Not an Object',
             value: undefined,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: '1',
             message: 'Not an Object',
             value: undefined,
-          }),
-          new LightTypeError({
+          },
+          {
             type: 'required',
             path: '2',
             message: 'Not an Object',
             value: undefined,
-          })
+          }
         )
       )
+    })
+  })
+
+  describe('validation', () => {
+    const simpleArray = lt.array(lt.number())
+
+    it.each([1, 1.01, 2])('checks min %p', (val) => {
+      expect(simpleArray.min(1).parse(val)).toBe(val)
+    })
+
+    it.each([1, 1.01, 2])('checks max %p', (val) => {
+      expect(simpleArray.max(2).parse(val)).toBe(val)
+    })
+
+    it.each([1, 1.01, 2])('checks max %p', (val) => {
+      expect(simpleArray.length(2).parse(val)).toBe(val)
     })
   })
 })
