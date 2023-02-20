@@ -18,9 +18,10 @@ export function throws(
       err instanceof LightTypeAggregatedErrors &&
       expectedError instanceof LightTypeAggregatedErrors
     ) {
-      const actual = aggToObj(err)
-      const expected = aggToObj(expectedError)
-      expect(actual).toEqual(expected)
+      return expect(err.issues).toEqual(expectedError.issues)
+      // const actual = aggToObj(err)
+      // const expected = aggToObj(expectedError)
+      // expect(actual).toEqual(expected)
 
       return
     }

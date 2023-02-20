@@ -175,16 +175,58 @@ describe('arrays', () => {
   describe('validation', () => {
     const simpleArray = lt.array(lt.number())
 
-    it.each([1, 1.01, 2])('checks min %p', (val) => {
-      expect(simpleArray.min(1).parse(val)).toBe(val)
+    it.each([1, 2])('checks min %p', (val) => {
+      const array = new Array(val).fill(-1)
+      expect(simpleArray.min(1).check([...array])).toEqual([...array])
     })
 
-    it.each([1, 1.01, 2])('checks max %p', (val) => {
-      expect(simpleArray.max(2).parse(val)).toBe(val)
+    it.each([0])('checks min rejects %p', (val) => {
+      const array = new Array(val).fill(-1)
+
+      throws(
+        () => simpleArray.min(1).check(array),
+        aggregated({
+          message: 'Min Length is 1',
+          type: 'min',
+          value: array,
+        })
+      )
     })
 
-    it.each([1, 1.01, 2])('checks max %p', (val) => {
-      expect(simpleArray.length(2).parse(val)).toBe(val)
+    it.each([1, 2])('checks max %p', (val) => {
+      const array = new Array(val).fill(-1)
+      expect(simpleArray.max(2).check([...array])).toEqual([...array])
+    })
+
+    it.each([2])('checks max rejects %p', (val) => {
+      const array = new Array(val).fill(-1)
+
+      throws(
+        () => simpleArray.max(1).check(array),
+        aggregated({
+          message: 'Max Length is 1',
+          type: 'max',
+          value: array,
+        })
+      )
+    })
+
+    it.each([2])('checks length %p', (val) => {
+      const array = new Array(val).fill(-1)
+      expect(simpleArray.length(2).check([...array])).toEqual([...array])
+    })
+
+    it.each([1, 3])('checks length rejects %p', (val) => {
+      const array = new Array(val).fill(-1)
+
+      throws(
+        () => simpleArray.length(2).check(array),
+        aggregated({
+          message: 'Expected Length is 2',
+          type: 'length',
+          value: array,
+        })
+      )
     })
   })
 })

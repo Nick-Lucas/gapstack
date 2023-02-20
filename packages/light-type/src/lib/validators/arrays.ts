@@ -30,7 +30,7 @@ export function max<T>(max: number): Assertion<T[]> {
 
 export function length<T>(length: number): Assertion<T[]> {
   return (input, ctx) => {
-    if (input.length > length) {
+    if (input.length !== length) {
       ctx.addIssue({
         type: 'length',
         message: 'Expected Length is ' + length,
