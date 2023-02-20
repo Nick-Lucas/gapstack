@@ -6,7 +6,7 @@ export function min(characters: number): Assertion<string> {
       ctx.addIssue({
         type: 'min',
         message: 'Min Length is ' + characters,
-        value: characters,
+        value: input,
       })
     }
 
@@ -20,7 +20,7 @@ export function max(characters: number): Assertion<string> {
       ctx.addIssue({
         type: 'max',
         message: 'Max Length is ' + characters,
-        value: characters,
+        value: input,
       })
     }
 
@@ -34,6 +34,34 @@ export function length(characters: number): Assertion<string> {
       ctx.addIssue({
         type: 'length',
         message: 'Expected Length is ' + characters,
+        value: input,
+      })
+    }
+
+    return input
+  }
+}
+
+export function includes(text: string): Assertion<string> {
+  return (input, ctx) => {
+    if (input.includes(text)) {
+      ctx.addIssue({
+        type: 'includes',
+        message: 'Expected string to include: ' + text,
+        value: input,
+      })
+    }
+
+    return input
+  }
+}
+
+export function regex(regex: RegExp): Assertion<string> {
+  return (input, ctx) => {
+    if (regex.test(input) === false) {
+      ctx.addIssue({
+        type: 'regex',
+        message: 'Expected string to match: ' + String(regex),
         value: input,
       })
     }

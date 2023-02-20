@@ -1,0 +1,25 @@
+import { Assertion, strings } from '../validators'
+import { ChainableType } from './ChainableType'
+
+export class ChainableString extends ChainableType<string, string> {
+  private validator = (check: Assertion<string>) => {
+    const t = this.t
+
+    return new ChainableString({
+      parse(input, ctx) {
+        const value = t.parse(input, ctx)
+        if (ctx.anyIssue()) {
+          return ctx.NEVER
+        }
+
+        return check(value, ctx)
+      },
+    })
+  }
+
+  min = (min: number) => this.validator(strings.min(min))
+  max = (max: number) => this.validator(strings.max(max))
+  length = (length: number) => this.validator(strings.length(length))
+  regex = (regex: RegExp) => this.validator(strings.regex(regex))
+  includes = (text: string) => this.validator(strings.includes(text))
+}

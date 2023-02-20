@@ -8,12 +8,13 @@ import {
 import { AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
 import { ChainableObject } from './chainable/ChainableObject'
-import { LightTypeError } from './errors/LightTypeError'
 import { ChainableArray } from './chainable/ChainableArray'
 
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 import { createPipeFunction } from './types/pipes'
 import { Context } from './context/Context'
+import { ChainableString } from './chainable/ChainableString'
+import { ChainableNumber } from './chainable/ChainableNumber'
 
 /**
  * Validate an object type with a given shape:
@@ -41,9 +42,9 @@ export function object<TLightObject extends AnyLightObject>(
  * ```
  */
 export function array<TLightArrayElement extends AnyLightType>(
-  valueType: TLightArrayElement
+  elementType: TLightArrayElement
 ) {
-  return new ChainableArray<TLightArrayElement>(valueType)
+  return ChainableArray.create(elementType)
 }
 
 /**
@@ -110,7 +111,7 @@ export function boolean() {
  * ```
  */
 export function number() {
-  return new ChainableType<number, number>({
+  return new ChainableNumber({
     parse(input, ctx) {
       if (typeof input === 'number') {
         return input
@@ -135,7 +136,7 @@ export function number() {
  * ```
  */
 export function string() {
-  return new ChainableType<string, string>({
+  return new ChainableString({
     parse(input, ctx) {
       if (typeof input === 'string') {
         return input

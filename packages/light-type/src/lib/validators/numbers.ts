@@ -6,7 +6,7 @@ export function min(min: number): Assertion<number> {
       ctx.addIssue({
         type: 'min',
         message: 'Min Value is ' + min,
-        value: min,
+        value: input,
       })
     }
 
@@ -20,7 +20,7 @@ export function max(max: number): Assertion<number> {
       ctx.addIssue({
         type: 'max',
         message: 'Max Value is ' + max,
-        value: max,
+        value: input,
       })
     }
 
