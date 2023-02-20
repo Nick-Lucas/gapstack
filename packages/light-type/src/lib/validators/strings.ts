@@ -44,7 +44,7 @@ export function length(characters: number): Assertion<string> {
 
 export function includes(text: string): Assertion<string> {
   return (input, ctx) => {
-    if (input.includes(text)) {
+    if (input.includes(text) === false) {
       ctx.addIssue({
         type: 'includes',
         message: 'Expected string to include: ' + text,

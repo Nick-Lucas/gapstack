@@ -48,7 +48,7 @@ describe('pipe-constructor', () => {
           aggregated({
             type: 'required',
             message: 'Not a Date',
-            value: value,
+            value: new Date(NaN),
           })
         )
       }

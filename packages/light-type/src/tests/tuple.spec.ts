@@ -28,7 +28,7 @@ describe('tuple', () => {
       throws(
         () => tuple.parse(input as any),
         aggregated({
-          type: 'required',
+          type: 'length',
           message: 'Invalid Tuple: 1 elements instead of 2',
           value: ['Foo'],
         })

@@ -7,6 +7,8 @@ export function aggregated(...inners: Issue[]) {
   return new LightTypeAggregatedErrors(inners)
 }
 
+const SortIssues = (a: Issue, b: Issue) => a.message.localeCompare(b.message)
+
 export function throws(
   callback: () => void,
   expectedError: LightTypeAggregatedErrors
@@ -18,10 +20,9 @@ export function throws(
       err instanceof LightTypeAggregatedErrors &&
       expectedError instanceof LightTypeAggregatedErrors
     ) {
-      return expect(err.issues).toEqual(expectedError.issues)
-      // const actual = aggToObj(err)
-      // const expected = aggToObj(expectedError)
-      // expect(actual).toEqual(expected)
+      return expect(err.issues.sort(SortIssues)).toEqual(
+        expectedError.issues.sort(SortIssues)
+      )
 
       return
     }
@@ -30,16 +31,4 @@ export function throws(
   }
 
   fail('Did not throw')
-}
-
-const aggToObj = (err: LightTypeAggregatedErrors) => {
-  return {
-    message: err.message,
-    errors: err.issues.sort((a, b) => {
-      if (a.path && b.path) {
-        return a.path?.localeCompare(b.path)
-      }
-      return a.message.localeCompare(b.message)
-    }),
-  }
 }
