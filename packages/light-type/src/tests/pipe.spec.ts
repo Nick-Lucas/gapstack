@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { lt } from '..'
+import { InferOutput, lt } from '..'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function checkTypes() {
@@ -22,6 +22,37 @@ function checkTypes() {
   )
 
   lt.string().pipe((s) => (s ? 'bar' : undefined), lt.literal('foo').optional())
+
+  type Obj = { id: number; literal: 'foo' | 'bar' | undefined }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const literalobj = lt.string().pipe(
+    (s) => {
+      return {
+        id: parseInt(s),
+        literal: 'foo',
+      } as Obj
+    },
+    // @ts-expect-error Because lt.literal is not optional but input literal is, it will not compile
+    lt.object({
+      id: lt.number(),
+      literal: lt.literal(['foo', 'bar']),
+    })
+  )
+
+  type Obj2 = { id: number; literal: 'foo' | 'bar' }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const literalobj2 = lt.string().pipe(
+    (s) => {
+      return {
+        id: parseInt(s),
+        literal: 'foo',
+      } as Obj2
+    },
+    lt.object({
+      id: lt.number(),
+      literal: lt.literal(['foo', 'bar']),
+    })
+  )
 }
 
 describe('pipe', () => {
