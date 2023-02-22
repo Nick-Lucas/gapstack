@@ -22,4 +22,6 @@ export class ChainableString extends ChainableType<string, string> {
   length = (length: number) => this.validator(strings.length(length))
   regex = (regex: RegExp) => this.validator(strings.regex(regex))
   includes = (text: string) => this.validator(strings.includes(text))
+  startsWith = (text: string) => this.validator(strings.startsWith(text))
+  endsWith = (text: string) => this.validator(strings.endsWith(text))
 }
