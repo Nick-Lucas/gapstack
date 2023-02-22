@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { ChainableType } from '../chainable/ChainableType'
+import { LtType } from '../chainable/LtType'
 import { LightTypeContext } from '../context/LightTypeContext'
 import { LightType } from './LightType'
 import { TypeInner } from './TypeInner'
@@ -22,25 +22,25 @@ export function createPipeFunction<TInitialInput, TInitialOutput>(
 ) {
   function pipe<A extends TInitialOutput, TFinalOutput>(
     a: PipeElem<A, TFinalOutput>
-  ): ChainableType<TInitialInput, TFinalOutput>
+  ): LtType<TInitialInput, TFinalOutput>
 
   function pipe<A extends TInitialOutput, B, TFinalOutput>(
     a: PipeElem<A, B>,
     b: PipeElem<B, TFinalOutput>
-  ): ChainableType<TInitialInput, TFinalOutput>
+  ): LtType<TInitialInput, TFinalOutput>
 
   function pipe<A extends TInitialOutput, B, C, TFinalOutput>(
     a: PipeElem<A, B>,
     b: PipeElem<B, C>,
     c: PipeElem<C, TFinalOutput>
-  ): ChainableType<TInitialInput, TFinalOutput>
+  ): LtType<TInitialInput, TFinalOutput>
 
   function pipe<A extends TInitialOutput, B, C, D, TFinalOutput>(
     a: PipeElem<A, B>,
     b: PipeElem<B, C>,
     c: PipeElem<C, D>,
     d: PipeElem<D, TFinalOutput>
-  ): ChainableType<TInitialInput, TFinalOutput>
+  ): LtType<TInitialInput, TFinalOutput>
 
   function pipe<A extends TInitialOutput, B, C, D, E, TFinalOutput>(
     a: PipeElem<A, B>,
@@ -48,7 +48,7 @@ export function createPipeFunction<TInitialInput, TInitialOutput>(
     c: PipeElem<C, D>,
     d: PipeElem<D, E>,
     e: PipeElem<E, TFinalOutput>
-  ): ChainableType<TInitialInput, TFinalOutput>
+  ): LtType<TInitialInput, TFinalOutput>
 
   function pipe<A extends TInitialOutput, B, C, D, E, F, TFinalOutput>(
     a: PipeElem<A, B>,
@@ -57,12 +57,12 @@ export function createPipeFunction<TInitialInput, TInitialOutput>(
     d: PipeElem<D, E>,
     e: PipeElem<E, F>,
     f: PipeElem<F, TFinalOutput>
-  ): ChainableType<TInitialInput, TFinalOutput>
+  ): LtType<TInitialInput, TFinalOutput>
 
   // TODO: add more overloads 🙂
 
   function pipe(...funcs: PipeElem[]) {
-    return new ChainableType<TInitialInput, any>({
+    return new LtType<TInitialInput, any>({
       parse(input, ctx) {
         const nextInput = t.parse(input, ctx)
 
