@@ -1,17 +1,14 @@
 import { AnyLightType, InferInput, InferOutput } from '../types/LightType'
 import { arrays, Assertion } from '../validators'
-import { ChainableType } from './ChainableType'
+import { LtType } from './LtType'
 
-export class ChainableArray<TInput, TOutput> extends ChainableType<
-  TInput[],
-  TOutput[]
-> {
+export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
   static create<
     TElement extends AnyLightType,
     TInput extends InferInput<TElement> = InferInput<TElement>,
     TOutput extends InferOutput<TElement> = InferOutput<TElement>
   >(elementType: TElement) {
-    return new ChainableArray<TInput, TOutput>({
+    return new LtArray<TInput, TOutput>({
       parse(input, ctx) {
         if (Array.isArray(input)) {
           const items = new Array<TOutput>(input.length)
@@ -43,7 +40,7 @@ export class ChainableArray<TInput, TOutput> extends ChainableType<
   private validator = (check: Assertion<TOutput[]>) => {
     const t = this._t
 
-    return new ChainableArray<TInput, TOutput>({
+    return new LtArray<TInput, TOutput>({
       parse(input, ctx) {
         const value = t.parse(input, ctx)
         if (ctx.anyIssue()) {

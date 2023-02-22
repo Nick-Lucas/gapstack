@@ -1,3 +1,5 @@
+import { AnyLightType, LightType } from './LightType'
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NoOp = {}
 
@@ -7,7 +9,7 @@ export type AnyKey = string | number | symbol
 /**
  * Determine the primitive types included in a literal union
  */
-export type LiteralBase<T extends Primitive> = T extends string
+export type LiteralBase<T> = T extends string
   ? string
   : T extends number
   ? number
@@ -16,6 +18,26 @@ export type LiteralBase<T extends Primitive> = T extends string
   : T extends symbol
   ? symbol
   : T
+
+/**
+ * Sometimes (like during piping) TypeScript can get a little too
+ * aggressive about what it wants, and we need a way to curtail this.
+ *
+ * This type helps
+ */
+export type SoftenInput<T> = T extends Record<AnyKey, unknown>
+  ?
+      | {
+          [key in keyof T]?: T[key] extends LightType<
+            infer TInput,
+            infer TOutput
+          >
+            ? LightType<SoftenInput<TInput>, TOutput>
+            : SoftenInput<T[key]>
+        }
+      | null
+      | undefined
+  : LiteralBase<T> | null | undefined
 
 /**
  * Materialises a complex/generic type into a simple/raw type for compiler output and autocomplete

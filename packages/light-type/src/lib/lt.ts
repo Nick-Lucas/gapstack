@@ -1,4 +1,4 @@
-import { ChainableType } from './chainable/ChainableType'
+import { LtType } from './chainable/LtType'
 import {
   AnyLightType,
   InferInput,
@@ -7,14 +7,14 @@ import {
 } from './types/LightType'
 import { AnyLightObject } from './types/LightObject'
 import { Primitive, LiteralBase, AnyKey } from './types/utils'
-import { ChainableObject } from './chainable/ChainableObject'
-import { ChainableArray } from './chainable/ChainableArray'
+import { LtObject } from './chainable/LtObject'
+import { LtArray } from './chainable/LtArray'
 
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 import { createPipeFunction } from './types/pipes'
 import { Context } from './context/Context'
-import { ChainableString } from './chainable/ChainableString'
-import { ChainableNumber } from './chainable/ChainableNumber'
+import { LtString } from './chainable/LtString'
+import { LtNumber } from './chainable/LtNumber'
 
 /**
  * Validate an object type with a given shape:
@@ -29,7 +29,7 @@ import { ChainableNumber } from './chainable/ChainableNumber'
 export function object<TLightObject extends AnyLightObject>(
   lightObject: TLightObject
 ) {
-  return new ChainableObject<TLightObject>(lightObject)
+  return new LtObject<TLightObject>(lightObject)
 }
 
 /**
@@ -44,7 +44,7 @@ export function object<TLightObject extends AnyLightObject>(
 export function array<TLightArrayElement extends AnyLightType>(
   elementType: TLightArrayElement
 ) {
-  return ChainableArray.create(elementType)
+  return LtArray.create(elementType)
 }
 
 /**
@@ -56,7 +56,7 @@ export function array<TLightArrayElement extends AnyLightType>(
  */
 export function any() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return new ChainableType<any, any>({
+  return new LtType<any, any>({
     parse(input) {
       return input
     },
@@ -71,7 +71,7 @@ export function any() {
  * ```
  */
 export function unknown() {
-  return new ChainableType<unknown, unknown>({
+  return new LtType<unknown, unknown>({
     parse(input) {
       return input
     },
@@ -86,7 +86,7 @@ export function unknown() {
  * ```
  */
 export function boolean() {
-  return new ChainableType<boolean, boolean>({
+  return new LtType<boolean, boolean>({
     parse(input, ctx) {
       if (typeof input === 'boolean') {
         return input
@@ -111,7 +111,7 @@ export function boolean() {
  * ```
  */
 export function number() {
-  return new ChainableNumber({
+  return new LtNumber({
     parse(input, ctx) {
       if (typeof input === 'number') {
         return input
@@ -136,7 +136,7 @@ export function number() {
  * ```
  */
 export function string() {
-  return new ChainableString({
+  return new LtString({
     parse(input, ctx) {
       if (typeof input === 'string') {
         return input
@@ -161,7 +161,7 @@ export function string() {
  * ```
  */
 export function date() {
-  return new ChainableType<Date, Date>({
+  return new LtType<Date, Date>({
     parse(input, ctx) {
       if (input instanceof Date && !isNaN(input.valueOf())) {
         return input
@@ -198,7 +198,7 @@ export function literal<TLiteral extends Primitive>(
   const values = new Set(Array.isArray(literal) ? literal : [literal])
   const list = Array.from(values).join(', ')
 
-  return new ChainableType<LiteralBase<TLiteral>, TLiteral>({
+  return new LtType<LiteralBase<TLiteral>, TLiteral>({
     parse(input: unknown, ctx) {
       if (values.has(input as TLiteral)) {
         return input as TLiteral
@@ -235,7 +235,7 @@ export function record<
   type TInput = Record<KeyInput, ValueInput>
   type TOutput = Record<KeyOutput, ValueOutput>
 
-  return new ChainableType<TInput, TOutput>({
+  return new LtType<TInput, TOutput>({
     parse(input, ctx) {
       if (typeof input === 'object' && input !== null) {
         const maybeTInput = input as TInput
@@ -288,7 +288,7 @@ export function map<
   type TInput = Map<KeyInput, ValueInput> | Record<KeyInput, ValueInput>
   type TOutput = Map<KeyOutput, ValueOutput>
 
-  return new ChainableType<TInput, TOutput>({
+  return new LtType<TInput, TOutput>({
     parse(_input, ctx) {
       const input =
         _input instanceof Map
@@ -343,7 +343,7 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
     [K in keyof T]: InferOutput<T[K]>
   }
 
-  return new ChainableType<TInput, TOutput>({
+  return new LtType<TInput, TOutput>({
     parse(input, ctx) {
       if (Array.isArray(input)) {
         if (input.length !== tuple.length) {
@@ -393,7 +393,7 @@ export function union<T extends AnyUnionInput>(types: T) {
     [key in keyof T]: InferOutput<T[key]>
   }[number]
 
-  return new ChainableType<TInput, TOutput>({
+  return new LtType<TInput, TOutput>({
     parse(input, ctx) {
       for (const type of types) {
         const specialContext = new Context()
@@ -428,7 +428,7 @@ export function union<T extends AnyUnionInput>(types: T) {
  * ```
  */
 export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
-  return new ChainableType<TInput[] | Set<TInput>, Set<TOutput>>({
+  return new LtType<TInput[] | Set<TInput>, Set<TOutput>>({
     parse(_input, ctx) {
       let input = [] as TInput[]
       if (_input instanceof Set) {

@@ -3,7 +3,7 @@ import {
   InferLightObjectInput,
   InferLightObjectOutput,
 } from '../types/LightObject'
-import { ChainableType } from './ChainableType'
+import { LtType } from './LtType'
 import * as lt from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
@@ -19,7 +19,7 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof B, string> &
       Extract<keyof C, string>
 
-export class ChainableObject<
+export class LtObject<
   TLightObject extends AnyLightObject,
   TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
   TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
@@ -28,7 +28,7 @@ export class ChainableObject<
     TInput,
     TOutput
   >
-> extends ChainableType<TInput, TOutput> {
+> extends LtType<TInput, TOutput> {
   constructor(protected readonly lightObject: TLightObject) {
     const keys = Object.keys(lightObject) as TKey[]
 

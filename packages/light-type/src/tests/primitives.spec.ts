@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { lt } from '..'
-import { ChainableType } from '../lib/chainable/ChainableType'
+import { lt, LtType } from '..'
 import { aggregated } from './errors'
 
 describe('primitives', () => {
   type ProceduralTest = [
     name: string,
-    type: ChainableType<any>,
+    type: LtType<any>,
     validInputs: unknown[],
     invalidInputs: unknown[],
     error: string

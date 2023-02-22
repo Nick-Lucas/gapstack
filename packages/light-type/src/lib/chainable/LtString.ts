@@ -1,11 +1,11 @@
 import { Assertion, strings } from '../validators'
-import { ChainableType } from './ChainableType'
+import { LtType } from './LtType'
 
-export class ChainableString extends ChainableType<string, string> {
+export class LtString extends LtType<string, string> {
   private validator = (check: Assertion<string>) => {
     const t = this._t
 
-    return new ChainableString({
+    return new LtString({
       parse(input, ctx) {
         const value = t.parse(input, ctx)
         if (ctx.anyIssue()) {

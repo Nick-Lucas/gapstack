@@ -81,8 +81,6 @@ There are some features missing still which are important. See the todo list bel
 <!-- Now -->
 * Documentation
 * Custom error messages for validation errors
-* Chainable validators 
-* More validators (.assert(boolean, "message") string.regex|startsWith|endsWith|contains, arrays, sets, )
 
 
 <!-- Next -->

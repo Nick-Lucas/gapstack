@@ -3,7 +3,7 @@ import { TypeInner } from '../types/TypeInner'
 import { createPipeFunction } from '../types/pipes'
 import { Context } from '../context/Context'
 
-export class ChainableType<TInput, TOutput = TInput>
+export class LtType<TInput, TOutput = TInput>
   implements LightType<TInput, TOutput>
 {
   readonly _input!: TInput
@@ -66,10 +66,10 @@ export class ChainableType<TInput, TOutput = TInput>
    * // `{ value?: number | undefined }`
    * ```
    */
-  optional = (): ChainableType<TInput | undefined, TOutput | undefined> => {
+  optional = (): LtType<TInput | undefined, TOutput | undefined> => {
     const t = this._t
 
-    return new ChainableType<TInput | undefined, TOutput | undefined>({
+    return new LtType<TInput | undefined, TOutput | undefined>({
       parse(input, ctx) {
         if (input === undefined) {
           return undefined
@@ -87,10 +87,10 @@ export class ChainableType<TInput, TOutput = TInput>
    * // `number | null`
    * ```
    */
-  nullable = (): ChainableType<TInput | null, TOutput | null> => {
+  nullable = (): LtType<TInput | null, TOutput | null> => {
     const t = this._t
 
-    return new ChainableType<TInput | null, TOutput | null>({
+    return new LtType<TInput | null, TOutput | null>({
       parse(input, ctx) {
         if (input === null) {
           return null
@@ -116,12 +116,10 @@ export class ChainableType<TInput, TOutput = TInput>
    * // Output: `{ value: number }`
    * ```
    */
-  default = (
-    defaultValue: TOutput
-  ): ChainableType<TInput | undefined, TOutput> => {
+  default = (defaultValue: TOutput): LtType<TInput | undefined, TOutput> => {
     const t = this._t
 
-    return new ChainableType<TInput | undefined, TOutput>({
+    return new LtType<TInput | undefined, TOutput>({
       parse(input, ctx) {
         if (input === undefined) {
           return defaultValue
@@ -140,12 +138,10 @@ export class ChainableType<TInput, TOutput = TInput>
    * // Output: `number`
    * ```
    */
-  defaultNull = (
-    defaultValue: TOutput
-  ): ChainableType<TInput | null, TOutput> => {
+  defaultNull = (defaultValue: TOutput): LtType<TInput | null, TOutput> => {
     const t = this._t
 
-    return new ChainableType<TInput | null, TOutput>({
+    return new LtType<TInput | null, TOutput>({
       parse(input, ctx) {
         if (input === null) {
           return defaultValue
