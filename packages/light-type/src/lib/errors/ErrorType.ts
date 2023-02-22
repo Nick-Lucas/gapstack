@@ -5,5 +5,6 @@ export type ErrorType =
   | 'length'
   | 'regex'
   | 'includes'
-  | '${any-string}'
+  | 'startsWith'
+  | 'endsWith'
   | (string & Record<never, never>)

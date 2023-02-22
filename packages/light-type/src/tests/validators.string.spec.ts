@@ -72,6 +72,36 @@ describe('chainable validators', () => {
     )
   })
 
+  it.each(['foo'])('checks startsWith %p', (val) => {
+    expect(Str.startsWith(val).check('foo bar baz')).toEqual('foo bar baz')
+  })
+
+  it.each(['bar', 'baz'])('checks startsWith rejects %p', (val) => {
+    throws(
+      () => Str.startsWith(val).check('foo bar baz'),
+      aggregated({
+        message: 'Expected string to start with: ' + val,
+        type: 'startsWith',
+        value: 'foo bar baz',
+      })
+    )
+  })
+
+  it.each(['baz'])('checks endsWith %p', (val) => {
+    expect(Str.endsWith(val).check('foo bar baz')).toEqual('foo bar baz')
+  })
+
+  it.each(['bar', 'fo'])('checks endsWith rejects %p', (val) => {
+    throws(
+      () => Str.endsWith(val).check('foo bar baz'),
+      aggregated({
+        message: 'Expected string to end with: ' + val,
+        type: 'endsWith',
+        value: 'foo bar baz',
+      })
+    )
+  })
+
   it.each([/bar/, /foo/])('checks regex %p', (val) => {
     expect(Str.regex(val).check('foo bar baz')).toEqual('foo bar baz')
   })
