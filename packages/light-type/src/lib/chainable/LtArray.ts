@@ -1,36 +1,52 @@
-import { AnyLightType, InferInput, InferOutput } from '../types/LightType'
+import {
+  AnyLightType,
+  InferInput,
+  InferOutput,
+  LightType,
+} from '../types/LightType'
+import { TypeInner } from '../types/TypeInner'
 import { arrays, Assertion } from '../validators'
 import { LtType } from './LtType'
 
 export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
+  constructor(
+    readonly element: LightType<TInput, TOutput>,
+    inner: TypeInner<TInput[], TOutput[]>
+  ) {
+    super(inner)
+  }
+
   static create<
     TElement extends AnyLightType,
     TInput extends InferInput<TElement> = InferInput<TElement>,
     TOutput extends InferOutput<TElement> = InferOutput<TElement>
   >(elementType: TElement) {
-    return new LtArray<TInput, TOutput>({
-      parse(input, ctx) {
-        if (Array.isArray(input)) {
-          const items = new Array<TOutput>(input.length)
-          for (let i = 0; i < input.length; i++) {
-            items[i] = elementType._t.parse(
-              input[i],
-              ctx.createChild(String(i))
-            ) as TOutput
+    return new LtArray<TInput, TOutput>(
+      elementType as LightType<TInput, TOutput>,
+      {
+        parse(input, ctx) {
+          if (Array.isArray(input)) {
+            const items = new Array<TOutput>(input.length)
+            for (let i = 0; i < input.length; i++) {
+              items[i] = elementType._t.parse(
+                input[i],
+                ctx.createChild(String(i))
+              ) as TOutput
+            }
+
+            return items
           }
 
-          return items
-        }
+          ctx.addIssue({
+            type: 'required',
+            message: `Not an Array`,
+            value: input,
+          })
 
-        ctx.addIssue({
-          type: 'required',
-          message: `Not an Array`,
-          value: input,
-        })
-
-        return ctx.NEVER
-      },
-    })
+          return ctx.NEVER
+        },
+      }
+    )
   }
 
   //
@@ -40,7 +56,7 @@ export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
   private validator = (check: Assertion<TOutput[]>) => {
     const t = this._t
 
-    return new LtArray<TInput, TOutput>({
+    return new LtArray<TInput, TOutput>(this.element, {
       parse(input, ctx) {
         const value = t.parse(input, ctx)
         if (ctx.anyIssue()) {
