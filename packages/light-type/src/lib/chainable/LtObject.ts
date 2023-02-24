@@ -19,6 +19,10 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof B, string> &
       Extract<keyof C, string>
 
+interface ObjectOptions {
+  extraKeysModes?: 'discard' | 'strict' | 'passthrough'
+}
+
 export class LtObject<
   TLightObject extends AnyLightObject,
   TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
@@ -29,13 +33,40 @@ export class LtObject<
     TOutput
   >
 > extends LtType<TInput, TOutput> {
-  constructor(readonly shape: TLightObject) {
+  protected readonly options: ObjectOptions
+
+  constructor(readonly shape: TLightObject, options?: ObjectOptions) {
     const keys = Object.keys(shape) as TKey[]
+
+    options ??= {}
+    options.extraKeysModes ??= 'discard'
 
     super({
       parse(input, ctx) {
         if (typeof input === 'object' && input !== null) {
           const obj = input as TInput
+
+          const initialOutput =
+            options?.extraKeysModes === 'discard'
+              ? {}
+              : Object.keys(input).reduce((aggr, key) => {
+                  if ((keys as string[]).includes(key) === false) {
+                    aggr[key] = input[key as keyof typeof input]
+                  }
+                  return aggr
+                }, {} as Record<string, unknown>)
+
+          if (
+            options?.extraKeysModes === 'strict' &&
+            Object.keys(initialOutput).length > 0
+          ) {
+            ctx.addIssue({
+              type: 'strict',
+              message: `Extra keys found`,
+              value: input,
+            })
+            return ctx.NEVER
+          }
 
           return keys.reduce((aggr, key) => {
             const parser = shape[key]
@@ -46,7 +77,7 @@ export class LtObject<
             ) as TOutput[TKey]
 
             return aggr
-          }, {} as TOutput)
+          }, initialOutput as TOutput)
         }
 
         ctx.addIssue({
@@ -58,6 +89,8 @@ export class LtObject<
         return ctx.NEVER
       },
     })
+
+    this.options = options
   }
 
   /**
@@ -178,5 +211,15 @@ export class LtObject<
     }
 
     return lt.object(pickedLightObject)
+  }
+
+  strict = () => {
+    this.options.extraKeysModes = 'strict'
+    return this
+  }
+
+  passthrough = () => {
+    this.options.extraKeysModes = 'passthrough'
+    return this
   }
 }

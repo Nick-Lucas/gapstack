@@ -1,5 +1,6 @@
 export type ErrorType =
   | 'required'
+  | 'strict'
   | 'min'
   | 'max'
   | 'length'
