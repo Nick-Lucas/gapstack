@@ -1,3 +1,4 @@
+import lt from '..'
 import {
   AnyLightType,
   InferInput,
@@ -71,4 +72,19 @@ export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
   min = (min: number) => this.validator(arrays.min<TOutput>(min))
   max = (max: number) => this.validator(arrays.max<TOutput>(max))
   length = (length: number) => this.validator(arrays.length<TOutput>(length))
+
+  asSet = () => {
+    const t = this._t
+
+    return new LtType<TInput[], Set<TOutput>>({
+      parse(input, context) {
+        const result = t.parse(input, context)
+        if (context.anyIssue()) {
+          return context.NEVER
+        }
+
+        return new Set(result)
+      },
+    })
+  }
 }
