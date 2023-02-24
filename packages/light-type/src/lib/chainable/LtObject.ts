@@ -29,8 +29,8 @@ export class LtObject<
     TOutput
   >
 > extends LtType<TInput, TOutput> {
-  constructor(protected readonly lightObject: TLightObject) {
-    const keys = Object.keys(lightObject) as TKey[]
+  constructor(readonly shape: TLightObject) {
+    const keys = Object.keys(shape) as TKey[]
 
     super({
       parse(input, ctx) {
@@ -38,7 +38,7 @@ export class LtObject<
           const obj = input as TInput
 
           return keys.reduce((aggr, key) => {
-            const parser = lightObject[key]
+            const parser = shape[key]
 
             aggr[key] = parser._t.parse(
               obj[key],
@@ -74,7 +74,7 @@ export class LtObject<
   extend = <TExtendLightObject extends AnyLightObject>(
     extendLightObject: TExtendLightObject
   ) => {
-    const lightObject = this.lightObject
+    const lightObject = this.shape
 
     const extendedLightObject = mergeLightObjects(
       extendLightObject,
@@ -98,7 +98,7 @@ export class LtObject<
   merge = <TExtendLightObject extends AnyLightObject>(
     extendLightObject: TExtendLightObject
   ) => {
-    const lightObject = this.lightObject
+    const lightObject = this.shape
 
     const extendedLightObject = mergeLightObjects(
       lightObject,
@@ -123,7 +123,7 @@ export class LtObject<
    * ```
    */
   omit = <TOmit extends KeysParam<TLightObject>>(omit: TOmit) => {
-    const lightObject = this.lightObject
+    const lightObject = this.shape
 
     type TOmitKeys = keyof {
       [key in keyof TOmit]: TOmit[key] extends true ? key : never
@@ -158,7 +158,7 @@ export class LtObject<
    * ```
    */
   pick = <TPick extends KeysParam<TLightObject>>(pick: TPick) => {
-    const lightObject = this.lightObject
+    const lightObject = this.shape
 
     type TPickKeys = keyof {
       [key in keyof TPick]: TPick[key] extends true ? key : never
