@@ -332,3 +332,74 @@ describe('object methods', () => {
     })
   })
 })
+
+describe('extra keys', () => {
+  const object = lt.object({
+    id: lt.number(),
+    name: lt.string(),
+  })
+
+  it('discards', () => {
+    expect(
+      object.parse({
+        id: 1,
+        name: 'One',
+        age: 1,
+        placeOfBirth: 'earth',
+      })
+    ).toEqual({
+      id: 1,
+      name: 'One',
+    })
+  })
+
+  it('passthrough', () => {
+    expect(
+      object.passthrough().parse({
+        id: 1,
+        name: 'One',
+        age: 1,
+        placeOfBirth: 'earth',
+      })
+    ).toEqual({
+      id: 1,
+      name: 'One',
+      age: 1,
+      placeOfBirth: 'earth',
+    })
+  })
+
+  it('strict throws', () => {
+    throws(
+      () =>
+        object.strict().parse({
+          id: 1,
+          name: 'One',
+          age: 1,
+          placeOfBirth: 'earth',
+        }),
+      aggregated({
+        type: 'strict',
+        message: 'Extra keys found',
+        value: {
+          id: 1,
+          name: 'One',
+          age: 1,
+          placeOfBirth: 'earth',
+        },
+      })
+    )
+  })
+
+  it('strict ok', () => {
+    expect(
+      object.strict().parse({
+        id: 1,
+        name: 'One',
+      })
+    ).toEqual({
+      id: 1,
+      name: 'One',
+    })
+  })
+})

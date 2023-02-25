@@ -84,7 +84,6 @@ There are some features missing still which are important. See the todo list bel
 
 
 <!-- Next -->
-* strict and passthrough methods
 * Structure of classes, options:
   * Convert Chainables to store a pipeline and simply return `this`?
     * https://stackoverflow.com/questions/44204129/extending-builder-in-typescript

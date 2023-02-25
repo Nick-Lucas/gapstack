@@ -7,6 +7,7 @@ import { LtType } from './LtType'
 import * as lt from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
+import { TypeInner } from '../types/TypeInner'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
@@ -20,6 +21,7 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof C, string>
 
 export class LtObject<
+  // TODO: can this be simplified now?
   TLightObject extends AnyLightObject,
   TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
   TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
@@ -29,35 +31,51 @@ export class LtObject<
     TOutput
   >
 > extends LtType<TInput, TOutput> {
-  constructor(readonly shape: TLightObject) {
+  constructor(t: TypeInner<TInput, TOutput>, readonly shape: TLightObject) {
+    super(t)
+  }
+
+  static create<
+    TLightObject extends AnyLightObject,
+    TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
+    TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
+    TKey extends GetTKey<TLightObject, TInput, TOutput> = GetTKey<
+      TLightObject,
+      TInput,
+      TOutput
+    >
+  >(shape: TLightObject) {
     const keys = Object.keys(shape) as TKey[]
 
-    super({
-      parse(input, ctx) {
-        if (typeof input === 'object' && input !== null) {
-          const obj = input as TInput
+    return new LtObject<TLightObject, TInput, TOutput, TKey>(
+      {
+        parse(input, ctx) {
+          if (typeof input === 'object' && input !== null) {
+            const obj = input as TInput
 
-          return keys.reduce((aggr, key) => {
-            const parser = shape[key]
+            return keys.reduce((aggr, key) => {
+              const parser = shape[key]
 
-            aggr[key] = parser._t.parse(
-              obj[key],
-              ctx.createChild(key)
-            ) as TOutput[TKey]
+              aggr[key] = parser._t.parse(
+                obj[key],
+                ctx.createChild(key)
+              ) as TOutput[TKey]
 
-            return aggr
-          }, {} as TOutput)
-        }
+              return aggr
+            }, {} as TOutput)
+          }
 
-        ctx.addIssue({
-          type: 'required',
-          message: `Not an Object`,
-          value: input,
-        })
+          ctx.addIssue({
+            type: 'required',
+            message: `Not an Object`,
+            value: input,
+          })
 
-        return ctx.NEVER
+          return ctx.NEVER
+        },
       },
-    })
+      shape
+    )
   }
 
   /**
@@ -178,5 +196,82 @@ export class LtObject<
     }
 
     return lt.object(pickedLightObject)
+  }
+
+  strict = () => {
+    const t = this._t
+    const keys = new Set(Object.keys(this.shape))
+
+    return new LtObject<TLightObject, TInput, TOutput, TKey>(
+      {
+        parse(input, ctx) {
+          const result = t.parse(input, ctx)
+          if (ctx.anyIssue()) {
+            return ctx.NEVER
+          }
+
+          if (
+            typeof result === 'object' &&
+            typeof input === 'object' &&
+            !!result &&
+            !!input
+          ) {
+            const inputKeys = Object.keys(input)
+            for (const inputKey of inputKeys) {
+              if (!keys.has(inputKey)) {
+                // Maybe: Could produce an issue per extra key?
+
+                ctx.addIssue({
+                  type: 'strict',
+                  message: `Extra keys found`,
+                  value: input,
+                })
+
+                return ctx.NEVER
+              }
+            }
+          }
+
+          return result
+        },
+      },
+      this.shape
+    )
+  }
+
+  passthrough = () => {
+    const t = this._t
+    const keys = new Set(Object.keys(this.shape))
+
+    return new LtObject<TLightObject, TInput, TOutput, TKey>(
+      {
+        parse(input, ctx) {
+          const result = t.parse(input, ctx)
+          if (ctx.anyIssue()) {
+            return ctx.NEVER
+          }
+
+          if (
+            typeof result === 'object' &&
+            typeof input === 'object' &&
+            !!result &&
+            !!input
+          ) {
+            const inputKeys = Object.keys(input)
+            for (const inputKey of inputKeys) {
+              if (!keys.has(inputKey)) {
+                // Maybe: Could produce an issue per extra key?
+
+                result[inputKey as keyof TOutput] =
+                  input[inputKey as keyof typeof input]
+              }
+            }
+          }
+
+          return result
+        },
+      },
+      this.shape
+    )
   }
 }
