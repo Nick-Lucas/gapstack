@@ -20,10 +20,6 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof B, string> &
       Extract<keyof C, string>
 
-interface ObjectOptions {
-  extraKeysModes: 'discard' | 'strict' | 'passthrough'
-}
-
 export class LtObject<
   // TODO: can this be simplified now?
   TLightObject extends AnyLightObject,
@@ -35,11 +31,7 @@ export class LtObject<
     TOutput
   >
 > extends LtType<TInput, TOutput> {
-  constructor(
-    t: TypeInner<TInput, TOutput>,
-    readonly shape: TLightObject,
-    protected readonly options: ObjectOptions
-  ) {
+  constructor(t: TypeInner<TInput, TOutput>, readonly shape: TLightObject) {
     super(t)
   }
 
@@ -52,40 +44,14 @@ export class LtObject<
       TInput,
       TOutput
     >
-  >(shape: TLightObject, _options?: Partial<ObjectOptions>) {
+  >(shape: TLightObject) {
     const keys = Object.keys(shape) as TKey[]
-
-    const options: ObjectOptions = {
-      extraKeysModes: _options?.extraKeysModes ?? 'discard',
-    }
 
     return new LtObject<TLightObject, TInput, TOutput, TKey>(
       {
         parse(input, ctx) {
           if (typeof input === 'object' && input !== null) {
             const obj = input as TInput
-
-            const initialOutput =
-              options?.extraKeysModes === 'discard'
-                ? {}
-                : Object.keys(input).reduce((aggr, key) => {
-                    if ((keys as string[]).includes(key) === false) {
-                      aggr[key] = input[key as keyof typeof input]
-                    }
-                    return aggr
-                  }, {} as Record<string, unknown>)
-
-            if (
-              options?.extraKeysModes === 'strict' &&
-              Object.keys(initialOutput).length > 0
-            ) {
-              ctx.addIssue({
-                type: 'strict',
-                message: `Extra keys found`,
-                value: input,
-              })
-              return ctx.NEVER
-            }
 
             return keys.reduce((aggr, key) => {
               const parser = shape[key]
@@ -96,7 +62,7 @@ export class LtObject<
               ) as TOutput[TKey]
 
               return aggr
-            }, initialOutput as TOutput)
+            }, {} as TOutput)
           }
 
           ctx.addIssue({
@@ -108,8 +74,7 @@ export class LtObject<
           return ctx.NEVER
         },
       },
-      shape,
-      options
+      shape
     )
   }
 
@@ -233,15 +198,80 @@ export class LtObject<
     return lt.object(pickedLightObject)
   }
 
-  strict = () =>
-    new LtObject(this._t, this.shape, {
-      ...this.options,
-      extraKeysModes: 'strict',
-    })
+  strict = () => {
+    const t = this._t
+    const keys = new Set(Object.keys(this.shape))
 
-  passthrough = () =>
-    new LtObject(this._t, this.shape, {
-      ...this.options,
-      extraKeysModes: 'passthrough',
-    })
+    return new LtObject<TLightObject, TInput, TOutput, TKey>(
+      {
+        parse(input, ctx) {
+          const result = t.parse(input, ctx)
+          if (ctx.anyIssue()) {
+            return ctx.NEVER
+          }
+
+          if (
+            typeof result === 'object' &&
+            typeof input === 'object' &&
+            !!result &&
+            !!input
+          ) {
+            const inputKeys = Object.keys(input)
+            for (const inputKey of inputKeys) {
+              if (!keys.has(inputKey)) {
+                // Maybe: Could produce an issue per extra key?
+
+                ctx.addIssue({
+                  type: 'strict',
+                  message: `Extra keys found`,
+                  value: input,
+                })
+
+                return ctx.NEVER
+              }
+            }
+          }
+
+          return result
+        },
+      },
+      this.shape
+    )
+  }
+
+  passthrough = () => {
+    const t = this._t
+    const keys = new Set(Object.keys(this.shape))
+
+    return new LtObject<TLightObject, TInput, TOutput, TKey>(
+      {
+        parse(input, ctx) {
+          const result = t.parse(input, ctx)
+          if (ctx.anyIssue()) {
+            return ctx.NEVER
+          }
+
+          if (
+            typeof result === 'object' &&
+            typeof input === 'object' &&
+            !!result &&
+            !!input
+          ) {
+            const inputKeys = Object.keys(input)
+            for (const inputKey of inputKeys) {
+              if (!keys.has(inputKey)) {
+                // Maybe: Could produce an issue per extra key?
+
+                result[inputKey as keyof TOutput] =
+                  input[inputKey as keyof typeof input]
+              }
+            }
+          }
+
+          return result
+        },
+      },
+      this.shape
+    )
+  }
 }
