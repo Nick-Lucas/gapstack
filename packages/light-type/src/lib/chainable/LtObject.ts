@@ -7,6 +7,7 @@ import { LtType } from './LtType'
 import * as lt from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
+import { TypeInner } from '../types/TypeInner'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
@@ -20,10 +21,11 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof C, string>
 
 interface ObjectOptions {
-  extraKeysModes?: 'discard' | 'strict' | 'passthrough'
+  extraKeysModes: 'discard' | 'strict' | 'passthrough'
 }
 
 export class LtObject<
+  // TODO: can this be simplified now?
   TLightObject extends AnyLightObject,
   TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
   TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
@@ -33,64 +35,82 @@ export class LtObject<
     TOutput
   >
 > extends LtType<TInput, TOutput> {
-  protected readonly options: ObjectOptions
+  constructor(
+    t: TypeInner<TInput, TOutput>,
+    readonly shape: TLightObject,
+    protected readonly options: ObjectOptions
+  ) {
+    super(t)
+  }
 
-  constructor(readonly shape: TLightObject, options?: ObjectOptions) {
+  static create<
+    TLightObject extends AnyLightObject,
+    TInput extends GetTInput<TLightObject> = GetTInput<TLightObject>,
+    TOutput extends GetTOutput<TLightObject> = GetTOutput<TLightObject>,
+    TKey extends GetTKey<TLightObject, TInput, TOutput> = GetTKey<
+      TLightObject,
+      TInput,
+      TOutput
+    >
+  >(shape: TLightObject, _options?: Partial<ObjectOptions>) {
     const keys = Object.keys(shape) as TKey[]
 
-    options ??= {}
-    options.extraKeysModes ??= 'discard'
+    const options: ObjectOptions = {
+      extraKeysModes: _options?.extraKeysModes ?? 'discard',
+    }
 
-    super({
-      parse(input, ctx) {
-        if (typeof input === 'object' && input !== null) {
-          const obj = input as TInput
+    return new LtObject<TLightObject, TInput, TOutput, TKey>(
+      {
+        parse(input, ctx) {
+          if (typeof input === 'object' && input !== null) {
+            const obj = input as TInput
 
-          const initialOutput =
-            options?.extraKeysModes === 'discard'
-              ? {}
-              : Object.keys(input).reduce((aggr, key) => {
-                  if ((keys as string[]).includes(key) === false) {
-                    aggr[key] = input[key as keyof typeof input]
-                  }
-                  return aggr
-                }, {} as Record<string, unknown>)
+            const initialOutput =
+              options?.extraKeysModes === 'discard'
+                ? {}
+                : Object.keys(input).reduce((aggr, key) => {
+                    if ((keys as string[]).includes(key) === false) {
+                      aggr[key] = input[key as keyof typeof input]
+                    }
+                    return aggr
+                  }, {} as Record<string, unknown>)
 
-          if (
-            options?.extraKeysModes === 'strict' &&
-            Object.keys(initialOutput).length > 0
-          ) {
-            ctx.addIssue({
-              type: 'strict',
-              message: `Extra keys found`,
-              value: input,
-            })
-            return ctx.NEVER
+            if (
+              options?.extraKeysModes === 'strict' &&
+              Object.keys(initialOutput).length > 0
+            ) {
+              ctx.addIssue({
+                type: 'strict',
+                message: `Extra keys found`,
+                value: input,
+              })
+              return ctx.NEVER
+            }
+
+            return keys.reduce((aggr, key) => {
+              const parser = shape[key]
+
+              aggr[key] = parser._t.parse(
+                obj[key],
+                ctx.createChild(key)
+              ) as TOutput[TKey]
+
+              return aggr
+            }, initialOutput as TOutput)
           }
 
-          return keys.reduce((aggr, key) => {
-            const parser = shape[key]
+          ctx.addIssue({
+            type: 'required',
+            message: `Not an Object`,
+            value: input,
+          })
 
-            aggr[key] = parser._t.parse(
-              obj[key],
-              ctx.createChild(key)
-            ) as TOutput[TKey]
-
-            return aggr
-          }, initialOutput as TOutput)
-        }
-
-        ctx.addIssue({
-          type: 'required',
-          message: `Not an Object`,
-          value: input,
-        })
-
-        return ctx.NEVER
+          return ctx.NEVER
+        },
       },
-    })
-
-    this.options = options
+      shape,
+      options
+    )
   }
 
   /**
@@ -213,13 +233,15 @@ export class LtObject<
     return lt.object(pickedLightObject)
   }
 
-  strict = () => {
-    this.options.extraKeysModes = 'strict'
-    return this
-  }
+  strict = () =>
+    new LtObject(this._t, this.shape, {
+      ...this.options,
+      extraKeysModes: 'strict',
+    })
 
-  passthrough = () => {
-    this.options.extraKeysModes = 'passthrough'
-    return this
-  }
+  passthrough = () =>
+    new LtObject(this._t, this.shape, {
+      ...this.options,
+      extraKeysModes: 'passthrough',
+    })
 }

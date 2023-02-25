@@ -29,7 +29,7 @@ import { LtNumber } from './chainable/LtNumber'
 export function object<TLightObject extends AnyLightObject>(
   lightObject: TLightObject
 ) {
-  return new LtObject<TLightObject>(lightObject)
+  return LtObject.create(lightObject)
 }
 
 /**
