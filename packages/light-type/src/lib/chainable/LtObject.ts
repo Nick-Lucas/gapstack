@@ -8,6 +8,7 @@ import * as lt from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
 import { TypeInner } from '../types/TypeInner'
+import { LightType } from '../types/LightType'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
@@ -272,6 +273,57 @@ export class LtObject<
         },
       },
       this.shape
+    )
+  }
+
+  partial = () => {
+    type TNextLO = {
+      [key in keyof TLightObject]: TLightObject[key] extends LightType<
+        infer TI,
+        infer TO
+      >
+        ? LightType<TI | undefined, TO | undefined>
+        : never
+    }
+    type TNextInput = GetTInput<TNextLO>
+    type TNextOutput = GetTOutput<TNextLO>
+    type TNextKey = GetTKey<TNextLO, TNextInput, TNextOutput>
+
+    const keys = Object.keys(this.shape) as TNextKey[]
+    const shape = this.shape
+
+    return new LtObject<TNextLO, TNextInput, TNextOutput, TNextKey>(
+      {
+        parse(input, ctx) {
+          if (typeof input === 'object' && input !== null) {
+            const obj = input as TNextInput
+
+            return keys.reduce((aggr, key) => {
+              const parser = shape[key]
+
+              if (obj[key] === undefined) {
+                aggr[key] = undefined as any
+              } else {
+                aggr[key] = parser._t.parse(
+                  obj[key],
+                  ctx.createChild(key)
+                ) as any
+              }
+
+              return aggr
+            }, {} as TNextOutput)
+          }
+
+          ctx.addIssue({
+            type: 'required',
+            message: `Not an Object`,
+            value: input,
+          })
+
+          return ctx.NEVER
+        },
+      },
+      shape as unknown as TNextLO
     )
   }
 }

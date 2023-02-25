@@ -331,6 +331,67 @@ describe('object methods', () => {
       )
     })
   })
+
+  describe('partial', () => {
+    it('partialises a type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .partial()
+
+      expect(obj.check({})).toEqual({})
+      expect(obj.check({ id: 1, name: 'Bar' })).toEqual({ id: 1, name: 'Bar' })
+    })
+
+    it('partialises an optional type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .partial()
+        .optional()
+
+      expect(obj.check({})).toEqual({})
+      expect(obj.check(undefined)).toEqual(undefined)
+    })
+
+    it('partialises a masked type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .merge({ foo: lt.number() })
+        .partial()
+
+      expect(obj.check({})).toEqual({})
+      expect(obj.check({ id: 1, foo: 2, name: 'Bar' })).toEqual({
+        id: 1,
+        foo: 2,
+        name: 'Bar',
+      })
+    })
+
+    it('merges onto a partial type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .partial()
+        .merge({ foo: lt.number() })
+
+      expect(obj.check({ foo: 1 })).toEqual({ foo: 1 })
+      expect(obj.check({ id: 1, foo: 2, name: 'Bar' })).toEqual({
+        id: 1,
+        foo: 2,
+        name: 'Bar',
+      })
+    })
+  })
 })
 
 describe('extra keys', () => {
