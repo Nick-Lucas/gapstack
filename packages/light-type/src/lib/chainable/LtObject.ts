@@ -100,7 +100,7 @@ export class LtObject<
       lightObject
     )
 
-    return lt.object(extendedLightObject)
+    return LtObject.create(extendedLightObject)
   }
 
   /**
@@ -124,7 +124,7 @@ export class LtObject<
       extendLightObject
     )
 
-    return lt.object(extendedLightObject)
+    return LtObject.create(extendedLightObject)
   }
 
   /**
@@ -159,7 +159,7 @@ export class LtObject<
       }
     }
 
-    return lt.object(omittedLightObject)
+    return LtObject.create(omittedLightObject)
   }
 
   /**
@@ -196,7 +196,7 @@ export class LtObject<
       }
     }
 
-    return lt.object(pickedLightObject)
+    return LtObject.create(pickedLightObject)
   }
 
   strict = () => {
