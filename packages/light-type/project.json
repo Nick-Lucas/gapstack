@@ -10,6 +10,8 @@
       "options": {
         "outputPath": "dist/packages/light-type",
         "main": "packages/light-type/src/index.ts",
+        "clean": true,
+        "rootDir": "packages/light-type/src",
         "tsConfig": "packages/light-type/tsconfig.lib.json",
         "assets": ["packages/light-type/*.md"]
       }
