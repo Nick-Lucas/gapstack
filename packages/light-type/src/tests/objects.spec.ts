@@ -392,6 +392,24 @@ describe('object methods', () => {
       })
     })
   })
+
+  describe('allRequired', () => {
+    it('makes optional keys shallow required', () => {
+      const obj = lt
+        .object({
+          id: lt.number().optional(),
+          name: lt
+            .object({ first: lt.string(), last: lt.string().optional() })
+            .optional(),
+        })
+        .allRequired()
+
+      expect(obj.check({ id: 1, name: { first: 'Foo' } })).toEqual({
+        id: 1,
+        name: { first: 'Foo' },
+      })
+    })
+  })
 })
 
 describe('extra keys', () => {
@@ -496,5 +514,43 @@ describe('extra keys', () => {
         },
       })
     )
+  })
+
+  it('chaining with merge', () => {
+    const subject = object.passthrough().merge({ foo: lt.number().optional() })
+
+    expect(subject.parse({ id: 1, name: '', extra: 1 })).toEqual({
+      id: 1,
+      name: '',
+      extra: 1,
+    })
+  })
+
+  it('chaining with extend', () => {
+    const subject = object.passthrough().extend({ extra: lt.number() })
+
+    expect(subject.parse({ id: 1, name: '', extra: 1 })).toEqual({
+      id: 1,
+      name: '',
+      extra: 1,
+    })
+  })
+
+  it('chaining with omit', () => {
+    const subject = object.passthrough().omit({ id: true })
+
+    expect(subject.parse({ name: '', extra: 1 })).toEqual({
+      name: '',
+      extra: 1,
+    })
+  })
+
+  it('chaining with pick', () => {
+    const subject = object.passthrough().pick({ name: true })
+
+    expect(subject.parse({ name: '', extra: 1 })).toEqual({
+      name: '',
+      extra: 1,
+    })
   })
 })

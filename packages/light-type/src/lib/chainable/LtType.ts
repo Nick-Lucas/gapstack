@@ -17,28 +17,21 @@ export class LtType<TInput = any, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  // TODO: change _t to in  ternal, stop using LightType notations inside the codebase
   constructor(
-    /** @internal this API may change without notice */ readonly _t: TypeInner<
-      TInput,
-      TOutput
-    >,
+    private readonly t: TypeInner<TInput, TOutput>,
     readonly options: LtTypeOptions = {}
   ) {
     this.satisfiesInput = this.satisfiesInput.bind(this)
   }
 
   static createType<TInput, TOutput = TInput>(
-    /** @internal this API may change without notice */ _t: TypeInner<
-      TInput,
-      TOutput
-    >,
+    t: TypeInner<TInput, TOutput>,
     _options?: LtTypeOptions
   ) {
     const options = _options ?? {}
     options.optionalMode ??= 'none'
 
-    return new LtType<TInput, TOutput>(_t, options)
+    return new LtType<TInput, TOutput>(t, options)
   }
 
   /** @internal please use `.parse` instead. May change without warning. */
@@ -63,7 +56,7 @@ export class LtType<TInput = any, TOutput = TInput>
       return ltType.options.defaultNullValue as TOutput
     }
 
-    return ltType._t.parse(input, ctx)
+    return ltType.t.parse(input, ctx)
   }
 
   /**
@@ -115,7 +108,7 @@ export class LtType<TInput = any, TOutput = TInput>
    * ```
    */
   optional = (): LtType<TInput | undefined, TOutput | undefined> => {
-    return new LtType<TInput | undefined, TOutput | undefined>(this._t, {
+    return new LtType<TInput | undefined, TOutput | undefined>(this.t, {
       ...this.options,
       optionalMode: 'optional',
     })
@@ -137,7 +130,7 @@ export class LtType<TInput = any, TOutput = TInput>
     Exclude<TOutput, undefined>
   > => {
     return new LtType<Exclude<TInput, undefined>, Exclude<TOutput, undefined>>(
-      this._t as any,
+      this.t as any,
       {
         ...this.options,
         optionalMode: 'none',
@@ -154,7 +147,7 @@ export class LtType<TInput = any, TOutput = TInput>
    * ```
    */
   nullable = (): LtType<TInput | null, TOutput | null> => {
-    return new LtType<TInput | null, TOutput | null>(this._t as any, {
+    return new LtType<TInput | null, TOutput | null>(this.t as any, {
       ...this.options,
       nullMode: 'nullable',
     })
@@ -180,7 +173,7 @@ export class LtType<TInput = any, TOutput = TInput>
     defaultValue: Exclude<TOutput, undefined>
   ): LtType<TInput | undefined, Exclude<TOutput, undefined>> => {
     return new LtType<TInput | undefined, Exclude<TOutput, undefined>>(
-      this._t as any,
+      this.t as any,
       {
         ...this.options,
         optionalMode: 'default',
@@ -201,7 +194,7 @@ export class LtType<TInput = any, TOutput = TInput>
   defaultNull = (
     defaultValue: Exclude<TOutput, null>
   ): LtType<TInput | null, Exclude<TOutput, null>> => {
-    return new LtType<TInput | null, Exclude<TOutput, null>>(this._t as any, {
+    return new LtType<TInput | null, Exclude<TOutput, null>>(this.t as any, {
       ...this.options,
       nullMode: 'default',
       defaultNullValue: defaultValue,

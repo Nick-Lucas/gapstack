@@ -38,7 +38,7 @@ export class LtObject<
   constructor(
     t: TypeInner<TInput, TOutput>,
     readonly shape: TLightObject,
-    readonly functors: LtObjectOptions
+    readonly objectOptions: LtObjectOptions
   ) {
     super(t)
   }
@@ -52,12 +52,12 @@ export class LtObject<
       TInput,
       TOutput
     >
-  >(shape: TLightObject, _functors?: LtObjectOptions) {
+  >(shape: TLightObject, _options?: LtObjectOptions) {
     const keys = Object.keys(shape) as TKey[]
     const keySet = new Set<string>(keys)
 
-    const functors = _functors ?? {}
-    functors.extraKeys ??= 'strip'
+    const options = _options ?? {}
+    options.extraKeys ??= 'strip'
 
     return new LtObject<TLightObject, TInput, TOutput, TKey>(
       {
@@ -89,7 +89,7 @@ export class LtObject<
             // Extra Keys
             //
 
-            if (functors.extraKeys === 'strict') {
+            if (options.extraKeys === 'strict') {
               const inputKeys = Object.keys(input)
 
               for (const inputKey of inputKeys) {
@@ -107,7 +107,7 @@ export class LtObject<
               }
             }
 
-            if (functors.extraKeys === 'passthrough') {
+            if (options.extraKeys === 'passthrough') {
               const inputKeys = Object.keys(input)
 
               for (const inputKey of inputKeys) {
@@ -135,8 +135,14 @@ export class LtObject<
         },
       },
       shape,
-      functors
+      options
     )
+  }
+
+  private createNextShape = <TLightObject extends AnyLightObject>(
+    shape: TLightObject
+  ) => {
+    return LtObject.create(shape, this.objectOptions)
   }
 
   /**
@@ -160,7 +166,7 @@ export class LtObject<
       lightObject
     )
 
-    return LtObject.create(extendedLightObject)
+    return this.createNextShape(extendedLightObject)
   }
 
   /**
@@ -184,7 +190,7 @@ export class LtObject<
       extendLightObject
     )
 
-    return LtObject.create(extendedLightObject)
+    return this.createNextShape(extendedLightObject)
   }
 
   /**
@@ -219,7 +225,7 @@ export class LtObject<
       }
     }
 
-    return LtObject.create(omittedLightObject)
+    return this.createNextShape(omittedLightObject)
   }
 
   /**
@@ -256,7 +262,7 @@ export class LtObject<
       }
     }
 
-    return LtObject.create(pickedLightObject)
+    return this.createNextShape(pickedLightObject)
   }
 
   /**
@@ -275,7 +281,7 @@ export class LtObject<
    */
   strict = () => {
     return LtObject.create(this.shape, {
-      ...this.functors,
+      ...this.objectOptions,
       extraKeys: 'strict',
     })
   }
@@ -296,7 +302,7 @@ export class LtObject<
    */
   passthrough = () => {
     return LtObject.create(this.shape, {
-      ...this.functors,
+      ...this.objectOptions,
       extraKeys: 'passthrough',
     })
   }
@@ -343,13 +349,13 @@ export class LtObject<
    *    id: lt.string().optional(),
    *    name: lt.string().optional(),
    *  })
-   *  .required()
+   *  .allRequired()
    *
    * const obj = Entity.parse({ })
    * //                   ^ Error
    * ```
    */
-  required = () => {
+  allRequired = () => {
     type TNextLO = {
       [key in keyof TLightObject]: ReturnType<TLightObject[key]['required']>
     }
