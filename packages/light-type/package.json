@@ -1,8 +1,12 @@
 {
   "name": "@gapstack/light-type",
   "version": "0.1.0",
-  "main": "./cjs/index.js",
-  "module": "./esm/index.js",
+  "type": "commonjs",
+  "peerDependencies": {
+    "tslib": "2.4.0"
+  },
+  "main": "cjs/index.js",
+  "module": "esm/index.js",
   "types": "./types/index.d.ts",
   "exports": {
     ".": {
