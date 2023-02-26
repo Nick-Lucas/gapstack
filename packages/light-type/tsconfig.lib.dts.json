@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.lib.json",
+  "compilerOptions": {
+    "rootDir": "./src",
+    "module": "CommonJS",
+    "outDir": "../../dist/packages/light-type/types",
+    "declaration": true,
+    "emitDeclarationOnly": true
+  }
+}

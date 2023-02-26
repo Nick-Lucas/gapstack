@@ -5,15 +5,17 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nrwl/js:tsc",
-      "outputs": ["{options.outputPath}"],
+      "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/packages/light-type",
-        "main": "packages/light-type/src/index.ts",
-        "clean": true,
-        "rootDir": "packages/light-type/src",
-        "tsConfig": "packages/light-type/tsconfig.lib.json",
-        "assets": ["packages/light-type/*.md"]
+        "cwd": "packages/light-type",
+        "commands": [
+          "rm -rf ../../dist/light-type",
+          "tsc --project tsconfig.lib.esm.json",
+          "tsc --project tsconfig.lib.cjs.json",
+          "tsc --project tsconfig.lib.dts.json",
+          "cp *.md ../../dist/light-type",
+          "cp package.json ../../dist/light-type"
+        ]
       }
     },
     "publish": {
