@@ -35,6 +35,7 @@ describe('optional', () => {
 
     const optionalDefault = num.optional().default(0)
     assert(any as CanBeUndefined<typeof optionalDefault['_input']>)
+    // @ts-expect-error should not allow undefined
     assert(any as CanBeUndefined<typeof optionalDefault['_output']>)
 
     const requiredFromOptional = num.optional().required()

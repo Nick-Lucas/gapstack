@@ -6,6 +6,8 @@ import { Context, InternalContext } from '../context/Context'
 interface LtTypeOptions {
   optionalMode?: 'none' | 'optional' | 'default'
   defaultValue?: unknown
+  nullMode?: 'none' | 'nullable' | 'default'
+  defaultNullValue?: unknown
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,7 +17,7 @@ export class LtType<TInput = any, TOutput = TInput>
   readonly _input!: TInput
   readonly _output!: TOutput
 
-  // TODO: change _t to internal, stop using LightType notations inside the codebase
+  // TODO: change _t to in  ternal, stop using LightType notations inside the codebase
   constructor(
     /** @internal this API may change without notice */ readonly _t: TypeInner<
       TInput,
@@ -51,6 +53,14 @@ export class LtType<TInput = any, TOutput = TInput>
 
     if (ltType.options.optionalMode === 'default' && input === undefined) {
       return ltType.options.defaultValue as TOutput
+    }
+
+    if (ltType.options.nullMode === 'nullable' && input === null) {
+      return null as TOutput
+    }
+
+    if (ltType.options.nullMode === 'default' && input === null) {
+      return ltType.options.defaultNullValue as TOutput
     }
 
     return ltType._t.parse(input, ctx)
@@ -144,15 +154,9 @@ export class LtType<TInput = any, TOutput = TInput>
    * ```
    */
   nullable = (): LtType<TInput | null, TOutput | null> => {
-    const t = this._t
-
-    return new LtType<TInput | null, TOutput | null>({
-      parse(input, ctx) {
-        if (input === null) {
-          return null
-        }
-        return t.parse(input, ctx)
-      },
+    return new LtType<TInput | null, TOutput | null>(this._t as any, {
+      ...this.options,
+      nullMode: 'nullable',
     })
   }
 
@@ -172,12 +176,17 @@ export class LtType<TInput = any, TOutput = TInput>
    * // Output: `{ value: number }`
    * ```
    */
-  default = (defaultValue: TOutput): LtType<TInput | undefined, TOutput> => {
-    return new LtType<TInput | undefined, TOutput>(this._t, {
-      ...this.options,
-      optionalMode: 'default',
-      defaultValue: defaultValue,
-    })
+  default = (
+    defaultValue: Exclude<TOutput, undefined>
+  ): LtType<TInput | undefined, Exclude<TOutput, undefined>> => {
+    return new LtType<TInput | undefined, Exclude<TOutput, undefined>>(
+      this._t as any,
+      {
+        ...this.options,
+        optionalMode: 'default',
+        defaultValue: defaultValue,
+      }
+    )
   }
 
   /**
@@ -189,16 +198,13 @@ export class LtType<TInput = any, TOutput = TInput>
    * // Output: `number`
    * ```
    */
-  defaultNull = (defaultValue: TOutput): LtType<TInput | null, TOutput> => {
-    const t = this._t
-
-    return new LtType<TInput | null, TOutput>({
-      parse(input, ctx) {
-        if (input === null) {
-          return defaultValue
-        }
-        return t.parse(input, ctx)
-      },
+  defaultNull = (
+    defaultValue: Exclude<TOutput, null>
+  ): LtType<TInput | null, Exclude<TOutput, null>> => {
+    return new LtType<TInput | null, Exclude<TOutput, null>>(this._t as any, {
+      ...this.options,
+      nullMode: 'default',
+      defaultNullValue: defaultValue,
     })
   }
 
