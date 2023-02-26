@@ -292,38 +292,22 @@ export class LtObject<
     const keys = Object.keys(this.shape) as TNextKey[]
     const shape = this.shape
 
-    return new LtObject<TNextLO, TNextInput, TNextOutput, TNextKey>(
-      {
-        parse(input, ctx) {
-          if (typeof input === 'object' && input !== null) {
-            const obj = input as TNextInput
+    const nextShape: TNextLO = {} as TNextLO
+    for (const key of keys) {
+      const valueShape = shape[key]
 
-            return keys.reduce((aggr, key) => {
-              const parser = shape[key]
+      // TODO: probably redefine the input to this as being a LtType, rather than casting here
+      if (valueShape instanceof LtType) {
+        nextShape[key] = valueShape.optional() as any
+      } else {
+        throw new Error(
+          `Unexpected type: ${String(
+            valueShape
+          )} - did you try to use a non LtType as an object input?`
+        )
+      }
+    }
 
-              if (obj[key] === undefined) {
-                aggr[key] = undefined as any
-              } else {
-                aggr[key] = parser._t.parse(
-                  obj[key],
-                  ctx.createChild(key)
-                ) as any
-              }
-
-              return aggr
-            }, {} as TNextOutput)
-          }
-
-          ctx.addIssue({
-            type: 'required',
-            message: `Not an Object`,
-            value: input,
-          })
-
-          return ctx.NEVER
-        },
-      },
-      shape as unknown as TNextLO
-    )
+    return LtObject.create(nextShape)
   }
 }
