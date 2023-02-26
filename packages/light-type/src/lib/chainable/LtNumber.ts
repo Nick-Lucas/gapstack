@@ -2,12 +2,30 @@ import { Assertion, numbers } from '../validators'
 import { LtType } from './LtType'
 
 export class LtNumber extends LtType<number, number> {
-  private validator = (check: Assertion<number>) => {
-    const t = this._t
-
+  static create() {
     return new LtNumber({
       parse(input, ctx) {
-        const value = t.parse(input, ctx)
+        if (typeof input === 'number') {
+          return input
+        }
+
+        ctx.addIssue({
+          type: 'required',
+          message: `Not a Number`,
+          value: input,
+        })
+
+        return ctx.NEVER
+      },
+    })
+  }
+
+  private validator = (check: Assertion<number>) => {
+    const target = this
+
+    return LtNumber.createType({
+      parse(input, ctx) {
+        const value = LtType._parseInternal(target, input, ctx)
         if (ctx.anyIssue()) {
           return ctx.NEVER
         }

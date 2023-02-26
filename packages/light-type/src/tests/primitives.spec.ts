@@ -106,15 +106,15 @@ describe('primitives', () => {
       })
 
       describe('default', () => {
-        const t = type.default(0)
+        const tSubject = type.default(0)
 
         it.each([undefined])('defaults to %p', (input: any) => {
-          expect(t.parse(input)).toEqual(0)
+          expect(tSubject.parse(input)).toEqual(0)
         })
 
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
-            expect(() => t.parse(input)).toThrowError(
+            expect(() => tSubject.parse(input)).toThrowError(
               aggregated({
                 type: 'required',
                 message: error,
@@ -125,15 +125,15 @@ describe('primitives', () => {
       })
 
       describe('defaultNull', () => {
-        const t = type.defaultNull(0)
+        const tSubject = type.defaultNull(0)
 
         it.each([null])('defaults to %p', (input: any) => {
-          expect(t.parse(input)).toEqual(0)
+          expect(tSubject.parse(input)).toEqual(0)
         })
 
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input %p', (input: any) => {
-            expect(() => t.parse(input)).toThrowError(
+            expect(() => tSubject.parse(input)).toThrowError(
               aggregated({
                 type: 'required',
                 message: error,
@@ -144,18 +144,18 @@ describe('primitives', () => {
       })
 
       describe('optional', () => {
-        const t = type.optional()
+        const tSubject = type.optional()
 
         it.each([...validInputs, undefined])(
           'parses valid input: %p',
           (input: any) => {
-            expect(t.parse(input)).toEqual(input)
+            expect(tSubject.parse(input)).toEqual(input)
           }
         )
 
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
-            expect(() => t.parse(input)).toThrowError(
+            expect(() => tSubject.parse(input)).toThrowError(
               aggregated({
                 type: 'required',
                 message: error,
@@ -166,18 +166,18 @@ describe('primitives', () => {
       })
 
       describe('nullable', () => {
-        const t = type.nullable()
+        const tSubject = type.nullable()
 
         it.each([...validInputs, null])(
           'parses valid input: %p',
           (input: any) => {
-            expect(t.parse(input)).toEqual(input)
+            expect(tSubject.parse(input)).toEqual(input)
           }
         )
 
         if (invalidInputs.length > 0)
           it.each(invalidInputs)('rejects invalid input: %p', (input: any) => {
-            expect(() => t.parse(input)).toThrowError(
+            expect(() => tSubject.parse(input)).toThrowError(
               aggregated({
                 type: 'required',
                 message: error,

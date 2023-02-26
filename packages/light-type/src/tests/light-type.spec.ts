@@ -14,7 +14,7 @@ describe('lightType', () => {
       deepString: lt.string(),
       deepLiteral: lt.literal(fooBarLiteral2),
     })
-    const t = lt.object({
+    const tSubject = lt.object({
       someNum: lt.number(),
       someOptionalNum: lt.number().optional(),
       someDate: lt.date(),
@@ -54,7 +54,7 @@ describe('lightType', () => {
       }
 
       throws(
-        () => t.parse(input as any),
+        () => tSubject.parse(input as any),
         aggregated(
           {
             type: 'required',
@@ -113,7 +113,7 @@ describe('lightType', () => {
         ],
       }
 
-      expect(t.parse(input)).toEqual(input)
+      expect(tSubject.parse(input)).toEqual(input)
     })
   })
 })

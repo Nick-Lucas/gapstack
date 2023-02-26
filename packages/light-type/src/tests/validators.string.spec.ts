@@ -120,14 +120,14 @@ describe('chainable validators', () => {
 
 describe('string validators', () => {
   describe('min', () => {
-    const t = lt.string().pipe(strings.min(1))
+    const tSubject = lt.string().pipe(strings.min(1))
 
     it.each([' ', 'Foo'])('validates successfully', (value) => {
-      expect(t.parse(value)).toBe(value)
+      expect(tSubject.parse(value)).toBe(value)
     })
 
     it.each([''])('throws', (value) => {
-      expect(() => t.parse(value)).toThrow(
+      expect(() => tSubject.parse(value)).toThrow(
         aggregated({
           type: 'min',
           message: 'Min Length is 1',
@@ -138,14 +138,14 @@ describe('string validators', () => {
   })
 
   describe('max', () => {
-    const t = lt.string().pipe(strings.max(10))
+    const tSubject = lt.string().pipe(strings.max(10))
 
     it.each(['FooBarBaz2', ''])('validates successfully', (value) => {
-      expect(t.parse(value)).toBe(value)
+      expect(tSubject.parse(value)).toBe(value)
     })
 
     it.each(['FooBarBaz21'])('throws', (value) => {
-      expect(() => t.parse(value)).toThrow(
+      expect(() => tSubject.parse(value)).toThrow(
         aggregated({
           type: 'max',
           message: 'Max Length is 10',
@@ -156,14 +156,14 @@ describe('string validators', () => {
   })
 
   describe('length', () => {
-    const t = lt.string().pipe(strings.length(10))
+    const tSubject = lt.string().pipe(strings.length(10))
 
     it.each(['FooBarBaz2', '          '])('validates successfully', (value) => {
-      expect(t.parse(value)).toBe(value)
+      expect(tSubject.parse(value)).toBe(value)
     })
 
     it.each(['', 'FooBarBaz', 'FooBarBaz21'])('throws', (value) => {
-      expect(() => t.parse(value)).toThrow(
+      expect(() => tSubject.parse(value)).toThrow(
         aggregated({
           type: 'length',
           message: 'Expected Length is 10',
@@ -174,14 +174,14 @@ describe('string validators', () => {
   })
 
   describe('chaining', () => {
-    const t = lt.string().pipe(strings.min(1), strings.max(10))
+    const tSubject = lt.string().pipe(strings.min(1), strings.max(10))
 
     it.each(['FooBarBaz2', ' '])('validates successfully', (value) => {
-      expect(t.parse(value)).toBe(value)
+      expect(tSubject.parse(value)).toBe(value)
     })
 
     it.each(['FooBarBaz21'])('throws over max', (value) => {
-      expect(() => t.parse(value)).toThrow(
+      expect(() => tSubject.parse(value)).toThrow(
         aggregated({
           type: 'max',
           message: 'Max Length is 10',
@@ -191,7 +191,7 @@ describe('string validators', () => {
     })
 
     it.each([''])('throws under min', (value) => {
-      expect(() => t.parse(value)).toThrow(
+      expect(() => tSubject.parse(value)).toThrow(
         aggregated({
           type: 'min',
           message: 'Min Length is 1',

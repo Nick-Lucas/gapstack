@@ -10,6 +10,7 @@ import { TypeInner } from '../types/TypeInner'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
+// TODO: is simplify needed here?
 type GetTInput<LO extends AnyLightObject> = Simplify<InferLightObjectInput<LO>>
 type GetTOutput<LO extends AnyLightObject> = Simplify<
   InferLightObjectOutput<LO>
@@ -71,7 +72,8 @@ export class LtObject<
             const result = keys.reduce((aggr, key) => {
               const parser = shape[key]
 
-              aggr[key] = parser._t.parse(
+              aggr[key] = LtType._parseInternal(
+                parser,
                 obj[key],
                 ctx.createChild(key)
               ) as TOutput[TKey]

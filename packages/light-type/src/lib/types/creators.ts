@@ -1,9 +1,5 @@
-import { LightType } from './LightType'
+import { LtType } from '../chainable'
 
-export type AnyTupleInput = [LightType<unknown>, ...LightType<unknown>[]]
+export type AnyTupleInput = [LtType, ...LtType[]]
 
-export type AnyUnionInput = [
-  LightType<unknown>,
-  LightType<unknown>,
-  ...LightType<unknown>[]
-]
+export type AnyUnionInput = [LtType, LtType, ...LtType[]]

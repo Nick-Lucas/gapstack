@@ -2,12 +2,30 @@ import { Assertion, strings } from '../validators'
 import { LtType } from './LtType'
 
 export class LtString extends LtType<string, string> {
-  private validator = (check: Assertion<string>) => {
-    const t = this._t
-
+  static create() {
     return new LtString({
       parse(input, ctx) {
-        const value = t.parse(input, ctx)
+        if (typeof input === 'string') {
+          return input
+        }
+
+        ctx.addIssue({
+          type: 'required',
+          message: `Not a String`,
+          value: input,
+        })
+
+        return ctx.NEVER
+      },
+    })
+  }
+
+  private validator = (check: Assertion<string>) => {
+    const target = this
+
+    return LtString.createType({
+      parse(input, ctx) {
+        const value = LtType._parseInternal(target, input, ctx)
         if (ctx.anyIssue()) {
           return ctx.NEVER
         }
