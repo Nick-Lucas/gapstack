@@ -333,4 +333,37 @@ export class LtObject<
 
     return LtObject.create(nextShape)
   }
+
+  /**
+   * Marks all keys in this object as required
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.string().optional(),
+   *    name: lt.string().optional(),
+   *  })
+   *  .required()
+   *
+   * const obj = Entity.parse({ })
+   * //                   ^ Error
+   * ```
+   */
+  required = () => {
+    type TNextLO = {
+      [key in keyof TLightObject]: ReturnType<TLightObject[key]['required']>
+    }
+
+    const keys = Object.keys(this.shape) as TKey[]
+    const shape = this.shape
+
+    const nextShape: TNextLO = {} as TNextLO
+    for (const key of keys) {
+      const valueShape = shape[key]
+
+      nextShape[key] = valueShape.required() as any
+    }
+
+    return LtObject.create(nextShape)
+  }
 }
