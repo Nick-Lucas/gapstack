@@ -2,23 +2,18 @@
 
 import { LtType } from '../chainable/LtType'
 import { LightTypeContext } from '../context/LightTypeContext'
-import { LightType } from './LightType'
-import { TypeInner } from './TypeInner'
-import { SoftenInput } from './utils'
 
 export type PipeFunc<TInput = any, TOutput = any> = (
   input: TInput,
   ctx: LightTypeContext
 ) => TOutput
 
-export type PipeType<TInput = any, TOutput = any> = LightType<TInput, TOutput>
-
 export type PipeElem<TInput = any, TOutput = any> =
   | PipeFunc<TInput, TOutput>
-  | PipeType<SoftenInput<TInput>, TOutput>
+  | LtType<TInput, TOutput>
 
 export function createPipeFunction<TInitialInput, TInitialOutput>(
-  t: TypeInner<TInitialInput, TInitialOutput>
+  target: LtType<TInitialInput, TInitialOutput>
 ) {
   function pipe<A extends TInitialOutput, TFinalOutput>(
     a: PipeElem<A, TFinalOutput>
@@ -62,15 +57,15 @@ export function createPipeFunction<TInitialInput, TInitialOutput>(
   // TODO: add more overloads 🙂
 
   function pipe(...funcs: PipeElem[]) {
-    return new LtType<TInitialInput, any>({
+    return LtType.createType<TInitialInput, any>({
       parse(input, ctx) {
-        const nextInput = t.parse(input, ctx)
+        const nextInput = LtType._parseInternal(target, input, ctx)
 
         return funcs.reduce((acc, fn) => {
           if (typeof fn === 'function') {
             return fn(acc, ctx)
           } else {
-            return fn._t.parse(acc, ctx)
+            return LtType._parseInternal(fn, acc, ctx)
           }
         }, nextInput)
       },

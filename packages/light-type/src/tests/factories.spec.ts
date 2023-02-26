@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { AnyLightType, InferInput, LightType, lt } from '..'
+import { AnyLightType, InferInput, lt, LtType } from '..'
 
 describe('factories', () => {
   describe('simple object with primitive types', () => {
-    const PageDto = <T extends LightType<unknown, unknown>>(item: T) =>
+    const PageDto = <T extends LtType>(item: T) =>
       lt.object({
         page: lt.number().default(0),
         size: lt.number().default(0),
@@ -62,8 +62,7 @@ describe('factories', () => {
       //
       // Also check with an array factory
 
-      const ArrayDto = <T extends LightType<unknown, unknown>>(item: T) =>
-        lt.array(item)
+      const ArrayDto = <T extends LtType>(item: T) => lt.array(item)
       const NumberArray = ArrayDto(lt.number())
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -75,7 +74,7 @@ describe('factories', () => {
       //
       // Also check straight object factory
 
-      const ObjectDto = <T extends LightType<unknown, unknown>>(item: T) =>
+      const ObjectDto = <T extends LtType>(item: T) =>
         lt.object({
           id: lt.number(),
           generic: item,
@@ -91,9 +90,9 @@ describe('factories', () => {
       //
       // Also check wrapped object factory
 
-      const creator = <T extends AnyLightType>(input: T) =>
+      const creator = <T extends LtType>(input: T) =>
         lt.object({ value: input })
-      const CreatorObjectDto = <T extends AnyLightType>(item: T) =>
+      const CreatorObjectDto = <T extends LtType>(item: T) =>
         lt.object({
           id: lt.number(),
           generic: creator(item),

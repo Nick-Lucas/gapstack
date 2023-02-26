@@ -1,21 +1,62 @@
 import { LightType } from '../types/LightType'
 import { TypeInner } from '../types/TypeInner'
 import { createPipeFunction } from '../types/pipes'
-import { Context } from '../context/Context'
+import { Context, InternalContext } from '../context/Context'
 
-export class LtType<TInput, TOutput = TInput>
+interface LtTypeOptions {
+  optionalMode?: 'none' | 'optional' | 'default'
+  defaultValue?: unknown
+  nullMode?: 'none' | 'nullable' | 'default'
+  defaultNullValue?: unknown
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export class LtType<TInput = any, TOutput = TInput>
   implements LightType<TInput, TOutput>
 {
   readonly _input!: TInput
   readonly _output!: TOutput
 
   constructor(
-    /** @internal this API may change without notice */ readonly _t: TypeInner<
-      TInput,
-      TOutput
-    >
+    private readonly t: TypeInner<TInput, TOutput>,
+    readonly options: LtTypeOptions = {}
   ) {
     this.satisfiesInput = this.satisfiesInput.bind(this)
+  }
+
+  static createType<TInput, TOutput = TInput>(
+    t: TypeInner<TInput, TOutput>,
+    _options?: LtTypeOptions
+  ) {
+    const options = _options ?? {}
+    options.optionalMode ??= 'none'
+
+    return new LtType<TInput, TOutput>(t, options)
+  }
+
+  /** @internal please use `.parse` instead. May change without warning. */
+  static _parseInternal = <TInput, TOutput>(
+    ltType: LtType<TInput, TOutput>,
+    input: unknown,
+    ctx: InternalContext
+  ): TOutput => {
+    if (ltType.options.optionalMode === 'optional' && input === undefined) {
+      return undefined as TOutput
+    }
+
+    if (ltType.options.optionalMode === 'default' && input === undefined) {
+      return ltType.options.defaultValue as TOutput
+    }
+
+    if (ltType.options.nullMode === 'nullable' && input === null) {
+      return null as TOutput
+    }
+
+    if (ltType.options.nullMode === 'default' && input === null) {
+      return ltType.options.defaultNullValue as TOutput
+    }
+
+    return ltType.t.parse(input, ctx)
   }
 
   /**
@@ -26,7 +67,7 @@ export class LtType<TInput, TOutput = TInput>
   parse = (input: unknown): TOutput => {
     const ctx = new Context()
 
-    const result = this._t.parse(input, ctx)
+    const result = LtType._parseInternal(this, input, ctx)
 
     ctx.throwIfAny()
 
@@ -67,16 +108,34 @@ export class LtType<TInput, TOutput = TInput>
    * ```
    */
   optional = (): LtType<TInput | undefined, TOutput | undefined> => {
-    const t = this._t
-
-    return new LtType<TInput | undefined, TOutput | undefined>({
-      parse(input, ctx) {
-        if (input === undefined) {
-          return undefined
-        }
-        return t.parse(input, ctx)
-      },
+    return new LtType<TInput | undefined, TOutput | undefined>(this.t, {
+      ...this.options,
+      optionalMode: 'optional',
     })
+  }
+
+  /**
+   * Disallow undefined. Mostly useful when a type has already been marked as `.optiona()` previously
+   *
+   * ```ts
+   * const optionalNumber = lt.number().optional()
+   * // `number | undefined`
+   *
+   * const requiredNumber = optionalNumber.required()
+   * // `number`
+   * ```
+   */
+  required = (): LtType<
+    Exclude<TInput, undefined>,
+    Exclude<TOutput, undefined>
+  > => {
+    return new LtType<Exclude<TInput, undefined>, Exclude<TOutput, undefined>>(
+      this.t as any,
+      {
+        ...this.options,
+        optionalMode: 'none',
+      }
+    )
   }
 
   /**
@@ -88,15 +147,9 @@ export class LtType<TInput, TOutput = TInput>
    * ```
    */
   nullable = (): LtType<TInput | null, TOutput | null> => {
-    const t = this._t
-
-    return new LtType<TInput | null, TOutput | null>({
-      parse(input, ctx) {
-        if (input === null) {
-          return null
-        }
-        return t.parse(input, ctx)
-      },
+    return new LtType<TInput | null, TOutput | null>(this.t as any, {
+      ...this.options,
+      nullMode: 'nullable',
     })
   }
 
@@ -116,17 +169,17 @@ export class LtType<TInput, TOutput = TInput>
    * // Output: `{ value: number }`
    * ```
    */
-  default = (defaultValue: TOutput): LtType<TInput | undefined, TOutput> => {
-    const t = this._t
-
-    return new LtType<TInput | undefined, TOutput>({
-      parse(input, ctx) {
-        if (input === undefined) {
-          return defaultValue
-        }
-        return t.parse(input, ctx)
-      },
-    })
+  default = (
+    defaultValue: Exclude<TOutput, undefined>
+  ): LtType<TInput | undefined, Exclude<TOutput, undefined>> => {
+    return new LtType<TInput | undefined, Exclude<TOutput, undefined>>(
+      this.t as any,
+      {
+        ...this.options,
+        optionalMode: 'default',
+        defaultValue: defaultValue,
+      }
+    )
   }
 
   /**
@@ -138,20 +191,17 @@ export class LtType<TInput, TOutput = TInput>
    * // Output: `number`
    * ```
    */
-  defaultNull = (defaultValue: TOutput): LtType<TInput | null, TOutput> => {
-    const t = this._t
-
-    return new LtType<TInput | null, TOutput>({
-      parse(input, ctx) {
-        if (input === null) {
-          return defaultValue
-        }
-        return t.parse(input, ctx)
-      },
+  defaultNull = (
+    defaultValue: Exclude<TOutput, null>
+  ): LtType<TInput | null, Exclude<TOutput, null>> => {
+    return new LtType<TInput | null, Exclude<TOutput, null>>(this.t as any, {
+      ...this.options,
+      nullMode: 'default',
+      defaultNullValue: defaultValue,
     })
   }
 
-  pipe = createPipeFunction(this._t)
+  pipe = createPipeFunction(this)
 
   /**
    * **Only generates compile-time errors**

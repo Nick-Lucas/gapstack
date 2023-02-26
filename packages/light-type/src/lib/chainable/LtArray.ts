@@ -1,10 +1,4 @@
-import lt from '..'
-import {
-  AnyLightType,
-  InferInput,
-  InferOutput,
-  LightType,
-} from '../types/LightType'
+import { InferInput, InferOutput, LightType } from '../types/LightType'
 import { TypeInner } from '../types/TypeInner'
 import { arrays, Assertion } from '../validators'
 import { LtType } from './LtType'
@@ -18,7 +12,7 @@ export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
   }
 
   static create<
-    TElement extends AnyLightType,
+    TElement extends LtType,
     TInput extends InferInput<TElement> = InferInput<TElement>,
     TOutput extends InferOutput<TElement> = InferOutput<TElement>
   >(elementType: TElement) {
@@ -29,7 +23,8 @@ export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
           if (Array.isArray(input)) {
             const items = new Array<TOutput>(input.length)
             for (let i = 0; i < input.length; i++) {
-              items[i] = elementType._t.parse(
+              items[i] = LtType._parseInternal(
+                elementType,
                 input[i],
                 ctx.createChild(String(i))
               ) as TOutput
@@ -55,11 +50,11 @@ export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
   //
 
   private validator = (check: Assertion<TOutput[]>) => {
-    const t = this._t
+    const target = this
 
     return new LtArray<TInput, TOutput>(this.element, {
       parse(input, ctx) {
-        const value = t.parse(input, ctx)
+        const value = LtType._parseInternal(target, input, ctx)
         if (ctx.anyIssue()) {
           return ctx.NEVER
         }
@@ -74,11 +69,11 @@ export class LtArray<TInput, TOutput> extends LtType<TInput[], TOutput[]> {
   length = (length: number) => this.validator(arrays.length<TOutput>(length))
 
   asSet = () => {
-    const t = this._t
+    const target = this
 
-    return new LtType<TInput[], Set<TOutput>>({
+    return LtType.createType<TInput[], Set<TOutput>>({
       parse(input, context) {
-        const result = t.parse(input, context)
+        const result = LtType._parseInternal(target, input, context)
         if (context.anyIssue()) {
           return context.NEVER
         }

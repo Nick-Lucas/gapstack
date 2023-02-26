@@ -3,7 +3,6 @@ import { Issue } from '../context/Issue'
 
 export type Assertion<T> = (input: T, ctx: LightTypeContext) => T
 
-// TODO: tidy this up a bit
 type AssertIssue = Pick<Issue, 'message' | 'type'>
 type IssueMessage = Pick<Issue, 'message'>
 

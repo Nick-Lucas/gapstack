@@ -1,20 +1,23 @@
 import { LtType } from './chainable/LtType'
-import {
-  AnyLightType,
-  InferInput,
-  InferOutput,
-  LightType,
-} from './types/LightType'
+import { AnyLightType, LightType } from './types/LightType'
 import { AnyLightObject } from './types/LightObject'
-import { Primitive, LiteralBase, AnyKey } from './types/utils'
-import { LtObject } from './chainable/LtObject'
-import { LtArray } from './chainable/LtArray'
+import { Primitive, AnyKey } from './types/utils'
 
 import { AnyTupleInput, AnyUnionInput } from './types/creators'
 import { createPipeFunction } from './types/pipes'
-import { Context } from './context/Context'
-import { LtString } from './chainable/LtString'
-import { LtNumber } from './chainable/LtNumber'
+import {
+  LtObject,
+  LtArray,
+  LtMap,
+  LtRecord,
+  LtSet,
+  LtTuple,
+  LtUnion,
+  LtNumber,
+  LtString,
+  LtBoolean,
+  LtLiteral,
+} from './chainable'
 
 /**
  * Validate an object type with a given shape:
@@ -41,7 +44,7 @@ export function object<TLightObject extends AnyLightObject>(
  * const arrayOfObjects = lt.array(lt.object({ ...etc... }))
  * ```
  */
-export function array<TLightArrayElement extends AnyLightType>(
+export function array<TLightArrayElement extends LtType>(
   elementType: TLightArrayElement
 ) {
   return LtArray.create(elementType)
@@ -56,7 +59,7 @@ export function array<TLightArrayElement extends AnyLightType>(
  */
 export function any() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return new LtType<any, any>({
+  return LtType.createType<any, any>({
     parse(input) {
       return input
     },
@@ -71,7 +74,7 @@ export function any() {
  * ```
  */
 export function unknown() {
-  return new LtType<unknown, unknown>({
+  return LtType.createType<unknown, unknown>({
     parse(input) {
       return input
     },
@@ -86,21 +89,7 @@ export function unknown() {
  * ```
  */
 export function boolean() {
-  return new LtType<boolean, boolean>({
-    parse(input, ctx) {
-      if (typeof input === 'boolean') {
-        return input
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: `Not a Boolean`,
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtBoolean.create()
 }
 
 /**
@@ -111,21 +100,7 @@ export function boolean() {
  * ```
  */
 export function number() {
-  return new LtNumber({
-    parse(input, ctx) {
-      if (typeof input === 'number') {
-        return input
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: `Not a Number`,
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtNumber.create()
 }
 
 /**
@@ -136,21 +111,7 @@ export function number() {
  * ```
  */
 export function string() {
-  return new LtString({
-    parse(input, ctx) {
-      if (typeof input === 'string') {
-        return input
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: `Not a String`,
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtString.create()
 }
 
 /**
@@ -161,7 +122,7 @@ export function string() {
  * ```
  */
 export function date() {
-  return new LtType<Date, Date>({
+  return LtType.createType<Date, Date>({
     parse(input, ctx) {
       if (input instanceof Date && !isNaN(input.valueOf())) {
         return input
@@ -195,24 +156,7 @@ export function date() {
 export function literal<TLiteral extends Primitive>(
   literal: TLiteral | readonly TLiteral[]
 ) {
-  const values = new Set(Array.isArray(literal) ? literal : [literal])
-  const list = Array.from(values).join(', ')
-
-  return new LtType<LiteralBase<TLiteral>, TLiteral>({
-    parse(input: unknown, ctx) {
-      if (values.has(input as TLiteral)) {
-        return input as TLiteral
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: `Does not match literal, expected one of: ${list}`,
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtLiteral.create(literal)
 }
 
 /**
@@ -224,48 +168,10 @@ export function literal<TLiteral extends Primitive>(
  * ```
  */
 export function record<
-  TKey extends LightType<AnyKey>,
-  TValue extends LightType<unknown>
+  TKey extends LtType<AnyKey>,
+  TValue extends LtType<unknown>
 >(key: TKey, value: TValue) {
-  type KeyInput = InferInput<TKey>
-  type KeyOutput = InferInput<TKey>
-  type ValueInput = InferInput<TValue>
-  type ValueOutput = InferInput<TValue>
-
-  type TInput = Record<KeyInput, ValueInput>
-  type TOutput = Record<KeyOutput, ValueOutput>
-
-  return new LtType<TInput, TOutput>({
-    parse(input, ctx) {
-      if (typeof input === 'object' && input !== null) {
-        const maybeTInput = input as TInput
-
-        const inputKeys = Object.keys(maybeTInput) as KeyInput[]
-
-        const result = {} as TOutput
-        for (let i = 0; i < inputKeys.length; i++) {
-          const innerCtx = ctx.createChild(String(inputKeys[i]))
-
-          const outputKey = key._t.parse(inputKeys[i], innerCtx) as KeyOutput
-
-          result[outputKey] = value._t.parse(
-            maybeTInput[inputKeys[i]],
-            innerCtx
-          ) as ValueOutput
-        }
-
-        return result
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: 'Not a Record',
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtRecord.create(key, value)
 }
 
 /**
@@ -277,54 +183,10 @@ export function record<
  * ```
  */
 export function map<
-  TKey extends LightType<AnyKey>,
-  TValue extends LightType<unknown>
+  TKey extends LtType<AnyKey>,
+  TValue extends LtType<unknown>
 >(key: TKey, value: TValue) {
-  type KeyInput = InferInput<TKey>
-  type KeyOutput = InferInput<TKey>
-  type ValueInput = InferInput<TValue>
-  type ValueOutput = InferInput<TValue>
-
-  type TInput = Map<KeyInput, ValueInput> | Record<KeyInput, ValueInput>
-  type TOutput = Map<KeyOutput, ValueOutput>
-
-  return new LtType<TInput, TOutput>({
-    parse(_input, ctx) {
-      const input =
-        _input instanceof Map
-          ? (Object.fromEntries(_input) as Record<KeyInput, ValueInput>)
-          : _input
-
-      if (typeof input === 'object' && input !== null) {
-        const maybeTInput = input as TInput
-
-        const inputKeys = Object.keys(maybeTInput) as (keyof TInput)[]
-
-        const result = new Map() as TOutput
-        for (let i = 0; i < inputKeys.length; i++) {
-          const innerContext = ctx.createChild(String(inputKeys[i]))
-
-          result.set(
-            key._t.parse(inputKeys[i], innerContext) as KeyOutput,
-            value._t.parse(
-              maybeTInput[inputKeys[i]],
-              innerContext
-            ) as ValueOutput
-          )
-        }
-
-        return result
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: 'Not a Map or Object',
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtMap.create(key, value)
 }
 
 /**
@@ -336,41 +198,7 @@ export function map<
  * ```
  */
 export function tuple<T extends AnyTupleInput>(tuple: T) {
-  type TInput = {
-    [K in keyof T]: InferInput<T[K]>
-  }
-  type TOutput = {
-    [K in keyof T]: InferOutput<T[K]>
-  }
-
-  return new LtType<TInput, TOutput>({
-    parse(input, ctx) {
-      if (Array.isArray(input)) {
-        if (input.length !== tuple.length) {
-          ctx.addIssue({
-            type: 'length',
-            message: `Invalid Tuple: ${input.length} elements instead of ${tuple.length}`,
-            value: input,
-          })
-        }
-        const result = new Array(tuple.length) as TOutput
-        for (let i = 0; i < tuple.length; i++) {
-          const innerContext = ctx.createChild(String(i))
-          result[i] = tuple[i]._t.parse(input[i], innerContext)
-        }
-
-        return result
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: `Not a Tuple`,
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtTuple.create(tuple)
 }
 
 /**
@@ -385,38 +213,7 @@ export function tuple<T extends AnyTupleInput>(tuple: T) {
  * ```
  */
 export function union<T extends AnyUnionInput>(types: T) {
-  type TInput = {
-    [key in keyof T]: InferInput<T[key]>
-  }[number]
-
-  type TOutput = {
-    [key in keyof T]: InferOutput<T[key]>
-  }[number]
-
-  return new LtType<TInput, TOutput>({
-    parse(input, ctx) {
-      for (const type of types) {
-        const specialContext = new Context()
-
-        const result = type._t.parse(input, specialContext) as TOutput
-        if (specialContext.anyIssue()) {
-          // We go until we get one without any validation errors
-          continue
-        }
-
-        return result
-      }
-
-      // TODO: maybe can give more details on why no type was matched?
-      ctx.addIssue({
-        type: 'required',
-        message: 'No Matching Type in Union',
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+  return LtUnion.create(types)
 }
 
 /**
@@ -427,36 +224,8 @@ export function union<T extends AnyUnionInput>(types: T) {
  * // `Set<string>`
  * ```
  */
-export function set<TInput, TOutput>(valueType: LightType<TInput, TOutput>) {
-  return new LtType<TInput[] | Set<TInput>, Set<TOutput>>({
-    parse(_input, ctx) {
-      let input = [] as TInput[]
-      if (_input instanceof Set) {
-        input = Array.from(_input)
-      } else {
-        input = _input as TInput[]
-      }
-
-      if (Array.isArray(input)) {
-        const result = new Set<TOutput>()
-
-        for (let i = 0; i < input.length; i++) {
-          const innerContext = ctx.createChild(String(i))
-          result.add(valueType._t.parse(input[i], innerContext))
-        }
-
-        return result
-      }
-
-      ctx.addIssue({
-        type: 'required',
-        message: `Not a Set or Arraylike`,
-        value: input,
-      })
-
-      return ctx.NEVER
-    },
-  })
+export function set<TInput, TOutput>(valueType: LtType<TInput, TOutput>) {
+  return LtSet.create(valueType)
 }
 
 /**

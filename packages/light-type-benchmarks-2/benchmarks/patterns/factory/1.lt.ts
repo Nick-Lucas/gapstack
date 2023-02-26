@@ -1,6 +1,6 @@
-import { LightType, lt } from 'dist-lt'
+import { lt, LtType } from 'dist-lt'
 
-export const PageDto = <T extends LightType<unknown, unknown>>(item: T) =>
+export const PageDto = <T extends LtType>(item: T) =>
   lt.object({
     page: lt.number(),
     size: lt.number(),

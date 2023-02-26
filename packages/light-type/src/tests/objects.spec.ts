@@ -331,6 +331,85 @@ describe('object methods', () => {
       )
     })
   })
+
+  describe('partial', () => {
+    it('partialises a type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .partial()
+
+      expect(obj.check({})).toEqual({})
+      expect(obj.check({ id: 1, name: 'Bar' })).toEqual({ id: 1, name: 'Bar' })
+    })
+
+    it('partialises an optional type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .partial()
+        .optional()
+
+      expect(obj.check({})).toEqual({})
+      expect(obj.check(undefined)).toEqual(undefined)
+    })
+
+    it('partialises a masked type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .merge({ foo: lt.number() })
+        .partial()
+
+      expect(obj.check({})).toEqual({})
+      expect(obj.check({ id: 1, foo: 2, name: 'Bar' })).toEqual({
+        id: 1,
+        foo: 2,
+        name: 'Bar',
+      })
+    })
+
+    it('merges onto a partial type', () => {
+      const obj = lt
+        .object({
+          id: lt.number(),
+          name: lt.string(),
+        })
+        .partial()
+        .merge({ foo: lt.number() })
+
+      expect(obj.check({ foo: 1 })).toEqual({ foo: 1 })
+      expect(obj.check({ id: 1, foo: 2, name: 'Bar' })).toEqual({
+        id: 1,
+        foo: 2,
+        name: 'Bar',
+      })
+    })
+  })
+
+  describe('allRequired', () => {
+    it('makes optional keys shallow required', () => {
+      const obj = lt
+        .object({
+          id: lt.number().optional(),
+          name: lt
+            .object({ first: lt.string(), last: lt.string().optional() })
+            .optional(),
+        })
+        .allRequired()
+
+      expect(obj.check({ id: 1, name: { first: 'Foo' } })).toEqual({
+        id: 1,
+        name: { first: 'Foo' },
+      })
+    })
+  })
 })
 
 describe('extra keys', () => {
@@ -400,6 +479,78 @@ describe('extra keys', () => {
     ).toEqual({
       id: 1,
       name: 'One',
+    })
+  })
+
+  it('chaining opposite handlers should use final one (passthrough)', () => {
+    expect(
+      object.strict().passthrough().parse({
+        id: 1,
+        name: 'One',
+        extraneousKey: 'FooBar',
+      })
+    ).toEqual({
+      id: 1,
+      name: 'One',
+      extraneousKey: 'FooBar',
+    })
+  })
+
+  it('chaining opposite handlers should use final one (strict)', () => {
+    throws(
+      () =>
+        object.passthrough().strict().parse({
+          id: 1,
+          name: 'One',
+          extraneousKey: 'FooBar',
+        }),
+      aggregated({
+        type: 'strict',
+        message: 'Extra keys found',
+        value: {
+          id: 1,
+          name: 'One',
+          extraneousKey: 'FooBar',
+        },
+      })
+    )
+  })
+
+  it('chaining with merge', () => {
+    const subject = object.passthrough().merge({ foo: lt.number().optional() })
+
+    expect(subject.parse({ id: 1, name: '', extra: 1 })).toEqual({
+      id: 1,
+      name: '',
+      extra: 1,
+    })
+  })
+
+  it('chaining with extend', () => {
+    const subject = object.passthrough().extend({ extra: lt.number() })
+
+    expect(subject.parse({ id: 1, name: '', extra: 1 })).toEqual({
+      id: 1,
+      name: '',
+      extra: 1,
+    })
+  })
+
+  it('chaining with omit', () => {
+    const subject = object.passthrough().omit({ id: true })
+
+    expect(subject.parse({ name: '', extra: 1 })).toEqual({
+      name: '',
+      extra: 1,
+    })
+  })
+
+  it('chaining with pick', () => {
+    const subject = object.passthrough().pick({ name: true })
+
+    expect(subject.parse({ name: '', extra: 1 })).toEqual({
+      name: '',
+      extra: 1,
     })
   })
 })

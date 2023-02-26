@@ -1,3 +1,4 @@
+import { LtType } from '../chainable'
 import { AnyLightType, LightType } from './LightType'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -28,11 +29,8 @@ export type LiteralBase<T> = T extends string
 export type SoftenInput<T> = T extends Record<AnyKey, unknown>
   ?
       | {
-          [key in keyof T]?: T[key] extends LightType<
-            infer TInput,
-            infer TOutput
-          >
-            ? LightType<SoftenInput<TInput>, TOutput>
+          [key in keyof T]?: T[key] extends LtType<infer TInput, infer TOutput>
+            ? LtType<SoftenInput<TInput>, TOutput>
             : SoftenInput<T[key]>
         }
       | null

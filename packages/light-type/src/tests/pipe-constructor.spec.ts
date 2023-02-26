@@ -13,6 +13,8 @@ function checkTypes() {
 
   // @ts-expect-error type value should reject anything not compatible with the function output
   lt.pipe(() => '', lt.boolean())
+
+  lt.pipe(Boolean, lt.boolean())
 }
 
 describe('pipe-constructor', () => {

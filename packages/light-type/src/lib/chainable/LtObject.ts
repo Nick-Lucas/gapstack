@@ -4,7 +4,6 @@ import {
   InferLightObjectOutput,
 } from '../types/LightObject'
 import { LtType } from './LtType'
-import * as lt from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
 import { TypeInner } from '../types/TypeInner'
@@ -20,6 +19,10 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof B, string> &
       Extract<keyof C, string>
 
+export interface LtObjectOptions {
+  extraKeys?: 'strip' | 'strict' | 'passthrough'
+}
+
 export class LtObject<
   // TODO: can this be simplified now?
   TLightObject extends AnyLightObject,
@@ -31,7 +34,11 @@ export class LtObject<
     TOutput
   >
 > extends LtType<TInput, TOutput> {
-  constructor(t: TypeInner<TInput, TOutput>, readonly shape: TLightObject) {
+  constructor(
+    t: TypeInner<TInput, TOutput>,
+    readonly shape: TLightObject,
+    readonly objectOptions: LtObjectOptions
+  ) {
     super(t)
   }
 
@@ -44,8 +51,12 @@ export class LtObject<
       TInput,
       TOutput
     >
-  >(shape: TLightObject) {
+  >(shape: TLightObject, _options?: LtObjectOptions) {
     const keys = Object.keys(shape) as TKey[]
+    const keySet = new Set<string>(keys)
+
+    const options = _options ?? {}
+    options.extraKeys ??= 'strip'
 
     return new LtObject<TLightObject, TInput, TOutput, TKey>(
       {
@@ -53,16 +64,64 @@ export class LtObject<
           if (typeof input === 'object' && input !== null) {
             const obj = input as TInput
 
-            return keys.reduce((aggr, key) => {
+            //
+            // Parse
+            //
+
+            const result = keys.reduce((aggr, key) => {
               const parser = shape[key]
 
-              aggr[key] = parser._t.parse(
+              aggr[key] = LtType._parseInternal(
+                parser,
                 obj[key],
                 ctx.createChild(key)
               ) as TOutput[TKey]
 
               return aggr
             }, {} as TOutput)
+
+            if (ctx.anyIssue()) {
+              return ctx.NEVER
+            }
+
+            //
+            // Extra Keys
+            //
+
+            if (options.extraKeys === 'strict') {
+              const inputKeys = Object.keys(input)
+
+              for (const inputKey of inputKeys) {
+                if (!keySet.has(inputKey)) {
+                  // Maybe: Could produce an issue per extra key?
+
+                  ctx.addIssue({
+                    type: 'strict',
+                    message: `Extra keys found`,
+                    value: input,
+                  })
+
+                  return ctx.NEVER
+                }
+              }
+            }
+
+            if (options.extraKeys === 'passthrough') {
+              const inputKeys = Object.keys(input)
+
+              for (const inputKey of inputKeys) {
+                if (!keySet.has(inputKey)) {
+                  result[inputKey as keyof TOutput] =
+                    input[inputKey as keyof typeof input]
+                }
+              }
+            }
+
+            //
+            // OK
+            //
+
+            return result
           }
 
           ctx.addIssue({
@@ -74,8 +133,15 @@ export class LtObject<
           return ctx.NEVER
         },
       },
-      shape
+      shape,
+      options
     )
+  }
+
+  private createNextShape = <TLightObject extends AnyLightObject>(
+    shape: TLightObject
+  ) => {
+    return LtObject.create(shape, this.objectOptions)
   }
 
   /**
@@ -99,7 +165,7 @@ export class LtObject<
       lightObject
     )
 
-    return lt.object(extendedLightObject)
+    return this.createNextShape(extendedLightObject)
   }
 
   /**
@@ -123,7 +189,7 @@ export class LtObject<
       extendLightObject
     )
 
-    return lt.object(extendedLightObject)
+    return this.createNextShape(extendedLightObject)
   }
 
   /**
@@ -153,12 +219,11 @@ export class LtObject<
     }
     for (const key in omit) {
       if (omit[key] === true) {
-        // TODO: fix this keying type
         delete omittedLightObject[key as unknown as keyof TOmittedLightObject]
       }
     }
 
-    return lt.object(omittedLightObject)
+    return this.createNextShape(omittedLightObject)
   }
 
   /**
@@ -188,90 +253,120 @@ export class LtObject<
     const pickedLightObject = {} as TPickedLightObject
     for (const key in pick) {
       if (pick[key] === true) {
-        // TODO: fix this keying type
         pickedLightObject[key as unknown as keyof TPickedLightObject] =
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          lightObject[key] as unknown as any
+          lightObject[key] as any
       }
     }
 
-    return lt.object(pickedLightObject)
+    return this.createNextShape(pickedLightObject)
   }
 
+  /**
+   * Disallows extra keys in the input.
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.number(),
+   *  })
+   *  .strict()
+   *
+   * const obj = Entity.parse({ id: 1, name: "FooBar" })
+   * //                   ^ Error!
+   * ```
+   */
   strict = () => {
-    const t = this._t
-    const keys = new Set(Object.keys(this.shape))
-
-    return new LtObject<TLightObject, TInput, TOutput, TKey>(
-      {
-        parse(input, ctx) {
-          const result = t.parse(input, ctx)
-          if (ctx.anyIssue()) {
-            return ctx.NEVER
-          }
-
-          if (
-            typeof result === 'object' &&
-            typeof input === 'object' &&
-            !!result &&
-            !!input
-          ) {
-            const inputKeys = Object.keys(input)
-            for (const inputKey of inputKeys) {
-              if (!keys.has(inputKey)) {
-                // Maybe: Could produce an issue per extra key?
-
-                ctx.addIssue({
-                  type: 'strict',
-                  message: `Extra keys found`,
-                  value: input,
-                })
-
-                return ctx.NEVER
-              }
-            }
-          }
-
-          return result
-        },
-      },
-      this.shape
-    )
+    return LtObject.create(this.shape, {
+      ...this.objectOptions,
+      extraKeys: 'strict',
+    })
   }
 
+  /**
+   * Passes through extra keys in the input.
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.number(),
+   *  })
+   *  .strict()
+   *
+   * const obj = Entity.parse({ id: 1, name: "FooBar" })
+   * // `{ id: 1, name: "FooBar" }`
+   * ```
+   */
   passthrough = () => {
-    const t = this._t
-    const keys = new Set(Object.keys(this.shape))
+    return LtObject.create(this.shape, {
+      ...this.objectOptions,
+      extraKeys: 'passthrough',
+    })
+  }
 
-    return new LtObject<TLightObject, TInput, TOutput, TKey>(
-      {
-        parse(input, ctx) {
-          const result = t.parse(input, ctx)
-          if (ctx.anyIssue()) {
-            return ctx.NEVER
-          }
+  /**
+   * Marks all keys in this object as optional
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.string(),
+   *    name: lt.string(),
+   *  })
+   *  .optional()
+   *
+   * const obj = Entity.parse({ })
+   * // `{ }`
+   * ```
+   */
+  partial = () => {
+    type TNextLO = {
+      [key in keyof TLightObject]: ReturnType<TLightObject[key]['optional']>
+    }
 
-          if (
-            typeof result === 'object' &&
-            typeof input === 'object' &&
-            !!result &&
-            !!input
-          ) {
-            const inputKeys = Object.keys(input)
-            for (const inputKey of inputKeys) {
-              if (!keys.has(inputKey)) {
-                // Maybe: Could produce an issue per extra key?
+    const keys = Object.keys(this.shape) as TKey[]
+    const shape = this.shape
 
-                result[inputKey as keyof TOutput] =
-                  input[inputKey as keyof typeof input]
-              }
-            }
-          }
+    const nextShape: TNextLO = {} as TNextLO
+    for (const key of keys) {
+      const valueShape = shape[key]
 
-          return result
-        },
-      },
-      this.shape
-    )
+      nextShape[key] = valueShape.optional() as any
+    }
+
+    return LtObject.create(nextShape)
+  }
+
+  /**
+   * Marks all keys in this object as required
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.string().optional(),
+   *    name: lt.string().optional(),
+   *  })
+   *  .allRequired()
+   *
+   * const obj = Entity.parse({ })
+   * //                   ^ Error
+   * ```
+   */
+  allRequired = () => {
+    type TNextLO = {
+      [key in keyof TLightObject]: ReturnType<TLightObject[key]['required']>
+    }
+
+    const keys = Object.keys(this.shape) as TKey[]
+    const shape = this.shape
+
+    const nextShape: TNextLO = {} as TNextLO
+    for (const key of keys) {
+      const valueShape = shape[key]
+
+      nextShape[key] = valueShape.required() as any
+    }
+
+    return LtObject.create(nextShape)
   }
 }
