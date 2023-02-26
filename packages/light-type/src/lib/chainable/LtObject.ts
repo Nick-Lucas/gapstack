@@ -7,7 +7,6 @@ import { LtType } from './LtType'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
 import { TypeInner } from '../types/TypeInner'
-import { LightType } from '../types/LightType'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
@@ -20,6 +19,10 @@ type GetTKey<A extends AnyLightObject, B, C> =
       Extract<keyof B, string> &
       Extract<keyof C, string>
 
+export interface LtObjectOptions {
+  extraKeys?: 'strip' | 'strict' | 'passthrough'
+}
+
 export class LtObject<
   // TODO: can this be simplified now?
   TLightObject extends AnyLightObject,
@@ -31,7 +34,11 @@ export class LtObject<
     TOutput
   >
 > extends LtType<TInput, TOutput> {
-  constructor(t: TypeInner<TInput, TOutput>, readonly shape: TLightObject) {
+  constructor(
+    t: TypeInner<TInput, TOutput>,
+    readonly shape: TLightObject,
+    readonly functors: LtObjectOptions
+  ) {
     super(t)
   }
 
@@ -44,8 +51,12 @@ export class LtObject<
       TInput,
       TOutput
     >
-  >(shape: TLightObject) {
+  >(shape: TLightObject, _functors?: LtObjectOptions) {
     const keys = Object.keys(shape) as TKey[]
+    const keySet = new Set<string>(keys)
+
+    const functors = _functors ?? {}
+    functors.extraKeys ??= 'strip'
 
     return new LtObject<TLightObject, TInput, TOutput, TKey>(
       {
@@ -53,7 +64,11 @@ export class LtObject<
           if (typeof input === 'object' && input !== null) {
             const obj = input as TInput
 
-            return keys.reduce((aggr, key) => {
+            //
+            // Parse
+            //
+
+            const result = keys.reduce((aggr, key) => {
               const parser = shape[key]
 
               aggr[key] = parser._t.parse(
@@ -63,6 +78,49 @@ export class LtObject<
 
               return aggr
             }, {} as TOutput)
+
+            if (ctx.anyIssue()) {
+              return ctx.NEVER
+            }
+
+            //
+            // Extra Keys
+            //
+
+            if (functors.extraKeys === 'strict') {
+              const inputKeys = Object.keys(input)
+
+              for (const inputKey of inputKeys) {
+                if (!keySet.has(inputKey)) {
+                  // Maybe: Could produce an issue per extra key?
+
+                  ctx.addIssue({
+                    type: 'strict',
+                    message: `Extra keys found`,
+                    value: input,
+                  })
+
+                  return ctx.NEVER
+                }
+              }
+            }
+
+            if (functors.extraKeys === 'passthrough') {
+              const inputKeys = Object.keys(input)
+
+              for (const inputKey of inputKeys) {
+                if (!keySet.has(inputKey)) {
+                  result[inputKey as keyof TOutput] =
+                    input[inputKey as keyof typeof input]
+                }
+              }
+            }
+
+            //
+            // OK
+            //
+
+            return result
           }
 
           ctx.addIssue({
@@ -74,7 +132,8 @@ export class LtObject<
           return ctx.NEVER
         },
       },
-      shape
+      shape,
+      functors
     )
   }
 
@@ -213,44 +272,10 @@ export class LtObject<
    * ```
    */
   strict = () => {
-    const t = this._t
-    const keys = new Set(Object.keys(this.shape))
-
-    return new LtObject<TLightObject, TInput, TOutput, TKey>(
-      {
-        parse(input, ctx) {
-          const result = t.parse(input, ctx)
-          if (ctx.anyIssue()) {
-            return ctx.NEVER
-          }
-
-          if (
-            typeof result === 'object' &&
-            typeof input === 'object' &&
-            !!result &&
-            !!input
-          ) {
-            const inputKeys = Object.keys(input)
-            for (const inputKey of inputKeys) {
-              if (!keys.has(inputKey)) {
-                // Maybe: Could produce an issue per extra key?
-
-                ctx.addIssue({
-                  type: 'strict',
-                  message: `Extra keys found`,
-                  value: input,
-                })
-
-                return ctx.NEVER
-              }
-            }
-          }
-
-          return result
-        },
-      },
-      this.shape
-    )
+    return LtObject.create(this.shape, {
+      ...this.functors,
+      extraKeys: 'strict',
+    })
   }
 
   /**
@@ -268,39 +293,10 @@ export class LtObject<
    * ```
    */
   passthrough = () => {
-    const t = this._t
-    const keys = new Set(Object.keys(this.shape))
-
-    return new LtObject<TLightObject, TInput, TOutput, TKey>(
-      {
-        parse(input, ctx) {
-          const result = t.parse(input, ctx)
-          if (ctx.anyIssue()) {
-            return ctx.NEVER
-          }
-
-          if (
-            typeof result === 'object' &&
-            typeof input === 'object' &&
-            !!result &&
-            !!input
-          ) {
-            const inputKeys = Object.keys(input)
-            for (const inputKey of inputKeys) {
-              if (!keys.has(inputKey)) {
-                // Maybe: Could produce an issue per extra key?
-
-                result[inputKey as keyof TOutput] =
-                  input[inputKey as keyof typeof input]
-              }
-            }
-          }
-
-          return result
-        },
-      },
-      this.shape
-    )
+    return LtObject.create(this.shape, {
+      ...this.functors,
+      extraKeys: 'passthrough',
+    })
   }
 
   /**
@@ -320,18 +316,10 @@ export class LtObject<
    */
   partial = () => {
     type TNextLO = {
-      [key in keyof TLightObject]: TLightObject[key] extends LtType<
-        infer TI,
-        infer TO
-      >
-        ? LtType<TI | undefined, TO | undefined>
-        : never
+      [key in keyof TLightObject]: ReturnType<TLightObject[key]['optional']>
     }
-    type TNextInput = GetTInput<TNextLO>
-    type TNextOutput = GetTOutput<TNextLO>
-    type TNextKey = GetTKey<TNextLO, TNextInput, TNextOutput>
 
-    const keys = Object.keys(this.shape) as TNextKey[]
+    const keys = Object.keys(this.shape) as TKey[]
     const shape = this.shape
 
     const nextShape: TNextLO = {} as TNextLO

@@ -487,8 +487,8 @@ describe('extra keys', () => {
           extraneousKey: 'FooBar',
         }),
       aggregated({
-        message: 'Extra keys found',
         type: 'strict',
+        message: 'Extra keys found',
         value: {
           id: 1,
           name: 'One',

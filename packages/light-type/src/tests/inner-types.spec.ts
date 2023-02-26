@@ -25,7 +25,7 @@ describe('inner types of collection types', () => {
     )
 
     it('parses an object', () => {
-      expect(array.element.check({ id: 1, name: 'foo' })).toBe({
+      expect(array.element.check({ id: 1, name: 'foo' })).toEqual({
         id: 1,
         name: 'foo',
       })
