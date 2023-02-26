@@ -4,7 +4,6 @@ import {
   InferLightObjectOutput,
 } from '../types/LightObject'
 import { LtType } from './LtType'
-import * as lt from '../lt'
 import { mergeLightObjects } from '../mergeLightObjects'
 import { Simplify } from '../types/utils'
 import { TypeInner } from '../types/TypeInner'
@@ -278,11 +277,11 @@ export class LtObject<
 
   partial = () => {
     type TNextLO = {
-      [key in keyof TLightObject]: TLightObject[key] extends LightType<
+      [key in keyof TLightObject]: TLightObject[key] extends LtType<
         infer TI,
         infer TO
       >
-        ? LightType<TI | undefined, TO | undefined>
+        ? LtType<TI | undefined, TO | undefined>
         : never
     }
     type TNextInput = GetTInput<TNextLO>
@@ -296,16 +295,7 @@ export class LtObject<
     for (const key of keys) {
       const valueShape = shape[key]
 
-      // TODO: probably redefine the input to this as being a LtType, rather than casting here
-      if (valueShape instanceof LtType) {
-        nextShape[key] = valueShape.optional() as any
-      } else {
-        throw new Error(
-          `Unexpected type: ${String(
-            valueShape
-          )} - did you try to use a non LtType as an object input?`
-        )
-      }
+      nextShape[key] = valueShape.optional() as any
     }
 
     return LtObject.create(nextShape)

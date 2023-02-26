@@ -1,6 +1,8 @@
+import { LtType } from '../chainable'
 import { LightType } from './LightType'
 
-export type AnyLightObject = Record<string, LightType<unknown, unknown>>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyLightObject = Record<string, LtType<any, any>>
 
 export type InferLightObjectOutput<TDef extends AnyLightObject> =
   ApplyOptionals<{

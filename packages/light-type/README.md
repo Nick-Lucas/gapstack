@@ -92,14 +92,13 @@ There are some features missing still which are important. See the todo list bel
 * Object Discriminated Unions - later, they auto-discriminate just not at great runtime performance
 
 <!-- After Next -->
-* .extend should accept a record type (implement .and if necessary)
-  * maybe implement .and?
+* .required .notNull on LtType, .required on LtObject
+  * Problem: opening types is easy because of how the internal t.parse wrapping workings. Removing wrappings isn't possible though. Maybe move to a list of functors approach?
+* .extend should accept a record type 
   * maybe implement .open to 'open' a type for extension?
 * String Template Literals
 * Set up Runtime benchmarks
   * Consider changing all chainable methods to prototype methods if performance can be improved
-* .partial("deep" | "shallow")
-* .required("deep" | "shallow")
 * Calculated values
 * Bundled parsers or a recommended library/pattern
   * ISO Date parsing
