@@ -198,6 +198,20 @@ export class LtObject<
     return LtObject.create(pickedLightObject)
   }
 
+  /**
+   * Disallows extra keys in the input.
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.number(),
+   *  })
+   *  .strict()
+   *
+   * const obj = Entity.parse({ id: 1, name: "FooBar" })
+   * //                   ^ Error!
+   * ```
+   */
   strict = () => {
     const t = this._t
     const keys = new Set(Object.keys(this.shape))
@@ -239,6 +253,20 @@ export class LtObject<
     )
   }
 
+  /**
+   * Passes through extra keys in the input.
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.number(),
+   *  })
+   *  .strict()
+   *
+   * const obj = Entity.parse({ id: 1, name: "FooBar" })
+   * // `{ id: 1, name: "FooBar" }`
+   * ```
+   */
   passthrough = () => {
     const t = this._t
     const keys = new Set(Object.keys(this.shape))
@@ -275,6 +303,21 @@ export class LtObject<
     )
   }
 
+  /**
+   * Marks all keys in this object as optional
+   *
+   * ```ts
+   * const Entity = lt
+   *  .object({
+   *    id: lt.string(),
+   *    name: lt.string(),
+   *  })
+   *  .optional()
+   *
+   * const obj = Entity.parse({ })
+   * // `{ }`
+   * ```
+   */
   partial = () => {
     type TNextLO = {
       [key in keyof TLightObject]: TLightObject[key] extends LtType<

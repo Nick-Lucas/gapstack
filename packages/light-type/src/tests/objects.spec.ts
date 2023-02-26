@@ -463,4 +463,38 @@ describe('extra keys', () => {
       name: 'One',
     })
   })
+
+  it('chaining opposite handlers should use final one (passthrough)', () => {
+    expect(
+      object.strict().passthrough().parse({
+        id: 1,
+        name: 'One',
+        extraneousKey: 'FooBar',
+      })
+    ).toEqual({
+      id: 1,
+      name: 'One',
+      extraneousKey: 'FooBar',
+    })
+  })
+
+  it('chaining opposite handlers should use final one (strict)', () => {
+    throws(
+      () =>
+        object.passthrough().strict().parse({
+          id: 1,
+          name: 'One',
+          extraneousKey: 'FooBar',
+        }),
+      aggregated({
+        message: 'Extra keys found',
+        type: 'strict',
+        value: {
+          id: 1,
+          name: 'One',
+          extraneousKey: 'FooBar',
+        },
+      })
+    )
+  })
 })
