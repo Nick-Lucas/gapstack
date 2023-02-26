@@ -9,13 +9,14 @@
       "options": {
         "cwd": "packages/light-type",
         "commands": [
-          "rm -rf ../../dist/light-type",
-          "tsc --project tsconfig.lib.esm.json",
-          "tsc --project tsconfig.lib.cjs.json",
-          "tsc --project tsconfig.lib.dts.json",
-          "cp *.md ../../dist/light-type",
-          "cp package.json ../../dist/light-type"
-        ]
+          "rm -rf ../../dist/light-type & echo",
+          "tsc --project tsconfig.lib.esm.json & echo",
+          "tsc --project tsconfig.lib.cjs.json & echo",
+          "tsc --project tsconfig.lib.dts.json & echo",
+          "cp *.md ../../dist/packages/light-type/ & echo",
+          "cp package.json ../../dist/packages/light-type/package.json & echo"
+        ],
+        "parallel": false
       }
     },
     "publish": {

@@ -1,5 +1,21 @@
 {
   "name": "@gapstack/light-type",
   "version": "0.1.0",
-  "type": "commonjs"
+  "main": "./cjs/index.js",
+  "module": "./esm/index.js",
+  "types": "./types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./cjs/index.js",
+      "types": "./types/index.d.ts",
+      "import": "./esm/index.js",
+      "default": "./cjs/index.js"
+    },
+    "./validators": {
+      "require": "./cjs/lib/validators/index.js",
+      "types": "./types/lib/validators/index.d.ts",
+      "import": "./esm/lib/validators/index.js",
+      "default": "./cjs/lib/validators/index.js"
+    }
+  }
 }

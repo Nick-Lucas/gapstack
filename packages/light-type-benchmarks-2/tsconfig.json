@@ -6,9 +6,9 @@
     "strict": true,
     "types": ["node"],
     "target": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "paths": {
-      "dist-lt": ["../../dist/packages/light-type/src"]
+      "dist-lt": ["../../dist/packages/light-type"]
     }
   },
   "include": ["**/*.ts"]
