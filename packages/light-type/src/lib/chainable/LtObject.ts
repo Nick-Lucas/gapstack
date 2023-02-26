@@ -10,7 +10,6 @@ import { TypeInner } from '../types/TypeInner'
 
 type KeysParam<T> = { [TKey in keyof T]?: true }
 
-// TODO: is simplify needed here?
 type GetTInput<LO extends AnyLightObject> = Simplify<InferLightObjectInput<LO>>
 type GetTOutput<LO extends AnyLightObject> = Simplify<
   InferLightObjectOutput<LO>
@@ -220,7 +219,6 @@ export class LtObject<
     }
     for (const key in omit) {
       if (omit[key] === true) {
-        // TODO: fix this keying type
         delete omittedLightObject[key as unknown as keyof TOmittedLightObject]
       }
     }
@@ -255,10 +253,9 @@ export class LtObject<
     const pickedLightObject = {} as TPickedLightObject
     for (const key in pick) {
       if (pick[key] === true) {
-        // TODO: fix this keying type
         pickedLightObject[key as unknown as keyof TPickedLightObject] =
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          lightObject[key] as unknown as any
+          lightObject[key] as any
       }
     }
 
