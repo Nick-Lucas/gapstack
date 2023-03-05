@@ -10,7 +10,6 @@ interface LtTypeOptions {
   defaultNullValue?: unknown
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class LtType<TInput = any, TOutput = TInput>
   implements LightType<TInput, TOutput>
 {
@@ -224,3 +223,5 @@ export class LtType<TInput = any, TOutput = TInput>
     return this
   }
 }
+
+export type LtTypeAnyKey = LtType<string> | LtType<number> | LtType<symbol>

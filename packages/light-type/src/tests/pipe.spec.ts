@@ -34,7 +34,7 @@ function checkTypes() {
     },
     lt.object({
       id: lt.number(),
-      literal: lt.literal(['foo', 'bar'] as const),
+      literal: lt.literal(['foo', 'bar'] as const).default('foo'),
     })
   )
 
@@ -53,7 +53,7 @@ function checkTypes() {
     })
   )
 
-  type Obj3 = { id: number; literal: 'foo' | 'bar' | 'ping' | undefined }
+  type Obj3 = { id: number; literal: 'foo' | 'bar' | 'ping' | null }
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const literalobj3 = lt.string().pipe(
     (s) => {

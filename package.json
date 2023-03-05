@@ -2,7 +2,22 @@
   "name": "gapstack",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "lint": "nx run-many --target=lint",
+    "test": "jest",
+    "build": "nx run-many --target=build --production",
+    "publish:imperative-render": "cd dist/packages/imperative-render && npm publish --access=public",
+    "publish:light-type": "cd dist/packages/light-type && npm publish --access=public && cd - || cd -",
+    "docs:base:build": "nx build-storybook docs",
+    "docs:base:publish": "gh-pages -d dist/storybook/docs",
+    "docs:deploy": "pnpm docs:base:build && pnpm docs:base:publish",
+    "docs": "nx storybook docs",
+    "light-type-benchmark:run": "pnpm build && pnpm node -r ts-node/register packages/light-type-benchmarks/run.ts",
+    "light-type-benchmark:run:mac": "taskpolicy -c utility pnpm light-type-benchmark:run",
+    "light-type-benchmark:run:nux": "taskset -c 1 pnpm light-type-benchmark:run",
+    "tsc:check": "pnpm tsc -p tsconfig.base.json --noEmit --incremental false --jsx react-jsx --allowSyntheticDefaultImports",
+    "tsc:trace": "pnpm tsc:check --generateTrace ./.trace"
+  },
   "private": true,
   "devDependencies": {
     "@jest/globals": "^29.4.3",

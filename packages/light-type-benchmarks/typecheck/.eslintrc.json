@@ -5,8 +5,7 @@
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
       "rules": {
-        "@typescript-eslint/no-this-alias": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "no-inner-declarations": "off"
       }
     },
     {
