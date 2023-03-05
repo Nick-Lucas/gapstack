@@ -1,8 +1,0 @@
-{
-  "name": "@gapstack/react-imperative-render",
-  "version": "0.0.7",
-  "private": false,
-  "peerDependencies": {
-    "react": ">=17"
-  }
-}
