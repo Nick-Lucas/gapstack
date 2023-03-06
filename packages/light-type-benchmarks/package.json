@@ -1,5 +1,12 @@
 {
   "name": "light-type-benchmarks",
   "version": "0.0.0",
-  "scripts": {}
+  "scripts": {},
+  "devDependencies": {
+    "minimatch": "^7.4.2"
+  },
+  "dependencies": {
+    "dist-lt": "file:../../dist/packages/light-type",
+    "zod": "^3.21.2"
+  }
 }

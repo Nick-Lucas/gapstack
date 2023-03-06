@@ -36,16 +36,16 @@ function benchmarkCompiles() {
   // The time which typescript takes to load a file and setup
   //
 
-  const baselineFile = path.join(__dirname, 'benchmarks', BASELINE_FILENAME)
-  const times: number[] = []
-  for (let i = 0; i < 10; i++) {
-    console.log('  Taking baseline measurement', i, '/', 10)
-    const { timeMS } = typecheck(baselineFile)
-    times.push(timeMS)
-  }
-  const baselineMS = takeTimeMeasurement(0, times)
-  console.log('  First calculated baseline time of ', baselineMS)
-  console.log('')
+  // const baselineFile = path.join(__dirname, 'benchmarks', BASELINE_FILENAME)
+  // const times: number[] = []
+  // for (let i = 0; i < 10; i++) {
+  //   const { timeMS } = typecheck(baselineFile)
+  //   console.log('  Taking baseline measurement', i, '/', 10, `${timeMS}ms`)
+  //   times.push(timeMS)
+  // }
+  const baselineMS = 0 //takeTimeMeasurement(0, times)
+  // console.log('  First calculated baseline time of ', baselineMS)
+  // console.log('')
 
   //
   // Benchmark
