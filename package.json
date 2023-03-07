@@ -13,6 +13,7 @@
     "docs:deploy": "yarn run docs:base:build && yarn run docs:base:publish",
     "docs": "nx storybook docs",
     "light-type-benchmark:start": "yarn nx run-many --target=serve --projects=light-type-benchmarks*",
+    "light-type-benchmark-2:process": "yarn build && yarn node -r ts-node/register packages/light-type-benchmarks-2/parse-trace.ts",
     "light-type-benchmark-2:run": "yarn build && yarn node -r ts-node/register packages/light-type-benchmarks-2/run.ts",
     "light-type-benchmark-2:run:mac": "taskpolicy -c utility yarn run light-type-benchmark-2:run",
     "light-type-benchmark-2:run:nux": "taskset -c 1 yarn run light-type-benchmark-2:run",
