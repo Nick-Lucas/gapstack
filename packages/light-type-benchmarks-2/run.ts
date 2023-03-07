@@ -3,7 +3,7 @@ import { parseArgs } from 'util'
 import { Framework, FrameworkLabel } from './types'
 import { BASELINE_FILENAME, listBenchmarks } from './listBenchmarks'
 import { typecheck, assertNoErrors } from './typecheck'
-import { minimatch } from 'minimatch'
+import minimatch from 'minimatch'
 
 //
 // Inputs

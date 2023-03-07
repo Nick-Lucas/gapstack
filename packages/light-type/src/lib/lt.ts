@@ -1,4 +1,4 @@
-import { LtType } from './chainable/LtType'
+import { LtType, LtTypeAnyKey } from './chainable/LtType'
 import { AnyLightType, LightType } from './types/LightType'
 import { AnyLightObject } from './types/LightObject'
 import { Primitive, AnyKey } from './types/utils'
@@ -167,10 +167,10 @@ export function literal<TLiteral extends Primitive>(
  * // `Record<string, number>`
  * ```
  */
-export function record<
-  TKey extends LtType<AnyKey>,
-  TValue extends LtType<unknown>
->(key: TKey, value: TValue) {
+export function record<TKey extends LtTypeAnyKey, TValue extends LtType>(
+  key: TKey,
+  value: TValue
+) {
   return LtRecord.create(key, value)
 }
 
@@ -182,10 +182,10 @@ export function record<
  * // `Map<string, number>`
  * ```
  */
-export function map<
-  TKey extends LtType<AnyKey>,
-  TValue extends LtType<unknown>
->(key: TKey, value: TValue) {
+export function map<TKey extends LtTypeAnyKey, TValue extends LtType>(
+  key: TKey,
+  value: TValue
+) {
   return LtMap.create(key, value)
 }
 

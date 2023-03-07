@@ -1,11 +1,10 @@
 import { LtType } from '../chainable'
-import { AnyLightType, LightType } from './LightType'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type NoOp = {}
 
 export type Primitive = string | number | boolean
-export type AnyKey = string | number | symbol
+export type AnyKey = any
 
 /**
  * Determine the primitive types included in a literal union
